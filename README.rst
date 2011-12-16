@@ -11,7 +11,7 @@ data analysis.
    :height: 400
 
 This repo is currently under construction and will eventually become the new
-home for STARS. 
+home for STARS development. 
 
 
 * STARS previous home_ 
