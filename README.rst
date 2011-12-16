@@ -15,10 +15,12 @@ home for STARS.
 
 
 * STARS previous home_ 
+* STARS downloads_
 * PySAL_ 
 
 
 
 .. _home: http://regionalanalysislab.org
+.. _downloads: http://regionalanalysislab.org/?n=Download
 .. _PySAL: http://pysal.org
 
