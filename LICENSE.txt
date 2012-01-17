@@ -1,1 +1,2 @@
 options = BSD, GPL
+This line is not empty.
