@@ -27,26 +27,26 @@ home for STARS development.
 Modules
 =======
 
-    * Data Structures
+* Data Structures
 
-      * efficient way to deal with space-time data
-      * fileio
-      * who: df, da, sk
+  * efficient way to deal with space-time data
+  * fileio
+  * who: df, da, sk
 
-    * Visualization
+* Visualization
 
-      * interactive graphics
-      * everything that is currently in stars
-      * who: xk, ps, jl 
+  * interactive graphics
+  * everything that is currently in stars
+  * who: xk, ps, jl 
 
-    * Analytical Layer
+* Analytical Layer
 
-      * brings pysal analytics in
-      * new analytics from stars back to pysal (eventually)
-      * who: 
+  * brings pysal analytics in
+  * new analytics from stars back to pysal (eventually)
+  * who: 
 
-    * Shell
+* Shell
 
-    * Slots and Signals/Plugin
+* Slots and Signals/Plugin
 
 
