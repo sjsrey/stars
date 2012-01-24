@@ -24,29 +24,3 @@ home for STARS development.
 .. _downloads: http://regionalanalysislab.org/?n=Download
 .. _PySAL: http://pysal.org
 
-Modules
-=======
-
-* Data Structures
-
-  * efficient way to deal with space-time data
-  * fileio
-  * who: df, da, sk
-
-* Visualization
-
-  * interactive graphics
-  * everything that is currently in stars
-  * who: xk, ps, jl 
-
-* Analytical Layer
-
-  * brings pysal analytics in
-  * new analytics from stars back to pysal (eventually)
-  * who: 
-
-* Shell
-
-* Slots and Signals/Plugin
-
-
