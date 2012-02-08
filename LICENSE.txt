@@ -1,0 +1,2 @@
+options = BSD, LGPL
+This line is not empty.
