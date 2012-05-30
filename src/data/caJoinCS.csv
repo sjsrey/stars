@@ -1,0 +1,59 @@
+COUNTY,One Offset,Zero Offset
+Alameda,1,0
+Alpine,2,1
+Amador,3,2
+Butte,4,3
+Calaveras,5,4
+Colusa,6,5
+Contra Costa,7,6
+Del Norte,8,7
+El Dorado,9,8
+Fresno,10,9
+Glenn,11,10
+Humboldt,12,11
+Imperial,13,12
+Inyo,14,13
+Kern,15,14
+Kings,16,15
+Lake,17,16
+Lassen,18,17
+Los Angeles,19,18
+Madera,20,19
+Marin,21,20
+Mariposa,22,21
+Mendocino,23,22
+Merced,24,23
+Modoc,25,24
+Mono,26,25
+Monterey,27,26
+Napa,28,27
+Nevada,29,28
+Orange,30,29
+Placer,31,30
+Plumas,32,31
+Riverside,33,32
+Sacramento,34,33
+San Benito,35,34
+San Bernardino,36,35
+San Diego,37,36
+San Francisco,38,37
+San Joaquin,39,38
+San Luis Obispo,40,39
+San Mateo,41,40
+Santa Barbara,42,41
+Santa Clara,43,42
+Santa Cruz,44,43
+Shasta,45,44
+Sierra,46,45
+Siskiyou,47,46
+Solano,48,47
+Sonoma,49,48
+Stanislaus,50,49
+Sutter,51,50
+Tehama,52,51
+Trinity,53,52
+Tulare,54,53
+Tuolumne,55,54
+Ventura,56,55
+Yolo,57,56
+Yuba,58,57
