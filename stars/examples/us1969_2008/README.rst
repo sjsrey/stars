@@ -1,7 +1,7 @@
 Files in this directory are being used to organize the refactoring of stars.
 These are not production ready :->
 
-Data and code examples are based on [RAM2011]_.
+Data and code examples are based on [RMA2011]_.
 
 Snippets
 --------
@@ -14,5 +14,5 @@ Snippets
 
 
 
-.. [RAM2011] Rey, S.J., L. Anselin and A. T. Murray (2011) "Visualizing regional income distribution dynamics". *Letters in Spatial and Resource Sciences*, (4) 81-19.
+.. [RMA2011] Rey, S.J., A. T. Murray and L. Anselin (2011) "Visualizing regional income distribution dynamics". *Letters in Spatial and Resource Sciences*, (4) 81-19.
 
