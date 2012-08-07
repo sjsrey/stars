@@ -13,7 +13,9 @@ data analysis.
 This repo is currently under construction and will eventually become the new
 home for STARS development. 
 
-See `STARS History and Road Map <https://github.com/sjsrey/stars/tree/master/doc/history.rst>`_ for more information.
+
+See
+`STARS History and Road Map <https://github.com/sjsrey/stars/blob/master/docs/history.rst>`_ for more information.
 
 Links
 =====
