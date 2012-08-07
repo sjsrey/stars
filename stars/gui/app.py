@@ -98,6 +98,12 @@ def guiMain():
     main.Show()
     app.MainLoop()
 
+def guiMain1():
+    app = wx.App()
+    main = AppWindow(None)
+    main.Show()
+
+
 if __name__ == '__main__':
     guiMain()
 
