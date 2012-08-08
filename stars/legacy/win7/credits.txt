@@ -1,0 +1,39 @@
+STARS Team (a.k.a. the 'All-STARS')
+
+PROJECT DIRECTOR
+Sergio J. Rey	sjrey@users.sourceforge.net
+
+DEVELOPERS
+Core group with write access to STARS source, currently
+consisting of
+
+Jared Aldstadt	aldstadt@users.sourceforge.net
+Boris Dev	borisdev@users.sourceforge.net
+Mark V. Janikas	mjanikas@users.sourceforge.net
+Young-Sik Kim	oriys@users.sourceforge.net
+Sergio J. Rey	sjrey@users.sourceforge.net
+Daisaku Yamamoto	daisakuy@users.sourceforge.net
+Tong Zhang	leibi@users.sourceforge.net 
+
+COLLABORATORS
+STARS has benefitted from the invaluable help of these people, who
+contributed suggestions, code, data, bug fixes or documentation:
+
+Luc Anselin	anselin@uiuc.edu
+Charlotte Coulter	coulter@rohan.sdsu.edu
+Julie Le Gallo	jlegallo@uiuc.edu
+Liang Guo	guo@rohan.sdsu.edu
+Dennis Larson	larson@rohan.sdsu.edu
+Youngwoo Lee	giant890@dreamwiz.com
+Yuying Li	yli@rohan.sdsu.edu
+Daniel Mattheis	mattheis@rohan.sdsu.edu
+
+Special thanks to Bob Ippolito for expert guidance in building the binaries for
+the Mac.
+
+As STARS is an open source and collaborative project, we would like to invite
+any interested developer, user, or researcher to join us. Feel free to drop any
+of the Developers an email or stop by our home page:
+http://stars-py.sourceforge.net/ 
+
+
