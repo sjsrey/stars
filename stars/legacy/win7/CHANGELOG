@@ -1,0 +1,34 @@
+0.8.2 2006/1/13
+
+STARS
+- STARSHOME environment variable deprecated (SJR)
+- View Zooming (SJR, TZ)
+- Cumulative Distirbution Function View (MVJ)
+- Interactive Data Table (SJR)
+- Complementary Brushing (SJR)
+- Kmeans Clustering (SJR, YSK)
+- Spatial Weight Characteristic (Join Distribution) (SJR-PYSAL)
+- Empirical Bayes Smoothing of Rates (SJR-PYSAL)
+- Spatial Smoothing of Rates (SJR-PYSAL)
+- Spatial Markov Tables (SJR)
+- New Dialogues (SJR, MVJ)
+
+ProjectMaker
+- New Projections (JA, TZ, SJR)
+- New Improved Interface (MVJ, SJR)
+- Shapelib deprecated (SRJ-PYSAL)
+
+
+0.7.2a 2004/7/12
+
+- ProjectMaker transpose bug fixed (mvj)
+- ProjectMaker example data corrected (mvj)
+- Typo in ja's name in credits (sjr)
+
+Note: first two bugs only affect the Linux and Mac OS X
+releases in 0.7.2 - the windows zip file and binary were
+made with the fixes for first two bugs. Third one will remain till
+next bug-fix relase
+
+0.7.2 2004/7/09
+Initial public end user release

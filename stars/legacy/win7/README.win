@@ -1,0 +1,44 @@
+STARS
+Space-Time Analysis of Regional Systems
+Copyright (C) 2000-2006 Sergio J. Rey
+Licensed under the GPL
+(see the file COPYING for details)
+Project Home Page: http://stars-py.sourceforge.net/
+
+
+
+INSTALLATION
+
+1. Just click the stars-0.8.2-setup.exe file and follow the instructions.
+2. Two programs will be created:
+	a) STARS: the application itself
+	b) ProjectMaker: the application used to create STARS projects.
+
+DOCUMENTATION
+The CreateSTARSProjects.pdf provides instructions for creating STARS projects.
+
+A Quick Start guide for STARS is not quite complete.  Check our homepage
+listed below in the future for the completed guide for STARS 0.8.2.
+
+
+
+USING YOUR OWN DATA WITH STARS
+To get your own data into STARS you need to first build a STARS project. This
+is done with a separate application called ProjectMaker which was installed in
+the same directory that STARS was installed. Make a desktop shortcut to the
+ProjectMaker.exe file to access this utility.
+
+Detailed instructions for creating your own STARS project can be found in the
+Quickstart guide.
+
+
+
+GETTING INVOLVED
+This is a beta release. Comments, bug reports, bug fixes, new
+data, suggestions, etc, are all welcome and should be sent to:
+
+	sjrey@users.sourceforge.net
+	
+or visit our project page at:
+
+https://sourceforge.net/projects/stars-py/
