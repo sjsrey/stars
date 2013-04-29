@@ -70,7 +70,6 @@ class AppWindow(wx.Frame):
         visualization_menu.Append(wx.ID_ANY, "Visualization")
 
 
-
         # help menu
 
         help_menu = wx.Menu()
@@ -98,10 +97,6 @@ def guiMain():
     main.Show()
     app.MainLoop()
 
-def guiMain1():
-    app = wx.App()
-    main = AppWindow(None)
-    main.Show()
 
 
 if __name__ == '__main__':
