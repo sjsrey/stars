@@ -4149,10 +4149,11 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         entries = ['Variable']
         sd.MultiEntry(d,varNames, entries, title='Variable to map',
                       helpText=txt)
-        sd.SpinEntry(d,label="Number of classes", values=range(2,10),
+        sp=sd.SpinEntry(d,label="Number of classes", values=range(2,10),
                      align="LEFT", title="Number")
         txt="Select one or more time periods for map(s)."
         sd.DualListBoxes(d,timePeriods,title='Time Periods', helpText=txt)
+        sp.setDefault(2) # should move the spinbox from 2 to 4
         d.draw()
         if d.status:
             varName = d.results[0]['Variable']

@@ -87,7 +87,7 @@ class DataTable:
         ijs = [ (i,j) for i in range(n) for j in range(k) ]
         svalues = [ format(self.fmt, values[i,j]) for i,j in ijs ]
         self.svalues = svalues
-        maxv = max(max(values))
+        maxv = values.max()
         maxS=format(self.fmt,maxv)
         maxSize = cellFont.measure(maxS)
         height = cellFont.measure('H')
