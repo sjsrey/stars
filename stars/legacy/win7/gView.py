@@ -1910,9 +1910,9 @@ class Plot(View):
         tagString (string): string to use as tag for line on canvas
         fill (string): color for the fitline
         """
-        if not x:
+        if x == []:
             x = array(self.scaledXCords)
-        if not y:
+        if y == []:
             y = array(self.scaledYCords)
 
         mx = mean(x)
