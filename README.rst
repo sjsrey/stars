@@ -13,6 +13,19 @@ data analysis.
 This repo is currently under construction and will eventually become the new
 home for STARS development. 
 
+The current stable source code resides in `/stars/legacy/win7`
+
+This can be run using:
+
+        python -i starsgui.py
+
+
+Note that this version should work on the following platforms
+
+ - Linux
+ - Windows
+ - Mac
+
 
 See
 `STARS History and Road Map <https://github.com/sjsrey/stars/blob/master/docs/history.rst>`_ for more information.
