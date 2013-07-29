@@ -16,18 +16,18 @@ home for STARS development.
 The current stable source code resides in `/stars/legacy/win7`
 
 This can be run using:
-
-        python -i starsgui.py
+```
+python -i starsgui.py
+```
 
 
 Note that this version should work on the following platforms
 
- - Linux
- - Windows
- - Mac
+- Linux
+- Windows
+- Mac
 
-
-See
+For more details on the plans for development, see
 `STARS History and Road Map <https://github.com/sjsrey/stars/blob/master/docs/history.rst>`_ for more information.
 
 Links
