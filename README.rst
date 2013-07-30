@@ -10,22 +10,17 @@ data analysis.
    :width: 800
    :height: 400
 
-This repo is currently under construction and will eventually become the new
-home for STARS development. 
+The current version of STARS is based on a refactoring to move from Numeric
+to Numpy. This version should work on the following platforms
 
-The current stable source code resides in ``/stars/legacy/win7``.
+- Linux
+- Windows
+- Mac
 
 This can be run using:
 
    python -i starsgui.py
 
-
-
-Note that this version should work on the following platforms
-
-- Linux
-- Windows
-- Mac
 
 For more details on the plans for development, see
 `STARS History and Road Map <https://github.com/sjsrey/stars/blob/master/docs/history.rst>`_.
