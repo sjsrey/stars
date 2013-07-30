@@ -13,7 +13,7 @@ data analysis.
 This repo is currently under construction and will eventually become the new
 home for STARS development. 
 
-The current stable source code resides in ``/stars/legacy/win7``.
+The current stable source code resides in the `numpy branch <https://github.com/sjsrey/stars/tree/numpy>`_.
 
 This can be run using:
 
