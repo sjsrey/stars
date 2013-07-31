@@ -41,7 +41,7 @@ VERSIONDATE = version.DATE
 
 GIFFILE = os.path.join(options.getSTARSHOME(),"splash.gif")
 
-c1="Copyright (C) 2000-2006, Sergio J. Rey\n"
+c1="Copyright (C) 2000-2013, Sergio J. Rey\n"
 crnotice1="%sSTARS version %s from %s"%(c1,version.VERSION,version.DATE) 
 crnotice2="http://stars-py.sf.net"
 
