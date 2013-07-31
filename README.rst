@@ -17,7 +17,7 @@ to Numpy. This version should work on the following platforms
 - Windows
 - Mac
 
-This can be run using:
+STARS can be run using:
 
    python -i starsgui.py
 
