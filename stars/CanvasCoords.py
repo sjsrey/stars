@@ -4,11 +4,7 @@ Regional Systems
 ----------------------------------------------------------------------
 AUTHOR(S):  Serge Rey sjrey@users.sourceforge.net
 ----------------------------------------------------------------------
-Copyright (c) 2000-2006  Sergio J. Rey
-======================================================================
-This source code is licensed under the GNU General Public License, 
-Version 2.  See the file COPYING for more details.
-======================================================================
+
 
 OVERVIEW:
 Transformation between canvas and physical coordinates.

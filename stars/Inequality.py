@@ -7,11 +7,6 @@ Regional Systems
 AUTHOR(S):  Sergio J. Rey sjrey@users.sourceforge.net
             Jared Aldstad aldstad@rohan.sdsu.edu
 ----------------------------------------------------------------------
-Copyright (c) 2000-2006 Sergio J. Rey
-======================================================================
-This source code is licensed under the GNU General Public License, 
-Version 2.  See the file COPYING for more details.
-======================================================================
 
 
 OVERVIEW
