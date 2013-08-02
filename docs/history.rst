@@ -42,14 +42,3 @@ STARS that rests on PySAL and draws on the  pandas library. STARS will also
 serve as somewhat of a testing ground for new space-time methods that
 eventually will be moved into the spatial_dynamics library of PySAL.
 
-Code Organization
-=================
-
-The older code base resides in
-`legacy <https://github.com/sjsrey/stars/tree/master/stars/legacy>`_,
-while the short run port to Windows 7
-will reside in
-`legacy/win7 <https://github.com/sjsrey/stars/tree/master/stars/legacy>`_.
-Everything else will be related to the long-term
-release. Thus, code outside of ``legacy`` and ``legacy/win`` is likely to not be
-working for a bit.
