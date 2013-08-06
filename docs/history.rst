@@ -35,21 +35,11 @@ Moving forward, there are short run and long run plans for STARS development.
 In the short run, there have been many requests for a version of STARS that
 runs on Windows 7. Because the last stable release relied on numeric (pre
 numpy days), some effort must be directed at refactoring the last version to
-meet these immediate needs.
+meet these immediate needs. As of 2013-08-01 this is largely completed in the source living in
+`master <https://github.com/sjsrey/stars>`_. Binary installers are planned for the near future. 
 
 In the longer term, however, the focus will be on a completely new rewrite of
 STARS that rests on PySAL and draws on the  pandas library. STARS will also
 serve as somewhat of a testing ground for new space-time methods that
 eventually will be moved into the spatial_dynamics library of PySAL.
 
-Code Organization
-=================
-
-The older code base resides in
-`legacy <https://github.com/sjsrey/stars/tree/master/stars/legacy>`_,
-while the short run port to Windows 7
-will reside in
-`legacy/win7 <https://github.com/sjsrey/stars/tree/master/stars/legacy>`_.
-Everything else will be related to the long-term
-release. Thus, code outside of ``legacy`` and ``legacy/win`` is likely to not be
-working for a bit.
