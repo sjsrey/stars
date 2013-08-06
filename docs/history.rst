@@ -35,7 +35,7 @@ Moving forward, there are short run and long run plans for STARS development.
 In the short run, there have been many requests for a version of STARS that
 runs on Windows 7. Because the last stable release relied on numeric (pre
 numpy days), some effort must be directed at refactoring the last version to
-meet these immediate needs. As of 2013-08-01 this is largely completed in the source living in master. Binary installers are planned for the near future. 
+meet these immediate needs. As of 2013-08-01 this is largely completed in the source living in [master](https://github.com/sjsrey/stars). Binary installers are planned for the near future. 
 
 In the longer term, however, the focus will be on a completely new rewrite of
 STARS that rests on PySAL and draws on the  pandas library. STARS will also
