@@ -1,6 +1,7 @@
 import os
 import sys
 import getopt
+import shutil
 
 def mac():
     if not os.path.exists("mac"):
@@ -25,24 +26,20 @@ def mac():
 	    os.system(cmd)
 
 def win():
-    if not os.path.exists("win"):
-	os.makedirs("win")
-
-	cmd ="cd win;cp -R  ../pyinstaller-pyinstaller-cd90936/* ."
-	os.system(cmd)
-	cmd ="cd win; python pyinstaller.py --windowed --name=stars ../../stars/starsgui.py"
-	os.system(cmd)
-
-	targetPath = "win/stars/dist/stars.app/Contents/winOS/."
-	cmds = ["cp ../../stars/stars/splash.gif",
-		"cp -R ../../stars/stars/data",
-		"cp ../../stars/stars/COPYING",
-		"cp ../../stars/stars/credits.txt"]
-
-	for cmd in cmds:
-	    cmd = cmd + " " + targetPath
-	    print cmd
-	    os.system(cmd)
+    src = "pyinstaller-pyinstaller-cd90936"
+    dst = "win"
+    shutil.copytree(src,dst)
+    cmd ="cd win; python pyinstaller.py --windowed --name=stars ../../stars/starsgui.py"
+    os.system(cmd)
+    targetPath = "win/stars/dist/stars.app/Contents/winOS/."
+    cmds = ["cp ../../stars/stars/splash.gif",
+	"cp -R ../../stars/stars/data",
+	"cp ../../stars/stars/COPYING",
+	"cp ../../stars/stars/credits.txt"]
+    for cmd in cmds:
+        cmd = cmd + " " + targetPath
+        print cmd
+        os.system(cmd)
 
 dispatcher = {}
 dispatcher['mac'] = mac
@@ -58,7 +55,7 @@ def main(argv):
 	    target = a
 	    print "target: ", target
 	    if target in dispatcher:
-		dispatcher()
+		dispatcher[target]()
 	    else:
 		print 'useage: builder.py -t [mac|win]'
 	else:
