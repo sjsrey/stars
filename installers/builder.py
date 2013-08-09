@@ -29,6 +29,7 @@ def win():
     src = "pyinstaller-pyinstaller-cd90936"
     dst = "win"
     shutil.copytree(src,dst)
+    # not sure cd works when chaining on windows
     cmd ="cd win; python pyinstaller.py --windowed --name=stars ../../stars/starsgui.py"
     os.system(cmd)
     targetPath = "win/stars/dist/stars.app/Contents/winOS/."
