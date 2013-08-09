@@ -1,5 +1,6 @@
 import os
 
+# add function for mac and another for windows
 if not os.path.exists("mac"):
     os.makedirs("mac")
 
