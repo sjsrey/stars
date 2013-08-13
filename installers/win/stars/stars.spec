@@ -1,5 +1,5 @@
 # -*- mode: python -*-
-a = Analysis(['../../stars/stars/starsgui.py'],
+a = Analysis(['../../stars/starsgui.py'],
              pathex=['C:\\Users\\serge\\Documents\\GitHub\\stars\\installers\\win\\stars'],
              hiddenimports=[],
              hookspath=None,
