@@ -30,24 +30,19 @@ def win():
     src = "pyinstaller-pyinstaller-cd90936"
     dst = "win"
     shutil.copytree(src,dst)
-    # not sure cd works when chaining on windows
-    #cmd ="cd win; python pyinstaller.py --windowed --name=stars ../../stars/starsgui.py"
-    #cmd ="start /d win python pyinstaller.py --windowed --name=stars ../../stars/starsgui.py"
-
     cmd = "python pyinstaller.py --windowed --name=stars ../../stars/starsgui.py"
     res = subprocess.Popen(cmd, cwd="win/")
     res.wait()
     targetPath = "win/stars/dist/stars/."
     cmds = ["cp ../../stars/stars/splash.gif",
 	"cp -R ../../stars/stars/data",
-	"cp ../../stars/stars/COPYING",
+    "cp ../../stars/stars/COPYING",
 	"cp ../../stars/stars/credits.txt"]
     for cmd in cmds:
         cmd = cmd + " " + targetPath
         print cmd
         r = subprocess.Popen(cmd)
         r.wait()
-
 dispatcher = {}
 dispatcher['mac'] = mac
 dispatcher['win'] = win
