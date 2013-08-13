@@ -11,6 +11,8 @@ Jared Aldstadt	aldstadt@users.sourceforge.net
 Boris Dev	borisdev@users.sourceforge.net
 Mark V. Janikas	mjanikas@users.sourceforge.net
 Young-Sik Kim	oriys@users.sourceforge.net
+Tadesse Sefer   tsefer@users.sourceforge.net
+Crystal English crystal.english127@gmail.com
 Sergio J. Rey	sjrey@users.sourceforge.net
 Daisaku Yamamoto	daisakuy@users.sourceforge.net
 Tong Zhang	leibi@users.sourceforge.net 
