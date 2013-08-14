@@ -24,6 +24,11 @@ def mac():
 	    cmd = cmd + " " + targetPath
 	    print cmd
 	    os.system(cmd)
+    # icon
+    cmd = "cp ../../stars/stars/stars.icns"
+    cmd +=" mac/stars/dist/stars.app/Contents/Resources/icon-windowed.icns"
+    print cmd
+    os.system(cmd)
 
 def win():
     import subprocess
