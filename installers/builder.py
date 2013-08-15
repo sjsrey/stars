@@ -3,7 +3,12 @@ import sys
 import getopt
 import shutil
 
+__author__ = "Sergio Rey <sjsrey@gmail.com>"
+
 def mac():
+    """
+    Builds a binary assuming enthought python 7.3 is installed
+    """
     if not os.path.exists("mac"):
 	os.makedirs("mac")
 
@@ -31,6 +36,10 @@ def mac():
     os.system(cmd)
 
 def macx11():
+
+    """
+    Builds a binary using anaconda which does not include aqua so x11 gui toolkit is used
+    """
     if not os.path.exists("mac"):
 	os.makedirs("mac")
 
@@ -75,30 +84,31 @@ def win():
         print cmd
         r = subprocess.Popen(cmd)
         r.wait()
+
 dispatcher = {}
 dispatcher['mac'] = mac
 dispatcher['macx11'] = macx11
 dispatcher['win'] = win
 
 def main(argv):
+    def usage():
+        print 'usage: builder.py -t [mac|macx11|win]'
     opts, args = getopt.getopt(argv,"ht:") 
-    print opts
-    print args
-    for o,a in opts:
-        if o == '-h':
-            print 'usage: builder.py -t [mac|macx11|win]'
-            sys.exit(0)
-        elif o == "-t":
-            target = a
-            print "target: ", target
-            if target in dispatcher:
-                dispatcher[target]()
+    if opts != []:
+        for o,a in opts:
+            if o == '-h':
+                usage()
+                sys.exit(0)
+            elif o == "-t":
+                target = a
+                if target in dispatcher:
+                    dispatcher[target]()
+                else:
+                    usage()
             else:
-             print 'usage: builder.py -t [mac|macx11|win]'
-        else:
-            print 'usage: builder.py -t [mac|macx11|win]'
-    #else:
-    #     print 'usage: builder.py -t [mac|macx11|win]'
+                usage()
+    else:
+       usage()
 if __name__ == "__main__":
     main(sys.argv[1:])
 
