@@ -71,7 +71,8 @@ def win():
     src = "pyinstaller-pyinstaller-cd90936"
     dst = "win"
     shutil.copytree(src,dst)
-    cmd = "python pyinstaller.py --windowed --name=stars ../../stars/starsgui.py"
+    cmd = "python pyinstaller.py --windowed --name=stars"
+    cmd +=" --icon=../../stars/stars.ico ../../stars/starsgui.py"
     res = subprocess.Popen(cmd, cwd="win/")
     res.wait()
     targetPath = "win/stars/dist/stars/."
