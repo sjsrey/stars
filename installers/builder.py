@@ -1,7 +1,48 @@
+"""
+Builder of binaries for windows and mac os x (aqua and x11)
+
+Usage
+=====
+
+python builder.py -t [mac|macx11|win]
+
+
+
+Requirements
+============
+
+pyinstaller
+
+
+pyinstaller-pyinstaller-v2.05-518-gcd90936.tar.gz is required for the mac
+builds and should reside in the same directory as this script.
+
+for windows the same version of the installer needs to be unzipped in this
+directory such that the source for that package resides in a subdirectory
+of the current folder
+
+
+pyinstaller is not part of the source code for stars
+
+
+Notes
+=====
+Location of binaries for the Mac is 
+    mac/stars/dist/stars.app
+The stars.app folder can be compressed or dragged to a new location. Opening
+stars.app will run the program
+
+Location of Windows binary is
+    win/stars/dist/stars/stars.exe
+To relocate this, create a shortcut and move the shortcut to a desired
+location.
+
+"""
 import os
 import sys
 import getopt
 import shutil
+
 
 __author__ = "Sergio Rey <sjsrey@gmail.com>"
 
