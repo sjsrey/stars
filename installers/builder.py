@@ -17,6 +17,8 @@ pyinstaller
 pyinstaller-pyinstaller-v2.05-518-gcd90936.tar.gz is required for the mac
 builds and should reside in the same directory as this script.
 
+The source is at: https://github.com/pyinstaller/pyinstaller/tarball/develop
+
 for windows the same version of the installer needs to be unzipped in this
 directory such that the source for that package resides in a subdirectory
 of the current folder
