@@ -9,6 +9,7 @@ class CanvasFrame(tk.Frame):
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
         self.canvas.grid(row=0, column=0, sticky='nesw')
+        self.canvas.create_line(0, 0, 300, 100, width = 5.0)
 
 
 if __name__ == '__main__':
