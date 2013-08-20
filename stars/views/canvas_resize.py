@@ -42,8 +42,9 @@ class CanvasFrame(tk.Frame):
         self.y0 = 0
         self.y1 = self.height
         if self.height > self.width:
+            width_screen = self.width
             height_screen = self.width
-            self.y0 = self.height - self.width
+            self.y0 = self.height - height_screen
             self.y0 /= 2.
             self.y1 = self.y0 + height_screen
             self.x0 = 0
@@ -53,23 +54,28 @@ class CanvasFrame(tk.Frame):
         wc_line = [ (100,100), (2000,2000) ]
         wc_line1 = [ (100,2000), (2000, 100) ]
 
-        width_world = wc_line[1][0] - wc_line[0][0]
-        height_world = wc_line[1][1] - wc_line[0][0]
+        min_x = 100
+        min_y = 100
+        max_x = 2000
+        max_y = 2000
+
+        width_world = max_x - min_x
+        height_world = max_y - min_y
         sy = height_screen * 1. / height_world
         sx = width_screen * 1. / width_world
 
-        x0 = (100 - 100) * sx + self.x0
-        y0 = self.y0 + (2000 - 100) * sy 
-        x1 = (2000 - 100) * sx + self.x0
-        y1 = self.y0 + (2000 - 2000) * sy
+        x0 = (100 - min_x) * sx + self.x0
+        y0 = self.y0 + (max_y - 100) * sy 
+        x1 = (2000 - min_x) * sx + self.x0
+        y1 = self.y0 + (max_y - 2000) * sy
         print x0,y0,x1,y1
         self.canvas.create_line(x0, y0, x1, y1, width=5.0)
 
         # second line
-        x0 = (100 - 100) * sx + self.x0
-        y0 = self.y0 + (2000 - 2000) * sy 
-        x1 = (2000 - 100) * sx + self.x0
-        y1 = self.y0 + (2000 - 100) * sy
+        x0 = (100 - min_x) * sx + self.x0
+        y0 = self.y0 + (max_y - 2000) * sy 
+        x1 = (2000 - min_x) * sx + self.x0
+        y1 = self.y0 + (max_y - 100) * sy
         print x0,y0,x1,y1
         self.canvas.create_line(x0, y0, x1, y1, width=5.0)
 
