@@ -7,12 +7,14 @@ class CanvasFrame(tk.Frame):
         self.parent = parent
         self.parent.title("CanvasView")
         self.pack(fill=tk.BOTH, expand = 1)
-        self.canvas = tk.Canvas(self, bg='white', width=300, height=100)
+        height = self.parent.winfo_screenheight() / 2.
+        width = self.parent.winfo_screenwidth() /2.
+        self.canvas = tk.Canvas(self, bg='white', width=width, height=height)
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
         self.canvas.grid(row=0, column=0, sticky='nesw')
-        self.canvas.create_line(0, 0, 300, 100, width = 5.0)
-        self.canvas.create_line(0, 100, 300, 0, width = 5.0)
+        self.canvas.create_line(0, 0, width, height, width = 5.0)
+        self.canvas.create_line(0, height, width, 0, width = 5.0)
         self.config_events = 0
 
         # Event bindings
