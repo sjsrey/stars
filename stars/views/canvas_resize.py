@@ -32,8 +32,48 @@ class CanvasFrame(tk.Frame):
 
     def redraw(self):
         self.canvas.delete(tk.ALL)
-        self.canvas.create_line(0, 0, self.width, self.height, width=5.0)
-        self.canvas.create_line(0, self.height, self.width, 0, width=5.0)
+        # start with assumption width of screen > height of screen
+        dim = self.height
+        width_screen = self.height 
+        height_screen = self.height
+        self.x0 = self.width - width_screen
+        self.x0 /= 2.0
+        self.x1 = self.x0 + width_screen
+        self.y0 = 0
+        self.y1 = self.height
+        if self.height > self.width:
+            height_screen = self.width
+            self.y0 = self.height - self.width
+            self.y0 /= 2.
+            self.y1 = self.y0 + height_screen
+            self.x0 = 0
+            self.x1 = self.width
+
+        # world coords for line
+        wc_line = [ (100,100), (2000,2000) ]
+        wc_line1 = [ (100,2000), (2000, 100) ]
+
+        width_world = wc_line[1][0] - wc_line[0][0]
+        height_world = wc_line[1][1] - wc_line[0][0]
+        sy = height_screen * 1. / height_world
+        sx = width_screen * 1. / width_world
+
+        x0 = (100 - 100) * sx + self.x0
+        y0 = self.y0 + (2000 - 100) * sy 
+        x1 = (2000 - 100) * sx + self.x0
+        y1 = self.y0 + (2000 - 2000) * sy
+        print x0,y0,x1,y1
+        self.canvas.create_line(x0, y0, x1, y1, width=5.0)
+
+        # second line
+        x0 = (100 - 100) * sx + self.x0
+        y0 = self.y0 + (2000 - 2000) * sy 
+        x1 = (2000 - 100) * sx + self.x0
+        y1 = self.y0 + (2000 - 100) * sy
+        print x0,y0,x1,y1
+        self.canvas.create_line(x0, y0, x1, y1, width=5.0)
+
+
 
 
 if __name__ == '__main__':
