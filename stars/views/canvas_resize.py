@@ -1,4 +1,5 @@
 
+
 import Tkinter as tk
 
 class CanvasFrame(tk.Frame):
@@ -9,7 +10,10 @@ class CanvasFrame(tk.Frame):
         self.pack(fill=tk.BOTH, expand = 1)
         height = self.parent.winfo_screenheight() / 2.
         width = self.parent.winfo_screenwidth() /2.
-        self.canvas = tk.Canvas(self, bg='white', width=width, height=height)
+        length = height
+        if width < height:
+            length = width
+        self.canvas = tk.Canvas(self, bg='white', width=length, height=length)
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
         self.canvas.grid(row=0, column=0, sticky='nesw')
@@ -70,11 +74,6 @@ class CanvasFrame(tk.Frame):
         y1 = self.y0 + (max_y - 2000) * sy
         print x0,y0,x1,y1
         self.canvas.create_line(x0, y0, x1, y1, width=5.0)
-        self.canvas.create_line(x0, y0, x0, y1, width=5.0)
-        self.canvas.create_line(x0, y0, x1, y0, width=5.0)
-        self.canvas.create_line(x1, y0, x1, y1, width=5.0)
-        self.canvas.create_line(x0, y1, x1, y1, width=5.0)
-
 
         # second line
         x0 = (100 - min_x) * sx + self.x0
@@ -86,8 +85,10 @@ class CanvasFrame(tk.Frame):
 
 
 
+
 if __name__ == '__main__':
     root = tk.Tk()
     view = CanvasFrame(root)
     root.mainloop()
+
 
