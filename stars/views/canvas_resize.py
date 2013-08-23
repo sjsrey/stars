@@ -1,6 +1,5 @@
-
-
 import Tkinter as tk
+import numpy as np
 
 class CanvasFrame(tk.Frame):
     def __init__(self, parent):
@@ -38,7 +37,9 @@ class CanvasFrame(tk.Frame):
         self.canvas.delete(tk.ALL)
         # buffer so we have some space between edge of parent window and our drawing
         # bounding box
-        buff = (1 - 0.025)
+        # bounding box is a square with sides having length equal to 
+        # 1/2 * minimum [parent_width, parent_height]
+        buff = (1 - 0.025) # use .975 of the window's min dimension
         if self.width < self.height:
             length = self.width
         else:
@@ -55,47 +56,47 @@ class CanvasFrame(tk.Frame):
         # world coords for line
         wc_line = [ (100,100), (2000,2000) ]
         wc_line1 = [ (100,2000), (2000, 100) ]
-
-        min_x = 100
-        min_y = 100
-        max_x = 2000
-        max_y = 2000
+        lines = np.array([ wc_line, wc_line1 ])
+        xs = np.array([line[0] for line in lines])
+        ys = np.array([line[1] for line in lines])
+        min_x = xs.min()
+        min_y = ys.min()
+        max_x = xs.max()
+        max_y = ys.max()
 
         width_world = max_x - min_x
         height_world = max_y - min_y
         sy = length * 1. / height_world
         sx = length * 1. / width_world
 
-        x0 = (100 - min_x) * sx + self.x0
-        y0 = self.y0 + (max_y - 100) * sy 
-        x1 = (2000 - min_x) * sx + self.x0
-        y1 = self.y0 + (max_y - 2000) * sy
+        x0 = self.x0
+        y0 = self.y0 + (max_y - min_y) * sy 
+        x1 = (max_x - min_x) * sx + self.x0
+        y1 = self.y0 
+
+        # first diagonal
         self.canvas.create_line(x0, y0, x1, y1, width=1.0)
 
-        # second line
-        x0 = (100 - min_x) * sx + self.x0
-        y0 = self.y0 + (max_y - 2000) * sy 
-        x1 = (2000 - min_x) * sx + self.x0
-        y1 = self.y0 + (max_y - 100) * sy
+        # second diagnoal
+        x0 = self.x0
+        y0 = self.y0 
+        x1 = (max_x - min_x) * sx + self.x0
+        y1 = self.y0 + (max_y - min_x) * sy
         self.canvas.create_line(x0, y0, x1, y1, width=1.0)
-
 
         # left
         self.canvas.create_line(x0, y0, x0, y1, width=1.0)
+
         # right
         self.canvas.create_line(x1, y0, x1, y1, width=1.0)
+
         # top
         self.canvas.create_line(x0, y1, x1, y1, width=1.0)
+
         # bottom
         self.canvas.create_line(x0, y0, x1, y0, width=1.0)
-
-
-
-
 
 if __name__ == '__main__':
     root = tk.Tk()
     view = CanvasFrame(root)
     root.mainloop()
-
-
