@@ -36,20 +36,21 @@ class CanvasFrame(tk.Frame):
 
     def redraw(self):
         self.canvas.delete(tk.ALL)
-        # start with assumption width of screen > height of screen
-        length = min(self.width, self.height)
-        self.x0 = self.width - length
-        self.x0 /= 2.0
-        self.x1 = self.x0 + length
-        self.y0 = 0
-        self.y1 = self.height
-        if self.height > self.width:
+        # buffer so we have some space between edge of parent window and our drawing
+        # bounding box
+        buff = (1 - 0.025)
+        if self.width < self.height:
             length = self.width
-            self.y0 = self.height - length
-            self.y0 /= 2.
-            self.y1 = self.y0 + length
-            self.x0 = 0
-            self.x1 = self.width
+        else:
+            length = self.height
+
+        length *= buff
+        self.x0 = self.width - length
+        self.x0 /= 2
+        self.x1 = self.x0 + length
+        self.y0 = self.height - length
+        self.y0 /= 2
+        self.y1 = self.y0 + length
 
         # world coords for line
         wc_line = [ (100,100), (2000,2000) ]
@@ -69,24 +70,24 @@ class CanvasFrame(tk.Frame):
         y0 = self.y0 + (max_y - 100) * sy 
         x1 = (2000 - min_x) * sx + self.x0
         y1 = self.y0 + (max_y - 2000) * sy
-        print x0,y0,x1,y1
-        self.canvas.create_line(x0, y0, x1, y1, width=5.0)
+        self.canvas.create_line(x0, y0, x1, y1, width=1.0)
 
         # second line
         x0 = (100 - min_x) * sx + self.x0
         y0 = self.y0 + (max_y - 2000) * sy 
         x1 = (2000 - min_x) * sx + self.x0
         y1 = self.y0 + (max_y - 100) * sy
-        print x0,y0,x1,y1
-        self.canvas.create_line(x0, y0, x1, y1, width=5.0)
+        self.canvas.create_line(x0, y0, x1, y1, width=1.0)
+
+
         # left
-        self.canvas.create_line(x0, y0, x0, y1, width=5.0)
+        self.canvas.create_line(x0, y0, x0, y1, width=1.0)
         # right
-        self.canvas.create_line(x1, y0, x1, y1, width=5.0)
+        self.canvas.create_line(x1, y0, x1, y1, width=1.0)
         # top
-        self.canvas.create_line(x0, y1, x1, y1, width=5.0, fill='green')
+        self.canvas.create_line(x0, y1, x1, y1, width=1.0)
         # bottom
-        self.canvas.create_line(x0, y0, x1, y0, width=5.0, fill='green')
+        self.canvas.create_line(x0, y0, x1, y0, width=1.0)
 
 
 
