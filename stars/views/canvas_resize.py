@@ -70,6 +70,11 @@ class CanvasFrame(tk.Frame):
         y1 = self.y0 + (max_y - 2000) * sy
         print x0,y0,x1,y1
         self.canvas.create_line(x0, y0, x1, y1, width=5.0)
+        self.canvas.create_line(x0, y0, x0, y1, width=5.0)
+        self.canvas.create_line(x0, y0, x1, y0, width=5.0)
+        self.canvas.create_line(x1, y0, x1, y1, width=5.0)
+        self.canvas.create_line(x0, y1, x1, y1, width=5.0)
+
 
         # second line
         x0 = (100 - min_x) * sx + self.x0
@@ -78,7 +83,6 @@ class CanvasFrame(tk.Frame):
         y1 = self.y0 + (max_y - 100) * sy
         print x0,y0,x1,y1
         self.canvas.create_line(x0, y0, x1, y1, width=5.0)
-
 
 
 
