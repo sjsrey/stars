@@ -37,7 +37,6 @@ class CanvasFrame(tk.Frame):
     def redraw(self):
         self.canvas.delete(tk.ALL)
         # start with assumption width of screen > height of screen
-        dim = self.height
         length = min(self.width, self.height)
         self.x0 = self.width - length
         self.x0 /= 2.0
@@ -80,6 +79,15 @@ class CanvasFrame(tk.Frame):
         y1 = self.y0 + (max_y - 100) * sy
         print x0,y0,x1,y1
         self.canvas.create_line(x0, y0, x1, y1, width=5.0)
+        # left
+        self.canvas.create_line(x0, y0, x0, y1, width=5.0)
+        # right
+        self.canvas.create_line(x1, y0, x1, y1, width=5.0)
+        # top
+        self.canvas.create_line(x0, y1, x1, y1, width=5.0, fill='green')
+        # bottom
+        self.canvas.create_line(x0, y0, x1, y0, width=5.0, fill='green')
+
 
 
 
