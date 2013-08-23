@@ -38,19 +38,17 @@ class CanvasFrame(tk.Frame):
         self.canvas.delete(tk.ALL)
         # start with assumption width of screen > height of screen
         dim = self.height
-        width_screen = self.height 
-        height_screen = self.height
-        self.x0 = self.width - width_screen
+        length = min(self.width, self.height)
+        self.x0 = self.width - length
         self.x0 /= 2.0
-        self.x1 = self.x0 + width_screen
+        self.x1 = self.x0 + length
         self.y0 = 0
         self.y1 = self.height
         if self.height > self.width:
-            width_screen = self.width
-            height_screen = self.width
-            self.y0 = self.height - height_screen
+            length = self.width
+            self.y0 = self.height - length
             self.y0 /= 2.
-            self.y1 = self.y0 + height_screen
+            self.y1 = self.y0 + length
             self.x0 = 0
             self.x1 = self.width
 
@@ -65,8 +63,8 @@ class CanvasFrame(tk.Frame):
 
         width_world = max_x - min_x
         height_world = max_y - min_y
-        sy = height_screen * 1. / height_world
-        sx = width_screen * 1. / width_world
+        sy = length * 1. / height_world
+        sx = length * 1. / width_world
 
         x0 = (100 - min_x) * sx + self.x0
         y0 = self.y0 + (max_y - 100) * sy 
