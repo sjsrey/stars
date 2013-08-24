@@ -132,5 +132,8 @@ class CanvasFrame(tk.Frame):
 
 if __name__ == '__main__':
     root = tk.Tk()
-    view = CanvasFrame(root)
+    t1 = tk.Toplevel(root)
+    view_1 = CanvasFrame(t1)
+    view_2 = CanvasFrame(tk.Toplevel(root))
+
     root.mainloop()
