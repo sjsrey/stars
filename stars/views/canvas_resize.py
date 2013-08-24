@@ -133,6 +133,18 @@ class CanvasFrame(tk.Frame):
         # bottom
         self.canvas.create_line(x0, y0, x1, y0, width=1.0)
 
+        # create semi transparent square in the middle
+        side = (x1-x0) / 10. # 1/10 of the canvas for the dimension 
+        cx = (x1+x0) / 2.
+        cy = (y1+y0) / 2.
+
+        left = cx - side/2.
+        right = cx + side/2.
+        top = cy - side/2.
+        bottom = cy + side/2.
+        self.canvas.create_rectangle(left,bottom,right,top, fill="blue",
+                stipple="gray12")
+
 if __name__ == '__main__':
     root = tk.Tk()
     t1 = tk.Toplevel(root)
