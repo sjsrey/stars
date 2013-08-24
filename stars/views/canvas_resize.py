@@ -81,11 +81,40 @@ class CanvasFrame(tk.Frame):
         pending_mode = self.interaction_mode.get()
         if pending_mode != self.current_mode:
             print 'switching modes'
+            self.set_interaction_mode(pending_mode)
         else:
             print 'not switching modes'
 
+    def set_interaction_mode(self, mode):
+        if mode == PANNING:
+            self.current_mode = PANNING
+            self.canvas.unbind('<1>')
+            self.canvas.bind('<1>', self.startPanning)
+            self.canvas.unbind('<B1-Motion>')
+            self.canvas.bind('<B1-Motion>', self.panning)
+        elif mode == ZOOMING:
+            self.current_mode = PANNING
+            self.canvas.unbind('<1>')
+            self.canvas.bind('<1>', self.startZooming)
+            self.canvas.unbind('<B1-Motion>')
+            self.canvas.bind('<B1-Motion>', self.sizeZoomWindow)
+
+
+    def startPanning(self, event):
+        print 'panning started'
+
+
+    def panning(self, event):
+        print 'panning'
+
     def zoomToggle(self, event):
         print 'zoomToggle'
+
+    def startZooming(self, event):
+        print 'zooming started'
+
+    def sizeZoomWindow(self, event):
+        print 'size zoom window'
 
     def onConfigure(self, event):
         print '(%d, %d)' %(event.width, event.height)
