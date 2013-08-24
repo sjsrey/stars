@@ -1,7 +1,8 @@
 import Tkinter as tk
 import numpy as np
 
-# interaciton modes
+
+# interaction modes
 BRUSHING = 1
 LINKING = 2
 PANNING = 3
@@ -30,12 +31,8 @@ class CanvasFrame(tk.Frame):
 
         # Event bindings
         self.canvas.bind('<Configure>', self.onConfigure)
-        self.canvas.bind('<Control-z>', self.zoomToggle)
-        self.canvas.bind('<1>', self.zoomToggle)
         self.canvas.bind('<2>', self.popUpMenu) # for mac
         self.canvas.bind('<3>', self.popUpMenu)
-
-
         self.makeMenu()
 
     def makeMenu(self):
@@ -70,7 +67,6 @@ class CanvasFrame(tk.Frame):
 
     
     def quit(self):
-        print self.winfo_toplevel()
         self.parent.destroy()
 
     def popUpMenu(self, event):
@@ -78,12 +74,12 @@ class CanvasFrame(tk.Frame):
         self.menu.post(event.x_root, event.y_root)
 
     def interaction_select(self):
-        pending_mode = self.interaction_mode.get()
-        if pending_mode != self.current_mode:
-            print 'switching modes'
-            self.set_interaction_mode(pending_mode)
-        else:
-            print 'not switching modes'
+        self.set_interaction_mode(self.interaction_mode.get())
+        #pending_mode = self.interaction_mode.get()
+        #print pending_mode, self.current_mode
+        #if pending_mode != self.current_mode:
+        #    print 'switching modes'
+        #    self.set_interaction_mode(pending_mode)
 
     def set_interaction_mode(self, mode):
         if mode == PANNING:
@@ -93,11 +89,14 @@ class CanvasFrame(tk.Frame):
             self.canvas.unbind('<B1-Motion>')
             self.canvas.bind('<B1-Motion>', self.panning)
         elif mode == ZOOMING:
-            self.current_mode = PANNING
+            print 'mode is ZOOMING'
+            self.current_mode = ZOOMING
             self.canvas.unbind('<1>')
             self.canvas.bind('<1>', self.startZooming)
             self.canvas.unbind('<B1-Motion>')
             self.canvas.bind('<B1-Motion>', self.sizeZoomWindow)
+            self.canvas.unbind('<B1-ButtonRelease>')
+            self.canvas.bind('<B1-ButtonRelease>', self.zoomWindowStop)
 
 
     def startPanning(self, event):
@@ -107,14 +106,28 @@ class CanvasFrame(tk.Frame):
     def panning(self, event):
         print 'panning'
 
-    def zoomToggle(self, event):
-        print 'zoomToggle'
-
     def startZooming(self, event):
         print 'zooming started'
+        self.start_x = self.canvas.canvasx(event.x)
+        self.start_y = self.canvas.canvasx(event.y)
 
     def sizeZoomWindow(self, event):
         print 'size zoom window'
+        x = self.canvas.canvasx(event.x)
+        y = self.canvas.canvasx(event.y)
+
+        if (x != self.start_x) and (y != self.start_y):
+            try:
+                self.canvas.delete(self.lasso)
+            except:
+                pass # no lasso exists
+            self.lasso = self.canvas.create_rectangle(self.start_x,
+                    self.start_y, x, y)
+            self.update_idletasks()
+
+    def zoomWindowStop(self, event):
+        self.canvas.delete(self.lasso)
+
 
     def onConfigure(self, event):
         print '(%d, %d)' %(event.width, event.height)
