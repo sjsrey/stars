@@ -22,6 +22,40 @@ class CanvasFrame(tk.Frame):
 
         # Event bindings
         self.canvas.bind('<Configure>', self.onConfigure)
+        self.canvas.bind('<Control-z>', self.zoomToggle)
+        self.canvas.bind('<1>', self.zoomToggle)
+        self.canvas.bind('<2>', self.popUpMenu) # for mac
+        self.canvas.bind('<3>', self.popUpMenu)
+
+
+        self.makeMenu()
+
+    def makeMenu(self):
+        """
+        Menu for the canvas
+        """
+        self.menu = tk.Menu(self.parent, tearoff=0)
+        self.menu.add_separator()
+        self.menu.add_command(label='Interaction')
+        self.menu.add_separator()
+        self.menu.add_radiobutton(label='Brush')
+        self.menu.add_radiobutton(label='Link')
+        self.menu.add_radiobutton(label='Pan')
+        self.menu.add_radiobutton(label='Zoom')
+        self.menu.add_radiobutton(label='None')
+        self.menu.add_separator()
+        self.menu.add_command(label='Print')
+        self.menu.add_command(label='Save')
+        self.menu.add_separator()
+        self.menu.add_command(label='Close')
+
+
+
+    def popUpMenu(self, event):
+        self.menu.post(event.x_root, event.y_root)
+
+    def zoomToggle(self, event):
+        print 'zoomToggle'
 
     def onConfigure(self, event):
         print '(%d, %d)' %(event.width, event.height)
