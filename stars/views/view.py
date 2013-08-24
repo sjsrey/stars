@@ -101,10 +101,12 @@ class CanvasFrame(tk.Frame):
 
     def startPanning(self, event):
         print 'panning started'
+        self.canvas.scan_mark(event.x, event.y)
 
 
     def panning(self, event):
         print 'panning'
+        self.canvas.scan_dragto(event.x, event.y)
 
     def startZooming(self, event):
         print 'zooming started'
@@ -216,6 +218,7 @@ class CanvasFrame(tk.Frame):
         self.canvas.create_rectangle(right,top,right+side, top-side,
                 fill="yellow",
                 stipple="gray12")
+        self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
 
 if __name__ == '__main__':
     root = tk.Tk()
