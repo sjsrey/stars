@@ -144,6 +144,9 @@ class CanvasFrame(tk.Frame):
         bottom = cy + side/2.
         self.canvas.create_rectangle(left,bottom,right,top, fill="blue",
                 stipple="gray12")
+        self.canvas.create_rectangle(right,top,right+side, top-side,
+                fill="yellow",
+                stipple="gray12")
 
 if __name__ == '__main__':
     root = tk.Tk()
