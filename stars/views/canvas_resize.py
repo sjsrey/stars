@@ -1,6 +1,14 @@
 import Tkinter as tk
 import numpy as np
 
+# interaciton modes
+BRUSHING = 1
+LINKING = 2
+PANNING = 3
+TRAVELING = 4
+ZOOMING = 5
+NONE = 0
+
 class CanvasFrame(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
@@ -34,15 +42,26 @@ class CanvasFrame(tk.Frame):
         """
         Menu for the canvas
         """
+        self.interaction_mode = tk.IntVar()
         self.menu = tk.Menu(self.parent, tearoff=0)
         self.menu.add_separator()
         self.menu.add_command(label='Interaction')
         self.menu.add_separator()
-        self.menu.add_radiobutton(label='Brush')
-        self.menu.add_radiobutton(label='Link')
-        self.menu.add_radiobutton(label='Pan')
-        self.menu.add_radiobutton(label='Zoom')
-        self.menu.add_radiobutton(label='None')
+        self.menu.add_radiobutton(label='Brush',
+                variable=self.interaction_mode, value=BRUSHING,
+                command=self.interaction_select)
+        self.menu.add_radiobutton(label='Link',
+                variable=self.interaction_mode, value=LINKING,
+                command=self.interaction_select)
+        self.menu.add_radiobutton(label='Pan',
+                variable=self.interaction_mode, value=PANNING,
+                command=self.interaction_select)
+        self.menu.add_radiobutton(label='Zoom',
+                variable=self.interaction_mode, value=ZOOMING,
+                command=self.interaction_select)
+        self.menu.add_radiobutton(label='None',
+                variable=self.interaction_mode, value=NONE,
+                command=self.interaction_select)
         self.menu.add_separator()
         self.menu.add_command(label='Print')
         self.menu.add_command(label='Save')
@@ -55,7 +74,15 @@ class CanvasFrame(tk.Frame):
         self.parent.destroy()
 
     def popUpMenu(self, event):
+        self.current_mode = self.interaction_mode.get()
         self.menu.post(event.x_root, event.y_root)
+
+    def interaction_select(self):
+        pending_mode = self.interaction_mode.get()
+        if pending_mode != self.current_mode:
+            print 'switching modes'
+        else:
+            print 'not switching modes'
 
     def zoomToggle(self, event):
         print 'zoomToggle'
