@@ -47,9 +47,12 @@ class CanvasFrame(tk.Frame):
         self.menu.add_command(label='Print')
         self.menu.add_command(label='Save')
         self.menu.add_separator()
-        self.menu.add_command(label='Close')
+        self.menu.add_command(label='Close', command=self.quit)
 
-
+    
+    def quit(self):
+        print self.winfo_toplevel()
+        self.parent.destroy()
 
     def popUpMenu(self, event):
         self.menu.post(event.x_root, event.y_root)
