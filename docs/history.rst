@@ -7,7 +7,7 @@ Where we have come from
 =======================
 
 Development on STARS was put on hold while the library
-`PySAL <http://code.google.com/p/pysal/>`_
+`PySAL <http://pythonhosted.org/PySAL/>`_
 was given priority focus. Many of the analytical methods first implemented in
 STARS were moved into the PySAL library during this time. Until PySAL was
 stable and had gone through several release versions, the plan had always been
