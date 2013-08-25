@@ -10,11 +10,27 @@ TRAVELING = 4
 ZOOMING = 5
 NONE = 0
 
+class LegendFrame(tk.Frame):
+    """ """
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.pack(fill='y', expand='no')
+        width = 200
+        height = self.parent.winfo_screenheight() / 2.
+        self.canvas = tk.Canvas(self, bg='white', width = width, height =
+                height)
+
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+        self.canvas.grid(row=0, column=0, sticky='ns')
+            
+
 class CanvasFrame(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
         self.parent = parent
-        self.parent.title("CanvasView")
+        #self.parent.title("CanvasView")
         self.pack(fill=tk.BOTH, expand = 1)
         height = self.parent.winfo_screenheight() / 2.
         width = self.parent.winfo_screenwidth() /2.
