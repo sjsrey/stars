@@ -20,7 +20,7 @@ class LegendFrame(tk.Frame):
         height = self.parent.winfo_screenheight() / 2.
         self.canvas = tk.Canvas(self, bg='white', width = width, height =
                 height)
-
+        self.canvas.create_text(100, height/2., text='LEGEND')
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
         self.canvas.grid(row=0, column=0, sticky='ns')
