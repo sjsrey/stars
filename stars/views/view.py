@@ -51,6 +51,12 @@ class CanvasFrame(tk.Frame):
         self.canvas.bind('<3>', self.popUpMenu)
         self.makeMenu()
 
+
+        # zooming
+        self.zoom_history = []
+        self.zoom_on = 0
+        self._percent = 1.
+
     def makeMenu(self):
         """
         Menu for the canvas
@@ -113,6 +119,9 @@ class CanvasFrame(tk.Frame):
             self.canvas.bind('<B1-Motion>', self.sizeZoomWindow)
             self.canvas.unbind('<B1-ButtonRelease>')
             self.canvas.bind('<B1-ButtonRelease>', self.zoomWindowStop)
+            self.canvas.unbind('<Control-u>',)
+            self.canvas.bind('<Control-u>', self.zoomReverseE)
+            self.zoom_on = 1
 
 
     def startPanning(self, event):
@@ -140,11 +149,62 @@ class CanvasFrame(tk.Frame):
             except:
                 pass # no lasso exists
             self.lasso = self.canvas.create_rectangle(self.start_x,
-                    self.start_y, x, y)
+                    self.start_y, x, y, tag='lasso')
             self.update_idletasks()
 
     def zoomWindowStop(self, event):
+        print 'zoomWindowStop'
+        x0, y0, x1, y1 = self.canvas.coords("lasso")
         self.canvas.delete(self.lasso)
+        self.zoom(coords = (x0, y0, x1, y1))
+
+    def zoom(self, percent=2.0, coords=None):
+        Mx = self.width / 2.
+        My = self.height / 2.
+
+        if coords:
+            x0, y0, x1, y1 = coords
+            mx = (x0 + x1) / 2.
+            my = (y0 + y1) / 2.
+        else:
+            my = Mx
+            mx = My
+
+        dx = Mx - mx
+        dy = My - my
+
+        self.zoom_history.append((percent, dx, dy))
+        self.updatePercent(percent)
+
+        self.canvas.move(tk.ALL, dx, dy)
+        self.canvas.scale(tk.ALL, Mx, My, percent, percent)
+
+    def updatePercent(self, percent):
+        self._percent *= percent
+
+   
+    def zoomReverseE(self, event):
+        print 'r'
+        self.zoomReverse()
+
+    def zoomReverse(self):
+
+        try:
+            percent, dx, dy = self.zoom_history.pop()
+
+            percent = 1./ percent
+            dx = -1 * dx
+            dy = -1 * dy
+            My = self.height / 2.
+            Mx = self.width / 2.
+
+            self.canvas.scale(tk.ALL, Mx, My, percent, percent)
+            self.canvas.move(tk.ALL, dx , dy)
+            self.updatePercent(percent)
+        except:
+            print 'back at original scale'
+
+
 
 
     def onConfigure(self, event):
@@ -201,7 +261,7 @@ class CanvasFrame(tk.Frame):
         # first diagonal
         self.canvas.create_line(x0, y0, x1, y1, width=1.0)
 
-        # second diagnoal
+        # second diagonal
         x0 = self.x0
         y0 = self.y0 
         x1 = (max_x - min_x) * sx + self.x0
