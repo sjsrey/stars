@@ -4,7 +4,7 @@ import numpy as np
 from view import CanvasFrame, LegendFrame
 
 top = tk.Toplevel()
-top.title('Paned Map')
+top.title('New Title')
 m1 = tk.PanedWindow(top)
 m1.pack(fill=tk.BOTH, expand='yes')
 
