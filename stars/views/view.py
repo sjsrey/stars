@@ -82,6 +82,8 @@ class CanvasFrame(tk.Frame):
                 variable=self.interaction_mode, value=NONE,
                 command=self.interaction_select)
         self.menu.add_separator()
+        self.menu.add_command(label='Reset', command=self.redraw)
+        self.menu.add_separator()
         self.menu.add_command(label='Print')
         self.menu.add_command(label='Save')
         self.menu.add_separator()
