@@ -120,8 +120,12 @@ class CanvasFrame(tk.Frame):
             self.canvas.unbind('<B1-ButtonRelease>')
             self.canvas.bind('<B1-ButtonRelease>', self.zoomWindowStop)
             self.canvas.unbind('<Control-u>',)
+            self.canvas.bind('<r>', self.redrawE)
             self.zoom_on = 1
+            self.canvas.focus_set()
 
+    def redrawE(self, event):
+        self.redraw()
 
     def startPanning(self, event):
         print 'panning started'
