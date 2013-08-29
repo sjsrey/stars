@@ -120,7 +120,6 @@ class CanvasFrame(tk.Frame):
             self.canvas.unbind('<B1-ButtonRelease>')
             self.canvas.bind('<B1-ButtonRelease>', self.zoomWindowStop)
             self.canvas.unbind('<Control-u>',)
-            self.canvas.bind('<Control-u>', self.zoomReverseE)
             self.zoom_on = 1
 
 
@@ -153,10 +152,11 @@ class CanvasFrame(tk.Frame):
             self.update_idletasks()
 
     def zoomWindowStop(self, event):
-        print 'zoomWindowStop'
-        x0, y0, x1, y1 = self.canvas.coords("lasso")
-        self.canvas.delete(self.lasso)
-        self.zoom(coords = (x0, y0, x1, y1))
+        lasso_coords = self.canvas.coords('lasso')
+        if lasso_coords:
+            x0, y0, x1, y1 = self.canvas.coords("lasso")
+            self.canvas.delete(self.lasso)
+            self.zoom(coords = (x0, y0, x1, y1))
 
     def zoom(self, percent=2.0, coords=None):
         Mx = self.width / 2.
