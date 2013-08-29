@@ -77,12 +77,13 @@ class CanvasFrame(tk.Frame):
                 command=self.interaction_select)
         self.menu.add_radiobutton(label='Zoom',
                 variable=self.interaction_mode, value=ZOOMING,
-                command=self.interaction_select)
+                command=self.interaction_select, underline=1, accelerator='z')
         self.menu.add_radiobutton(label='None',
                 variable=self.interaction_mode, value=NONE,
-                command=self.interaction_select)
+                command=self.interaction_select, underline=1, accelerator='n')
         self.menu.add_separator()
-        self.menu.add_command(label='Reset', command=self.redraw)
+        self.menu.add_command(label='Reset', underline=0, command=self.redraw,
+                accelerator='r')
         self.menu.add_separator()
         self.menu.add_command(label='Print')
         self.menu.add_command(label='Save')
@@ -125,6 +126,8 @@ class CanvasFrame(tk.Frame):
             self.canvas.bind('<r>', self.redrawE)
             self.zoom_on = 1
             self.canvas.focus_set()
+        elif mode == NONE:
+            print 'Interaction mode is NONE'
 
     def redrawE(self, event):
         self.redraw()
