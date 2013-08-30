@@ -49,6 +49,7 @@ class CanvasFrame(tk.Frame):
         self.canvas.bind('<Configure>', self.onConfigure)
         self.canvas.bind('<2>', self.popUpMenu) # for mac
         self.canvas.bind('<3>', self.popUpMenu)
+        self.canvas.focus_set()
         self.makeMenu()
 
 
@@ -68,19 +69,25 @@ class CanvasFrame(tk.Frame):
         self.menu.add_separator()
         self.menu.add_radiobutton(label='Brush',
                 variable=self.interaction_mode, value=BRUSHING,
-                command=self.interaction_select)
+                command=self.interaction_select,
+                underline=0,
+                accelerator='b')
         self.menu.add_radiobutton(label='Link',
                 variable=self.interaction_mode, value=LINKING,
-                command=self.interaction_select)
+                command=self.interaction_select,
+                underline=0,
+                accelerator='l')
         self.menu.add_radiobutton(label='Pan',
                 variable=self.interaction_mode, value=PANNING,
-                command=self.interaction_select)
+                command=self.interaction_select,
+                underline=0,
+                accelerator='p')
         self.menu.add_radiobutton(label='Zoom',
                 variable=self.interaction_mode, value=ZOOMING,
-                command=self.interaction_select, underline=1, accelerator='z')
+                command=self.interaction_select, underline=0, accelerator='z')
         self.menu.add_radiobutton(label='None',
                 variable=self.interaction_mode, value=NONE,
-                command=self.interaction_select, underline=1, accelerator='n')
+                command=self.interaction_select, underline=0, accelerator='n')
         self.menu.add_separator()
         self.menu.add_command(label='Reset', underline=0, command=self.redraw,
                 accelerator='r')
@@ -100,21 +107,17 @@ class CanvasFrame(tk.Frame):
 
     def interaction_select(self):
         self.set_interaction_mode(self.interaction_mode.get())
-        #pending_mode = self.interaction_mode.get()
-        #print pending_mode, self.current_mode
-        #if pending_mode != self.current_mode:
-        #    print 'switching modes'
-        #    self.set_interaction_mode(pending_mode)
 
     def set_interaction_mode(self, mode):
-        if mode == PANNING:
+        if mode == BRUSHING:
+            print 'brushing selected'
+        elif mode == PANNING:
             self.current_mode = PANNING
             self.canvas.unbind('<1>')
             self.canvas.bind('<1>', self.startPanning)
             self.canvas.unbind('<B1-Motion>')
             self.canvas.bind('<B1-Motion>', self.panning)
         elif mode == ZOOMING:
-            print 'mode is ZOOMING'
             self.current_mode = ZOOMING
             self.canvas.unbind('<1>')
             self.canvas.bind('<1>', self.startZooming)
@@ -133,21 +136,17 @@ class CanvasFrame(tk.Frame):
         self.redraw()
 
     def startPanning(self, event):
-        print 'panning started'
         self.canvas.scan_mark(event.x, event.y)
 
 
     def panning(self, event):
-        print 'panning'
         self.canvas.scan_dragto(event.x, event.y)
 
     def startZooming(self, event):
-        print 'zooming started'
         self.start_x = self.canvas.canvasx(event.x)
         self.start_y = self.canvas.canvasx(event.y)
 
     def sizeZoomWindow(self, event):
-        print 'size zoom window'
         x = self.canvas.canvasx(event.x)
         y = self.canvas.canvasx(event.y)
 
@@ -190,30 +189,6 @@ class CanvasFrame(tk.Frame):
 
     def updatePercent(self, percent):
         self._percent *= percent
-
-   
-    def zoomReverseE(self, event):
-        print 'r'
-        self.zoomReverse()
-
-    def zoomReverse(self):
-
-        try:
-            percent, dx, dy = self.zoom_history.pop()
-
-            percent = 1./ percent
-            dx = -1 * dx
-            dy = -1 * dy
-            My = self.height / 2.
-            Mx = self.width / 2.
-
-            self.canvas.scale(tk.ALL, Mx, My, percent, percent)
-            self.canvas.move(tk.ALL, dx , dy)
-            self.updatePercent(percent)
-        except:
-            print 'back at original scale'
-
-
 
 
     def onConfigure(self, event):
