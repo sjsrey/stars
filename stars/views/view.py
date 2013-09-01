@@ -120,6 +120,19 @@ class CanvasFrame(tk.Frame):
         print 'set interaciton_mode: ', mode
         if mode == BRUSHING:
             print 'brushing selected'
+            self.currrent_mode = BRUSHING
+            self.canvas.unbind('<1>')
+            self.canvas.bind('<1>', self.startBrushing)
+            self.canvas.unbind('<B1-Motion>')
+            self.canvas.bind('<B1-Motion>', self.sizeBrushWindow)
+            self.canvas.unbind('<B1-ButtonRelease>')
+            self.canvas.bind('<B1-ButtonRelease>', self.brushWindowStop)
+            self.canvas.unbind('<Control-u>',)
+            self.canvas.bind('<r>', self.redrawE)
+            self.zoom_on = 0
+            self.brush_on = 1
+            self.canvas.focus_set()
+
         elif mode == PANNING:
             self.current_mode = PANNING
             self.canvas.unbind('<1>')
@@ -150,6 +163,62 @@ class CanvasFrame(tk.Frame):
 
     def panning(self, event):
         self.canvas.scan_dragto(event.x, event.y)
+
+    def startBrushing(self, event):
+        self.start_x = self.canvas.canvasx(event.x)
+        self.start_y = self.canvas.canvasx(event.y)
+
+    def sizeBrushWindow(self, event):
+        x = self.canvas.canvasx(event.x)
+        y = self.canvas.canvasx(event.y)
+
+        if (x != self.start_x) and (y != self.start_y):
+            try:
+                self.canvas.delete(self.lasso)
+            except:
+                pass # no lasso exists
+            self.lasso = self.canvas.create_rectangle(self.start_x,
+                    self.start_y, x, y, tag='lasso')
+            self.update_idletasks()
+
+    def brushWindowStop(self, event):
+        lasso_coords = self.canvas.coords('lasso')
+        print 'brush window rezied'
+
+        # now set bindings to handle moving of brush window
+        self.canvas.unbind('<1>')
+        self.canvas.bind('<1>', self.startMoveBrush)
+        self.canvas.unbind('<B1-Motion>')
+        self.canvas.bind('<B1-Motion>', self.moveBrush)
+        self.canvas.unbind('<B1-ButtonRelease>')
+
+
+    def startMoveBrush(self, event):
+        print 'start moving brush'
+        lasso_coords = self.canvas.coords('lasso')
+
+    def moveBrush(self, event):
+        print 'moving brush'
+        lasso_coords = self.canvas.coords('lasso')
+        x = self.canvas.canvasx(event.x)
+        y = self.canvas.canvasx(event.y)
+
+        dx = x - lasso_coords[2]
+        dy = y - lasso_coords[3]
+
+        x0 = lasso_coords[0] + dx
+        y0 = lasso_coords[1] + dy
+        x1 = lasso_coords[2] + dx
+        y1 = lasso_coords[3] + dy
+
+        if (x != self.start_x) and (y != self.start_y):
+            try:
+                self.canvas.delete(self.lasso)
+            except:
+                pass # no lasso exists
+            self.lasso = self.canvas.create_rectangle(x0, y0, x1, y1, tag='lasso')
+            self.update_idletasks()
+
 
     def startZooming(self, event):
         self.start_x = self.canvas.canvasx(event.x)
