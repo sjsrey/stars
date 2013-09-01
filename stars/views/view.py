@@ -51,6 +51,7 @@ class CanvasFrame(tk.Frame):
         self.canvas.bind('<3>', self.popUpMenu)
         self.canvas.bind('z', self.setZoomingE)
         self.canvas.bind('b', self.setBrushingE)
+        self.canvas.bind('l', self.setLinkingE)
         self.canvas.focus_set()
         self.makeMenu()
 
@@ -116,10 +117,14 @@ class CanvasFrame(tk.Frame):
     def setBrushingE(self, event):
         self.set_interaction_mode(BRUSHING)
 
+    def setLinkingE(self, event):
+        self.set_interaction_mode(LINKING)
+
     def set_interaction_mode(self, mode):
         print 'set interaciton_mode: ', mode
         if mode == BRUSHING:
             print 'brushing selected'
+            self.interaction_mode.set(BRUSHING)
             self.currrent_mode = BRUSHING
             self.canvas.unbind('<1>')
             self.canvas.bind('<1>', self.startBrushing)
@@ -132,14 +137,22 @@ class CanvasFrame(tk.Frame):
             self.zoom_on = 0
             self.brush_on = 1
             self.canvas.focus_set()
-
         elif mode == PANNING:
+            self.interaction_mode.set(PANNING)
             self.current_mode = PANNING
             self.canvas.unbind('<1>')
             self.canvas.bind('<1>', self.startPanning)
             self.canvas.unbind('<B1-Motion>')
             self.canvas.bind('<B1-Motion>', self.panning)
+        elif mode == LINKING:
+            self.interaction_mode.set(LINKING)
+            self.current_mode = LINKING
+            self.canvas.unbind('<1>')
+            self.canvas.unbind('<B1-Motion>')
+            self.canvas.bind('<r>', self.redrawE)
+            self.canvas.focus_set()
         elif mode == ZOOMING:
+            self.interaction_mode.set(ZOOMING)
             self.current_mode = ZOOMING
             self.canvas.unbind('<1>')
             self.canvas.bind('<1>', self.startZooming)
