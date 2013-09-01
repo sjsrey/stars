@@ -49,6 +49,8 @@ class CanvasFrame(tk.Frame):
         self.canvas.bind('<Configure>', self.onConfigure)
         self.canvas.bind('<2>', self.popUpMenu) # for mac
         self.canvas.bind('<3>', self.popUpMenu)
+        self.canvas.bind('z', self.setZoomingE)
+        self.canvas.bind('b', self.setBrushingE)
         self.canvas.focus_set()
         self.makeMenu()
 
@@ -108,7 +110,14 @@ class CanvasFrame(tk.Frame):
     def interaction_select(self):
         self.set_interaction_mode(self.interaction_mode.get())
 
+    def setZoomingE(self, event):
+        self.set_interaction_mode(ZOOMING)
+
+    def setBrushingE(self, event):
+        self.set_interaction_mode(BRUSHING)
+
     def set_interaction_mode(self, mode):
+        print 'set interaciton_mode: ', mode
         if mode == BRUSHING:
             print 'brushing selected'
         elif mode == PANNING:
