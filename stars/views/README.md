@@ -22,3 +22,14 @@ This directory holds code for the prototyping of the new views in STARS.
  - `Mouse Down` start lasso
  - `Mouse Down-Move` grow lasso
  - `Mouse Up` end lasso
+
+
+### Brusing on
+
+This involves a sequence of events
+
+ 1. `Mouse Down` start to draw brush window
+ 2. `Mouse Donew-Move` grow brush window
+ 3. `Mouse up` set size of brush window
+ 4. `Mouse Down` initiate movement of brush window
+ 5. `Mouse Down-Move` move brush window
