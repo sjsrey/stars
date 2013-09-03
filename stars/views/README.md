@@ -33,3 +33,10 @@ This involves a sequence of events
  3. `Mouse up` set size of brush window
  4. `Mouse Down` initiate movement of brush window
  5. `Mouse Down-Move` move brush window
+ 6. 
+ 
+## Mouse and Key Combinations
+
+### View generated views
+
+ - `<CTRL-mouse-down>` Generate alternative (new) view of selected observation(s) 
