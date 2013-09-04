@@ -146,9 +146,11 @@ class CanvasFrame(tk.Frame):
             self.canvas.bind('<B1-ButtonRelease>', self.brushWindowStop)
             self.canvas.unbind('<Control-u>',)
             self.canvas.bind('<r>', self.redrawE)
+            self.canvas.bind('<Escape>', self.handleEscE)
             self.zoom_on = 0
             self.brush_on = 1
             self.canvas.focus_set()
+
         elif mode == PANNING:
             self.interaction_mode.set(PANNING)
             self.current_mode = PANNING
@@ -178,7 +180,9 @@ class CanvasFrame(tk.Frame):
             self.canvas.focus_set()
         elif mode == NONE:
             self.interaction_mode.set(NONE)
-            # unbind things here
+            self.canvas.unbind('<1>')
+            self.canvas.unbind('<B1-Motion>')
+            self.canvas.unbind('<B1-ButtonRelease>')
             print 'Interaction mode is NONE'
 
     def redrawE(self, event):
@@ -245,6 +249,20 @@ class CanvasFrame(tk.Frame):
                 pass # no lasso exists
             self.lasso = self.canvas.create_rectangle(x0, y0, x1, y1, tag='lasso')
             self.update_idletasks()
+
+    def handleEscE(self, event):
+        print 'handle Esc in brushing'
+        try:
+            self.canvas.delete(self.lasso)
+        except:
+            pass # no lasso exists
+
+        # unset mouse bindings
+        self.canvas.unbind('<1>')
+        self.canvas.unbind('<B1-Motion>')
+        self.canvas.unbind('<B1-ButtonRelease>')
+        self.interaction_mode.set(NONE)
+
 
 
     def startZooming(self, event):
