@@ -7,6 +7,8 @@ This directory holds code for the prototyping of the new views in STARS.
 
 ## Controls
 
+These apply to a view that has focus. Most are bound to the Canvas in the view. Some are bound to the container window for the canvas.
+
 ### Key-Bindings
 
  - `b` brushing
