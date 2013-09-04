@@ -30,6 +30,7 @@ class CanvasFrame(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
         self.parent = parent
+        self._title = 'CanvasFrame'
         #self.parent.title("CanvasView")
         self.pack(fill=tk.BOTH, expand = 1)
         height = self.parent.winfo_screenheight() / 2.
@@ -60,6 +61,13 @@ class CanvasFrame(tk.Frame):
         self.zoom_history = []
         self.zoom_on = 0
         self._percent = 1.
+
+    def title(self, title=None):
+        if not title:
+            return self._title
+        else:
+            self._title = title
+            self.parent.title(self._title)
 
     def makeMenu(self):
         """
@@ -375,6 +383,9 @@ if __name__ == '__main__':
     root = tk.Tk()
     t1 = tk.Toplevel(root)
     view_1 = CanvasFrame(t1)
+    view_1.title('View 1')
     view_2 = CanvasFrame(tk.Toplevel(root))
+    view_2.title('View 2')
+    root.title('STARS')
 
     root.mainloop()
