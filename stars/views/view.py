@@ -50,9 +50,10 @@ class CanvasFrame(tk.Frame):
         self.canvas.bind('<Configure>', self.onConfigure)
         self.canvas.bind('<2>', self.popUpMenu) # for mac
         self.canvas.bind('<3>', self.popUpMenu)
-        self.canvas.bind('z', self.setZoomingE)
         self.canvas.bind('b', self.setBrushingE)
         self.canvas.bind('l', self.setLinkingE)
+        self.canvas.bind('n', self.setInteractionOffE)
+        self.canvas.bind('z', self.setZoomingE)
         self.canvas.focus_set()
         self.makeMenu()
 
@@ -116,6 +117,9 @@ class CanvasFrame(tk.Frame):
         self.current_mode = self.interaction_mode.get()
         self.menu.post(event.x_root, event.y_root)
 
+    def setInteractionOffE(self, event):
+        self.set_interaction_mode(NONE)
+
     def interaction_select(self):
         self.set_interaction_mode(self.interaction_mode.get())
 
@@ -173,6 +177,8 @@ class CanvasFrame(tk.Frame):
             self.zoom_on = 1
             self.canvas.focus_set()
         elif mode == NONE:
+            self.interaction_mode.set(NONE)
+            # unbind things here
             print 'Interaction mode is NONE'
 
     def redrawE(self, event):
@@ -378,6 +384,7 @@ class CanvasFrame(tk.Frame):
                 fill="yellow",
                 stipple="gray12")
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
+        # not that transparency isn't supported under Aqual (Mac OS X)
 
 if __name__ == '__main__':
     root = tk.Tk()
