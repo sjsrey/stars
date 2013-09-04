@@ -24,7 +24,7 @@ This directory holds code for the prototyping of the new views in STARS.
  - `Mouse Up` end lasso
 
 
-### Brusing on
+### Brushing on
 
 This involves a sequence of events
 
