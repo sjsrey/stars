@@ -33,7 +33,8 @@ This involves a sequence of events
  3. `Mouse up` set size of brush window
  4. `Mouse Down` initiate movement of brush window
  5. `Mouse Down-Move` move brush window
- 6. 
+ 
+This is a little funky. Might think about after step 3, just having mouse movement on that view move the lasso around?
  
 ## Mouse and Key Combinations
 
