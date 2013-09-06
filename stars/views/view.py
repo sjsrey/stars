@@ -1,7 +1,6 @@
 import Tkinter as tk
 import numpy as np
 
-
 # interaction modes
 BRUSHING = 1
 LINKING = 2
@@ -11,7 +10,10 @@ ZOOMING = 5
 NONE = 0
 
 class LegendFrame(tk.Frame):
-    """ """
+    """
+    Container for Legend
+    """
+
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
         self.parent = parent
@@ -24,9 +26,12 @@ class LegendFrame(tk.Frame):
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
         self.canvas.grid(row=0, column=0, sticky='ns')
-            
 
 class CanvasFrame(tk.Frame):
+    """
+    Container for Canvas
+    """
+
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
         self.parent = parent
@@ -56,7 +61,6 @@ class CanvasFrame(tk.Frame):
         self.canvas.bind('z', self.setZoomingE)
         self.canvas.focus_set()
         self.makeMenu()
-
 
         # zooming
         self.zoom_history = []
@@ -108,7 +112,6 @@ class CanvasFrame(tk.Frame):
         self.menu.add_command(label='Save')
         self.menu.add_separator()
         self.menu.add_command(label='Close', command=self.quit)
-
     
     def quit(self):
         self.parent.destroy()
@@ -150,7 +153,6 @@ class CanvasFrame(tk.Frame):
             self.zoom_on = 0
             self.brush_on = 1
             self.canvas.focus_set()
-
         elif mode == PANNING:
             self.interaction_mode.set(PANNING)
             self.current_mode = PANNING
@@ -191,7 +193,6 @@ class CanvasFrame(tk.Frame):
     def startPanning(self, event):
         self.canvas.scan_mark(event.x, event.y)
 
-
     def panning(self, event):
         self.canvas.scan_dragto(event.x, event.y)
 
@@ -223,7 +224,6 @@ class CanvasFrame(tk.Frame):
         self.canvas.bind('<B1-Motion>', self.moveBrush)
         self.canvas.unbind('<B1-ButtonRelease>')
 
-
     def startMoveBrush(self, event):
         print 'start moving brush'
         lasso_coords = self.canvas.coords('lasso')
@@ -233,10 +233,8 @@ class CanvasFrame(tk.Frame):
         lasso_coords = self.canvas.coords('lasso')
         x = self.canvas.canvasx(event.x)
         y = self.canvas.canvasx(event.y)
-
         dx = x - lasso_coords[2]
         dy = y - lasso_coords[3]
-
         x0 = lasso_coords[0] + dx
         y0 = lasso_coords[1] + dy
         x1 = lasso_coords[2] + dx
@@ -262,8 +260,6 @@ class CanvasFrame(tk.Frame):
         self.canvas.unbind('<B1-Motion>')
         self.canvas.unbind('<B1-ButtonRelease>')
         self.interaction_mode.set(NONE)
-
-
 
     def startZooming(self, event):
         self.start_x = self.canvas.canvasx(event.x)
@@ -312,7 +308,6 @@ class CanvasFrame(tk.Frame):
 
     def updatePercent(self, percent):
         self._percent *= percent
-
 
     def onConfigure(self, event):
         print '(%d, %d)' %(event.width, event.height)
@@ -391,7 +386,6 @@ class CanvasFrame(tk.Frame):
         side = (x1-x0) / 10. # 1/10 of the canvas for the dimension 
         cx = (x1+x0) / 2.
         cy = (y1+y0) / 2.
-
         left = cx - side/2.
         right = cx + side/2.
         top = cy - side/2.
@@ -402,9 +396,10 @@ class CanvasFrame(tk.Frame):
                 fill="yellow",
                 stipple="gray12")
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
-        # not that transparency isn't supported under Aqual (Mac OS X)
+        # note that transparency isn't supported under Aqual (Mac OS X)
 
 if __name__ == '__main__':
+
     root = tk.Tk()
     t1 = tk.Toplevel(root)
     view_1 = CanvasFrame(t1)
@@ -412,5 +407,4 @@ if __name__ == '__main__':
     view_2 = CanvasFrame(tk.Toplevel(root))
     view_2.title('View 2')
     root.title('STARS')
-
     root.mainloop()
