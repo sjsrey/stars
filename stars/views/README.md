@@ -3,8 +3,6 @@
 This directory holds code for the prototyping of the new views in STARS.
 
 
-
-
 ## Controls
 
 These apply to a view that has focus. Most are bound to the Canvas in the view. Some are bound to the container window for the canvas.
@@ -19,14 +17,13 @@ These apply to a view that has focus. Most are bound to the Canvas in the view. 
 
 ### Mouse Events
 
-### Zooming on
+#### Zooming on
 
  - `Mouse Down` start lasso
  - `Mouse Down-Move` grow lasso
  - `Mouse Up` end lasso
 
-
-### Brushing on
+#### Brushing on
 
 This involves a sequence of events
 
