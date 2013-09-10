@@ -55,7 +55,7 @@ class CanvasFrame(tk.Frame):
         self.canvas.bind('<Configure>', self.onConfigure)
         self.canvas.bind('<2>', self.popUpMenu) # for mac
         self.canvas.bind('<3>', self.popUpMenu)
-        self.canvas.bind('b', self.setBrushingE)
+        self.canvas.bind('<Shift-1>', self.setBrushingE)
         self.canvas.bind('l', self.setLinkingE)
         self.canvas.bind('n', self.setInteractionOffE)
         self.canvas.bind('z', self.setZoomingE)
@@ -130,6 +130,9 @@ class CanvasFrame(tk.Frame):
         self.set_interaction_mode(ZOOMING)
 
     def setBrushingE(self, event):
+        self.start_x = self.canvas.canvasx(event.x)
+        self.start_y = self.canvas.canvasy(event.y)
+
         self.set_interaction_mode(BRUSHING)
 
     def setLinkingE(self, event):
