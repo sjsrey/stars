@@ -8,7 +8,6 @@ These apply to a view that has focus. Most are bound to the Canvas in the view. 
 
 ### Key-Bindings
 
- - `<Shift-b>` brushing
  - `b` brushing
  - `l` linking
  - `r` reset
@@ -36,6 +35,8 @@ This involves a sequence of events
 This is a little funky. Might think about after step 3, just having mouse movement on that view move the lasso around?
  
 ## Mouse and Key Combinations
+
+ - `<Shift-1>` brushing
 
 
 ### View generated views
