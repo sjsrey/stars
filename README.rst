@@ -5,8 +5,7 @@ STARS
 Space-Time Analysis of Regional Systems: a package for exploratory space-time
 data analysis.
 
-
-.. image:: http://regionalanalysislab.org/uploads/Main/linkWin.png 
+.. image:: web/linkWin.png 
    :width: 800
    :height: 400
 
