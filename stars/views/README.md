@@ -2,13 +2,13 @@
 
 This directory holds code for the prototyping of the new views in STARS.
 
-
 ## Controls
 
 These apply to a view that has focus. Most are bound to the Canvas in the view. Some are bound to the container window for the canvas.
 
 ### Key-Bindings
 
+ - `<Shift-b>` brushing
  - `b` brushing
  - `l` linking
  - `r` reset
@@ -36,6 +36,7 @@ This involves a sequence of events
 This is a little funky. Might think about after step 3, just having mouse movement on that view move the lasso around?
  
 ## Mouse and Key Combinations
+
 
 ### View generated views
 
