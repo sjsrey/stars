@@ -147,6 +147,7 @@ class CanvasFrame(tk.Frame):
             self.canvas.unbind('<1>')
             self.canvas.bind('<1>', self.startBrushing)
             self.canvas.unbind('<B1-Motion>')
+            self.canvas.bind("<Motion>", self.moveBrush)
             self.canvas.bind('<B1-Motion>', self.sizeBrushWindow)
             self.canvas.unbind('<B1-ButtonRelease>')
             self.canvas.bind('<B1-ButtonRelease>', self.brushWindowStop)
