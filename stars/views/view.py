@@ -252,7 +252,6 @@ class CanvasFrame(tk.Frame):
             self.update_idletasks()
 
     def handleEscE(self, event):
-        print 'handle Esc in brushing'
         try:
             self.canvas.delete(self.lasso)
         except:
