@@ -23,7 +23,7 @@ Installation
 Currently only source installs are available:
 
 1. Download source archive from master_
-2. ``cd stars/stars``
+2. ``cd stars-master/stars``
 3. ``python -i starsgui.py``
 
 
