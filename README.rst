@@ -23,8 +23,13 @@ Installation
 Currently only source installs are available:
 
 1. Download source archive from master_
+<<<<<<< Updated upstream
 2. ``cd stars/stars``
 3. ``python -i starsgui.py``
+=======
+2. cd stars/stars
+3. python -i starsgui.py
+>>>>>>> Stashed changes
 
 
 
