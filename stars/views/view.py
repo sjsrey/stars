@@ -9,6 +9,12 @@ TRAVELING = 4
 ZOOMING = 5
 NONE = 0
 
+# selector geometry
+RECTANGLE = 0
+CIRCLE = 1
+LINE = 2
+POLYGON = 3
+
 class LegendFrame(tk.Frame):
     """
     Container for Legend
@@ -79,31 +85,44 @@ class CanvasFrame(tk.Frame):
         Menu for the canvas
         """
         self.interaction_mode = tk.IntVar()
+        self.selector_geometry = tk.IntVar()
         self.menu = tk.Menu(self.parent, tearoff=0)
+        # interaction modes
         self.menu.add_separator()
         self.menu.add_command(label='Interaction')
         self.menu.add_separator()
         self.menu.add_radiobutton(label='Brush',
                 variable=self.interaction_mode, value=BRUSHING,
-                command=self.interaction_select,
-                underline=0,
-                accelerator='b')
+                command=self.interaction_select)
         self.menu.add_radiobutton(label='Link',
                 variable=self.interaction_mode, value=LINKING,
-                command=self.interaction_select,
-                underline=0,
-                accelerator='l')
+                command=self.interaction_select)
         self.menu.add_radiobutton(label='Pan',
                 variable=self.interaction_mode, value=PANNING,
-                command=self.interaction_select,
-                underline=0,
-                accelerator='p')
+                command=self.interaction_select)
         self.menu.add_radiobutton(label='Zoom',
                 variable=self.interaction_mode, value=ZOOMING,
-                command=self.interaction_select, underline=0, accelerator='z')
+                command=self.interaction_select)
         self.menu.add_radiobutton(label='None',
                 variable=self.interaction_mode, value=NONE,
-                command=self.interaction_select, underline=0, accelerator='n')
+                command=self.interaction_select)
+        # selector geometry
+        self.menu.add_separator()
+        self.menu.add_command(label='Selector')
+        self.menu.add_separator()
+        self.menu.add_radiobutton(label='Rectangle',
+                variable=self.selector_geometry, value=RECTANGLE,
+                command=self.selector_select)
+        self.menu.add_radiobutton(label='Circle',
+                variable=self.selector_geometry, value=CIRCLE,
+                command=self.selector_select)
+        self.menu.add_radiobutton(label='Line',
+                variable=self.selector_geometry, value=LINE,
+                command=self.selector_select)
+        self.menu.add_radiobutton(label='Polygon',
+                variable=self.selector_geometry, value=POLYGON,
+                command=self.selector_select)
+        # other
         self.menu.add_separator()
         self.menu.add_command(label='Reset', underline=0, command=self.redraw,
                 accelerator='r')
@@ -400,6 +419,15 @@ class CanvasFrame(tk.Frame):
                 stipple="gray12")
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
         # note that transparency isn't supported under Aqual (Mac OS X)
+
+    def selector_select(self):
+        self.set_selector_geometry(self.selector_geometry.get())
+
+    def set_selector_geometry(self, mode):
+        print 'set selector_geometry: ', mode
+        self.selector_geometry.set(mode)
+
+
 
 if __name__ == '__main__':
 
