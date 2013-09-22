@@ -15,6 +15,66 @@ CIRCLE = 1
 LINE = 2
 POLYGON = 3
 
+class Selector(object):
+    """Widget for selecting objects on a view
+    
+    
+    """
+    def __init__(self, canvas):
+        self.canvas = canvas
+
+    def start(self):
+        pass
+
+    def draw(self):
+        pass
+
+    def move(self):
+        pass
+
+    def delete(self):
+        pass
+
+    def findUnder(self):
+        pass
+
+    def findOverlapping(self):
+        pass
+
+    def findOutside(self):
+        pass
+
+class RectangleSelector(Selector):
+    """ """
+    def __init__(self, canvas):
+        super().__init__(canvas)
+
+class CircleSelector(Selector):
+    """ """
+    def __init__(self, canvas):
+        super().__init__(canvas)
+
+class LineSelector(Selector):
+    """ """
+    def __init__(self, canvas):
+        super().__init__(canvas)
+
+class PolygonSelector(Selector):
+    """ """
+    def __init__(self, canvas):
+        super().__init__(canvas)
+
+
+    def draw(self):
+        """
+        Trace out the perimeter of the polygon and snap starting and ending
+        vertices to close.
+
+        Mouse down-move traces the polygon, on mouse up snap
+        """
+        pass
+
+
 class LegendFrame(tk.Frame):
     """
     Container for Legend
@@ -229,15 +289,15 @@ class CanvasFrame(tk.Frame):
 
         if (x != self.start_x) and (y != self.start_y):
             try:
-                self.canvas.delete(self.lasso)
+                self.canvas.delete(self.selector)
             except:
-                pass # no lasso exists
-            self.lasso = self.canvas.create_rectangle(self.start_x,
-                    self.start_y, x, y, tag='lasso')
+                pass # no selector exists
+            self.selector = self.canvas.create_rectangle(self.start_x,
+                    self.start_y, x, y, tag='selector')
             self.update_idletasks()
 
     def brushWindowStop(self, event):
-        lasso_coords = self.canvas.coords('lasso')
+        selector_coords = self.canvas.coords('selector')
         print 'brush window rezied'
 
         # now set bindings to handle moving of brush window
@@ -249,33 +309,33 @@ class CanvasFrame(tk.Frame):
 
     def startMoveBrush(self, event):
         print 'start moving brush'
-        lasso_coords = self.canvas.coords('lasso')
+        selector_coords = self.canvas.coords('selector')
 
     def moveBrush(self, event):
         print 'moving brush'
-        lasso_coords = self.canvas.coords('lasso')
+        selector_coords = self.canvas.coords('selector')
         x = self.canvas.canvasx(event.x)
         y = self.canvas.canvasx(event.y)
-        dx = x - lasso_coords[2]
-        dy = y - lasso_coords[3]
-        x0 = lasso_coords[0] + dx
-        y0 = lasso_coords[1] + dy
-        x1 = lasso_coords[2] + dx
-        y1 = lasso_coords[3] + dy
+        dx = x - selector_coords[2]
+        dy = y - selector_coords[3]
+        x0 = selector_coords[0] + dx
+        y0 = selector_coords[1] + dy
+        x1 = selector_coords[2] + dx
+        y1 = selector_coords[3] + dy
 
         if (x != self.start_x) and (y != self.start_y):
             try:
-                self.canvas.delete(self.lasso)
+                self.canvas.delete(self.selector)
             except:
-                pass # no lasso exists
-            self.lasso = self.canvas.create_rectangle(x0, y0, x1, y1, tag='lasso')
+                pass # no selector exists
+            self.selector = self.canvas.create_rectangle(x0, y0, x1, y1, tag='selector')
             self.update_idletasks()
 
     def handleEscE(self, event):
         try:
-            self.canvas.delete(self.lasso)
+            self.canvas.delete(self.selector)
         except:
-            pass # no lasso exists
+            pass # no selector exists
 
         # unset mouse bindings
         self.canvas.unbind('<1>')
@@ -293,18 +353,18 @@ class CanvasFrame(tk.Frame):
 
         if (x != self.start_x) and (y != self.start_y):
             try:
-                self.canvas.delete(self.lasso)
+                self.canvas.delete(self.selector)
             except:
-                pass # no lasso exists
-            self.lasso = self.canvas.create_rectangle(self.start_x,
-                    self.start_y, x, y, tag='lasso')
+                pass # no selector exists
+            self.selector = self.canvas.create_rectangle(self.start_x,
+                    self.start_y, x, y, tag='selector')
             self.update_idletasks()
 
     def zoomWindowStop(self, event):
-        lasso_coords = self.canvas.coords('lasso')
-        if lasso_coords:
-            x0, y0, x1, y1 = self.canvas.coords("lasso")
-            self.canvas.delete(self.lasso)
+        selector_coords = self.canvas.coords('selector')
+        if selector_coords:
+            x0, y0, x1, y1 = self.canvas.coords("selector")
+            self.canvas.delete(self.selector)
             self.zoom(coords = (x0, y0, x1, y1))
 
     def zoom(self, percent=2.0, coords=None):
@@ -426,8 +486,6 @@ class CanvasFrame(tk.Frame):
     def set_selector_geometry(self, mode):
         print 'set selector_geometry: ', mode
         self.selector_geometry.set(mode)
-
-
 
 if __name__ == '__main__':
 
