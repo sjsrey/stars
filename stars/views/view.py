@@ -190,10 +190,14 @@ class CanvasFrame(tk.Frame):
         self.menu.add_command(label='Print')
         self.menu.add_command(label='Save')
         self.menu.add_separator()
-        self.menu.add_command(label='Close', command=self.quit)
+        self.menu.add_command(label='Close', command=self.close)
+        self.menu.add_command(label='Quit', command=self.quit)
     
-    def quit(self):
+    def close(self):
         self.parent.destroy()
+
+    def quit(self):
+        self.parent.master.destroy()
 
     def popUpMenu(self, event):
         self.current_mode = self.interaction_mode.get()
@@ -496,4 +500,4 @@ if __name__ == '__main__':
     view_2 = CanvasFrame(tk.Toplevel(root))
     view_2.title('View 2')
     root.title('STARS')
-    root.mainloop()
+    #root.mainloop()
