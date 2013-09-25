@@ -23,13 +23,13 @@ class Selector(object):
     def __init__(self, canvas):
         self.canvas = canvas
 
-    def start(self):
+    def start(self, coords):
         pass
 
-    def draw(self):
+    def draw(self, coords):
         pass
 
-    def move(self):
+    def move(self, coords):
         pass
 
     def delete(self):
@@ -47,22 +47,25 @@ class Selector(object):
 class RectangleSelector(Selector):
     """ """
     def __init__(self, canvas):
-        super().__init__(canvas)
+        super(RectangleSelector, self).__init__(canvas)
+
+    def start(self, coords):
+        print coords
 
 class CircleSelector(Selector):
     """ """
     def __init__(self, canvas):
-        super().__init__(canvas)
+        super(CircleSelector, self).__init__(canvas)
 
 class LineSelector(Selector):
     """ """
     def __init__(self, canvas):
-        super().__init__(canvas)
+        super(LineSelector, self).__init__(canvas)
 
 class PolygonSelector(Selector):
     """ """
     def __init__(self, canvas):
-        super().__init__(canvas)
+        super(PolygonSelector, self).__init__(canvas)
 
 
     def draw(self):
@@ -74,6 +77,11 @@ class PolygonSelector(Selector):
         """
         pass
 
+selectors = {}
+selectors[RECTANGLE] = RectangleSelector
+selectors[CIRCLE] = CircleSelector
+selectors[LINE] = LineSelector
+selectors[POLYGON] = PolygonSelector
 
 class LegendFrame(tk.Frame):
     """
@@ -490,6 +498,7 @@ class CanvasFrame(tk.Frame):
     def set_selector_geometry(self, mode):
         print 'set selector_geometry: ', mode
         self.selector_geometry.set(mode)
+        self.selector_object = selectors[mode](self.canvas)
 
 if __name__ == '__main__':
 
