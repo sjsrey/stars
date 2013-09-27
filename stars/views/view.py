@@ -304,7 +304,9 @@ class CanvasFrame(tk.Frame):
                 self.canvas.delete(self.selector)
             except:
                 pass # no selector exists
-            self.selector = self.canvas.create_rectangle(self.start_x,
+            #self.selector = self.canvas.create_rectangle(self.start_x,
+            #        self.start_y, x, y, tag='selector')
+            self.selector = self.canvas.create_oval(self.start_x,
                     self.start_y, x, y, tag='selector')
             self.update_idletasks()
 
@@ -340,7 +342,8 @@ class CanvasFrame(tk.Frame):
                 self.canvas.delete(self.selector)
             except:
                 pass # no selector exists
-            self.selector = self.canvas.create_rectangle(x0, y0, x1, y1, tag='selector')
+            #self.selector = self.canvas.create_rectangle(x0, y0, x1, y1, tag='selector')
+            self.selector = self.canvas.create_oval(x0, y0, x1, y1, tag='selector')
             self.update_idletasks()
 
     def handleEscE(self, event):
