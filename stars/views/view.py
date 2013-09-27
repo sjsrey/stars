@@ -1,5 +1,6 @@
 import Tkinter as tk
 import numpy as np
+import math
 
 # interaction modes
 BRUSHING = 1
@@ -306,8 +307,12 @@ class CanvasFrame(tk.Frame):
                 pass # no selector exists
             #self.selector = self.canvas.create_rectangle(self.start_x,
             #        self.start_y, x, y, tag='selector')
-            self.selector = self.canvas.create_oval(self.start_x,
-                    self.start_y, x, y, tag='selector')
+            dx = x - self.start_x
+            dy = y - self.start_y
+            dx /= math.pi
+            dy /= math.pi
+            self.selector = self.canvas.create_oval(self.start_x-dx,
+                    self.start_y-dy, x+dx, y+dy, tag='selector')
             self.update_idletasks()
 
     def brushWindowStop(self, event):
