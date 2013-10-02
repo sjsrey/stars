@@ -327,29 +327,28 @@ class CanvasFrame(tk.Frame):
         self.canvas.unbind('<B1-ButtonRelease>')
 
     def startMoveBrush(self, event):
-        print 'start moving brush'
         selector_coords = self.canvas.coords('selector')
 
     def moveBrush(self, event):
-        print 'moving brush'
         selector_coords = self.canvas.coords('selector')
-        x = self.canvas.canvasx(event.x)
-        y = self.canvas.canvasx(event.y)
-        dx = x - selector_coords[2]
-        dy = y - selector_coords[3]
-        x0 = selector_coords[0] + dx
-        y0 = selector_coords[1] + dy
-        x1 = selector_coords[2] + dx
-        y1 = selector_coords[3] + dy
+        if selector_coords:
+            x = self.canvas.canvasx(event.x)
+            y = self.canvas.canvasx(event.y)
+            dx = x - selector_coords[2]
+            dy = y - selector_coords[3]
+            x0 = selector_coords[0] + dx
+            y0 = selector_coords[1] + dy
+            x1 = selector_coords[2] + dx
+            y1 = selector_coords[3] + dy
 
-        if (x != self.start_x) and (y != self.start_y):
-            try:
-                self.canvas.delete(self.selector)
-            except:
-                pass # no selector exists
-            #self.selector = self.canvas.create_rectangle(x0, y0, x1, y1, tag='selector')
-            self.selector = self.canvas.create_oval(x0, y0, x1, y1, tag='selector')
-            self.update_idletasks()
+            if (x != self.start_x) and (y != self.start_y):
+                try:
+                    self.canvas.delete(self.selector)
+                except:
+                    pass # no selector exists
+                #self.selector = self.canvas.create_rectangle(x0, y0, x1, y1, tag='selector')
+                self.selector = self.canvas.create_oval(x0, y0, x1, y1, tag='selector')
+                self.update_idletasks()
 
     def handleEscE(self, event):
         try:
