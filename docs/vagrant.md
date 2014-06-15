@@ -6,6 +6,11 @@
 - install vagrant
 - install gitbash
 - install cygwin 
+	- xorg-server
+	- xinit
+	- xorg-docs
+	- openssh
+	See [here](http://stackoverflow.com/questions/20094118/ssh-into-vagrant-with-x-server-set-up) for specific instructions
 
 
 ### X11 Fowrading
