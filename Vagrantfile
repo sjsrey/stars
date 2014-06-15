@@ -1,3 +1,4 @@
+
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -11,7 +12,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "precise32"
+  config.vm.box = "ubuntu/trusty32"
   config.ssh.forward_agent = true
   config.ssh.forward_x11 = true
   config.vm.network :forwarded_port, host: 8888, guest: 8888
@@ -33,7 +34,7 @@ pip install -U pyzmq
 pip install -U jinja2
 pip install -U tornado
 pip install -U pygments
-pip install http://github.com/pysal/pysal/archive/master.zip
+pip install -U pysal
 END
 
 $ipython_notebook = <<CONF_SCRIPT
