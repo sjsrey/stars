@@ -28,6 +28,10 @@ apt-get install -y python-scipy
 apt-get install -y python-matplotlib
 apt-get install -y python-pandas
 apt-get install -y python-networkx
+apt-get install -y python-qt4
+apt-get install -y qt4-dev-tools
+apt-get install -y python-sip
+apt-get install -y python-sip-dev
 apt-get install -y python-tk
 pip install ipython[notebook]
 pip install -U pyzmq
