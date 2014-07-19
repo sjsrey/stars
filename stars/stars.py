@@ -66,7 +66,8 @@ You are welcome to redistribute it under certain conditions."""
 PROGRAM=PROGRAM+"\nType  \"Copyright()\", \"Credits()\" or \"License()\" for more information."
 PROGRAM=PROGRAM+"\nType  \"shelp()\" for help." 
 
-copyright="""Copyright (C) 2000-2006, Sergio J. Rey.
+copyright="""Copyright (C) 2000-2011, Sergio J. Rey.\n"""
+copyright="""Copyright (C) 2012-2014, STARS Developers.
 All rights reserved.
 email: sjrey@users.sourceforge.net
 web: http://stars-py.sourceforge.net/"""
