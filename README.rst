@@ -16,7 +16,6 @@ to Numpy. This version should work on the following platforms
 - Windows
 - Mac 
 
-
 Installation
 ============
 
@@ -42,7 +41,6 @@ STARS has been tested on the following versions:
 - Windows 8
 - Windows 8.1
 
-
 Road Map
 ========
 
@@ -61,4 +59,3 @@ Links
 .. _home: http://regionalanalysislab.org
 .. _downloads: http://regionalanalysislab.org/?n=Download
 .. _PySAL: http://pysal.org
-
