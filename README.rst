@@ -32,6 +32,15 @@ Mac OS X Notes
 There is a bug with Tk under Mavericks resulting in slow updates of the views.
 Installing `Active Python <http://www.activestate.com/activepython>`_ is a work-around.
 
+Windows Notes
+-------------
+
+STARS has been tested on the following versions:
+
+- Windows XP
+- Windows 7
+- Windows 8
+
 
 Road Map
 ========
