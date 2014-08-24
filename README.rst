@@ -40,6 +40,7 @@ STARS has been tested on the following versions:
 - Windows XP
 - Windows 7
 - Windows 8
+- Windows 8.1
 
 
 Road Map
