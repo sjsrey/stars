@@ -11,6 +11,7 @@ OVERVIEW:
 
 This module implements spatial weights classes for STARS.
 
+XXX PySAL 
 
 """
 
