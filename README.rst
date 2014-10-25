@@ -31,6 +31,8 @@ Mac OS X Notes
 There is a bug with Tk under Mavericks resulting in slow updates of the views.
 Installing `Active Python <http://www.activestate.com/activepython>`_ is a work-around.
 
+The Tk bug has been fixed in Yosemite. 
+
 Windows Notes
 -------------
 
