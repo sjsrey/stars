@@ -1,0 +1,3 @@
+[submodule "pysal"]
+	path = pysal
+	url = https://github.com/pysal/pysal.git
