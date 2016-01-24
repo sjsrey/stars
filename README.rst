@@ -19,6 +19,15 @@ to Numpy. This version should work on the following platforms
 Installation
 ============
 
+Vagrant under Linux
+-------------------
+
+Using Vagrant with the Vagrantfile
+
+
+Source
+------
+
 Currently only source installs are available:
 
 1. Download source archive from master_
