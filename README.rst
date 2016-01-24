@@ -19,6 +19,15 @@ to Numpy. This version should work on the following platforms
 Installation
 ============
 
+Using Conda (All Platforms)
+---------------------------
+
+1. Install `Anaconda Python Distribution
+   <https://www.continuum.io/downloads>`_
+2. ``conda create -n stars numpy=1.8 matplotlib scipy``
+3. ``source activate stars``
+4. ``cd stars; python -i starsgui.py``
+
 Vagrant under Ubuntu
 --------------------
 
