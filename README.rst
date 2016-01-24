@@ -35,9 +35,9 @@ The initial build will take some time, however future boots of the VM
 will be fast:
 
 1. ``vagrant up``
-4. ``vagrant ssh``
-5. ``cd stars``
-6. ``python -i starsgui.py -i``
+2. ``vagrant ssh``
+3. ``cd stars``
+4. ``python -i starsgui.py -i``
 
 
 
