@@ -19,10 +19,26 @@ to Numpy. This version should work on the following platforms
 Installation
 ============
 
-Vagrant under Linux
--------------------
+Vagrant under Ubuntu
+--------------------
 
-Using Vagrant with the Vagrantfile
+Build and run the box:
+
+1. `sudo apt-get install virtualbox`
+2. `sudo apt-get install vagrant`
+3. `vagrant up`
+4. `vagrant ssh`
+5. `cd stars`
+6. `python -i starsgui.py -i`
+
+The initial build will take some time, however future boots of the VM
+will be fast:
+
+1. `vagrant up`
+4. `vagrant ssh`
+5. `cd stars`
+6. `python -i starsgui.py -i`
+
 
 
 Source
