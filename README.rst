@@ -49,6 +49,18 @@ will be fast:
 4. ``python -i starsgui.py -i``
 
 
+If the following error is encountered::
+
+        URL: ["https://vagrantcloud.com/ubuntu/trusty32"]
+        Error: error setting certificate verify locations:
+          CAfile: /etc/ssl/certs/ca-bundle.crt
+          CApath: none
+
+The solution on 15.04 is::
+
+        cd /etc/ssl/certs
+        sudo cp ca-certificates.crt ca-bundle.crt
+
 
 Source
 ------
