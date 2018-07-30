@@ -303,10 +303,10 @@ def update_map(type_data, year_hovered, year_selected_slider, n, checkedValues):
     ranking = -1
     if (len(checkedValues) != 0):
         ranking = n % len(df_map[str(year)]) #+ 1
-        msg = str(len(df_map[str(year)]) - ranking) + 'th'
-        if (len(df_map[str(year)]) - ranking == 1): msg = '1st'
-        if (len(df_map[str(year)]) - ranking == 2): msg = '2nd'
-        if (len(df_map[str(year)]) - ranking == 3): msg = '3rd'
+        msg = str(ranking) + 'th'
+        if (ranking == 1): msg = '1st'
+        if (ranking == 2): msg = '2nd'
+        if (ranking == 3): msg = '3rd'
         for i, rank in enumerate(rk_map[str(year)]):
             if (rank == ranking): msg += ' ' + rk_map['STATE_NAME'][i] + ': {0:.2f}'.format(df_map[str(year)][i])
         heading += '<br>(' + msg + ')'
