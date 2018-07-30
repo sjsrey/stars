@@ -302,11 +302,11 @@ def update_map(type_data, year_hovered, year_selected_slider, n, checkedValues):
     heading = 'Income of US by State in ' + str(year)
     ranking = -1
     if (len(checkedValues) != 0):
-        ranking = n % len(df_map[str(year)]) + 1
-        msg = str(ranking) + 'th'
-        if (ranking == 1): msg = '1st'
-        if (ranking == 2): msg = '2nd'
-        if (ranking == 3): msg = '3rd'
+        ranking = n % len(df_map[str(year)]) #+ 1
+        msg = str(len(df_map[str(year)]) - ranking) + 'th'
+        if (len(df_map[str(year)]) - ranking == 1): msg = '1st'
+        if (len(df_map[str(year)]) - ranking == 2): msg = '2nd'
+        if (len(df_map[str(year)]) - ranking == 3): msg = '3rd'
         for i, rank in enumerate(rk_map[str(year)]):
             if (rank == ranking): msg += ' ' + rk_map['STATE_NAME'][i] + ': {0:.2f}'.format(df_map[str(year)][i])
         heading += '<br>(' + msg + ')'
@@ -388,21 +388,24 @@ def update_scatter(type_data, year_hovered, year_selected_slider, states_selecte
     
     else:
         df_map = df_map_pcr
-    
-    if ((states_selected_choropleth is None) & (state_clicked_choropleth is None)):
-        state_selected = 'California'
-    
-    elif ((states_selected_choropleth is None) & (state_clicked_choropleth is not None)):
-        state_selected = str(state_clicked_choropleth['points'][0]['text'])
-    
-    else:
-        state_selected = [i['text'] for i in states_selected_choropleth['points']]# state_selected_choropleth['points'][0]['text']
-    
+        
     if year_hovered is None: 
         year = year_selected_slider
     
     else:
         year = year_hovered['points'][0]['x']
+    
+    if ((states_selected_choropleth is None) & (state_clicked_choropleth is None)):
+        state_selected = ['California']
+        title_graph = state_selected[0]
+    
+    elif ((states_selected_choropleth is None) & (state_clicked_choropleth is not None)):
+        state_selected = [str(state_clicked_choropleth['points'][0]['text'])]
+        title_graph = state_selected[0]
+    
+    else:
+        state_selected = [i['text'] for i in states_selected_choropleth['points']]# state_selected_choropleth['points'][0]['text']
+        title_graph = 'Multiple States'
     
     #df_map[str(year)] = [48,2,3,4,5,6,7,8,9,60,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,1]
 
@@ -431,7 +434,8 @@ def update_scatter(type_data, year_hovered, year_selected_slider, states_selecte
                             'mode': 'lines',
                             'line': {'color': '#009999'},
                             'name': 'Reg'}
-                    ]
+    ]
+    
     if (states_selected_choropleth is not None):
         var = [v['z'] for v in states_selected_choropleth['points']]
         varLag = [VarLag[v['pointIndex']] for v in states_selected_choropleth['points']]
@@ -473,7 +477,7 @@ def update_scatter(type_data, year_hovered, year_selected_slider, states_selecte
                         'xaxis': {'title': 'Original Variable'},
                         'yaxis': {'title': "Lagged Variable"},
                      'showlegend': False,
-                     'title': 'Scatterplot for {} <br>{} highlighted'.format(year, state_selected)
+                     'title': 'Scatterplot for {} <br>{} highlighted'.format(year, title_graph)
                      }
     
     Scatter = {
@@ -594,8 +598,12 @@ def update_boxplot(type_data, year_hovered, states_selected_choropleth, year_sel
 @app.callback(
     Output('timepath-graph', 'figure'),
     [Input('type_data_selector', 'value'),
-     Input('choropleth-graph','clickData')])
-def update_timepath(type_data, state_clicked):
+     Input('choropleth-graph','clickData'),
+     Input('timeseries-graph','hoverData'),
+     Input('years-slider', 'value')],
+     [State('years-slider', 'min')])
+
+def update_timepath(type_data, state_clicked, year_hovered, year_selected_slider, minValue):
     
     if type_data == 'raw': 
         df_map = df_map_raw
@@ -609,6 +617,18 @@ def update_timepath(type_data, state_clicked):
     else:
         chosen_state = str(state_clicked['points'][0]['text'])
         
+    if year_hovered is None:    
+        theIDX = year_selected_slider - minValue
+    
+    else:
+        theIDX = year_hovered['points'][0]['x'] - minValue
+    
+    if year_hovered is None:    
+        year = year_selected_slider
+    
+    else:
+        year = year_hovered['points'][0]['x']
+    
     def calculate_lag_value(x):
         return ps.lag_spatial(W, x)
     
@@ -621,12 +641,12 @@ def update_timepath(type_data, state_clicked):
     
     TimePath_Data = [
                         {
-                            'x': Var, 
-                            'y': VarLag,
+                            'x': Var[[theIDX]], 
+                            'y': VarLag[[theIDX]],
                             'mode': 'markers',
                             'marker': {'size': 12},
                             'name': '',
-                        'text': Var.index},
+                        'text': str(year)},
                         {
                             'x': Var, 
                             'y': VarLag,
@@ -639,7 +659,7 @@ def update_timepath(type_data, state_clicked):
                         'xaxis': {'title': 'Original Variable'},
                         'yaxis': {'title': "Lagged Variable"},
                      'showlegend': False,
-                     'title': 'Time-path for {}'.format(str(chosen_state))
+                     'title': 'Time-path for {}<br> Highlighted {}'.format(str(chosen_state), str(year))
                      }
     
     TimePath = {
