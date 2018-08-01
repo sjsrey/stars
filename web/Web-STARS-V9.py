@@ -42,6 +42,7 @@ years_options = [{'label': i, 'value': i} for i in years_aux]
 #usjoin.STATE_FIPS
 #us48_map.STATE_FIPS
 us48_map.STATE_FIPS = us48_map.STATE_FIPS.astype(int)
+gpd_map.STATE_FIPS = gpd_map.STATE_FIPS.astype(int)
 
 df_map_raw = us48_map.merge(usjoin, on='STATE_FIPS')
 
@@ -80,8 +81,12 @@ for i in cols_to_calculate:
     morans.append(aux)
 
 ############################################################  
+df_map_pcr_aux = gpd_map.merge(usjoin, on='STATE_FIPS')
+rk_map_pcr_aux = gpd_map.merge(usjoin, on='STATE_FIPS')
+for year in years: rk_map_pcr_aux[str(year)] = rankdata(df_map_pcr_aux[str(year)], method='ordinal')
+
     
-rk_map_pcr_tidy = pd.melt(rk_map_pcr, 
+rk_map_pcr_tidy = pd.melt(rk_map_pcr_aux, 
                           id_vars=['STATE_ABBR', 'geometry', 'Name'],
                           value_vars=cols_to_calculate, 
                           var_name='Year', 
@@ -847,12 +852,13 @@ def update_density(type_data, initial_year, final_year, state_clicked, state_cli
 @app.callback(
     Output('rank-path-graph', 'figure'),
     [Input('type_data_selector', 'value'),
+     Input('rankpath_dropdown','value'),
      Input('timeseries-graph','hoverData'),
      Input('years-slider','value'), 
      Input('spatial_interval-event', 'n_intervals')],
     [State('spatial_travel-check', 'values')],
 )
-def update_rankpath(type_data, year_hovered, year_selected_slider, n, checkedValues):
+def update_rankpath(type_data, rank_selected, year_hovered, year_selected_slider, n, checkedValues):
     
     if type_data == 'raw': 
         df_map = gpd_map
@@ -870,7 +876,19 @@ def update_rankpath(type_data, year_hovered, year_selected_slider, n, checkedVal
     else:
         year = year_hovered['points'][0]['x']
 
+    chosen_rank = int(rank_selected)
+    
+    rp_aux = rk_map_pcr_tidy[rk_map_pcr_tidy.Rank == chosen_rank]
+
+    rp_aux['x'] = rp_aux.geometry.centroid.x
+    rp_aux['y'] = rp_aux.geometry.centroid.y
+    rp_aux['dot_color'] = np.where(np.isin(rp_aux.Year, str(year)), '#0066FF', 'red')
+    rp_aux['dot_size'] = np.where(np.isin(rp_aux.Year, str(year)), 14, 0)
+
+    
     RankPath_Layout = dict(
+        projection=dict( type='albers usa' ),
+        title = 'RankPath for the Rank {} and highlighted {}'.format(chosen_rank, year),
         hovermode = 'closest',
         xaxis = dict(
             autorange = True, # False,
@@ -886,12 +904,12 @@ def update_rankpath(type_data, year_hovered, year_selected_slider, n, checkedVal
             zeroline = False,
             fixedrange = True
         ),
-        margin = dict(
-            t=20,
-            b=20,
-            r=20,
-            l=20
-        ),
+        #margin = dict(
+        #    t=20,
+        #    b=20,
+        #    r=20,
+        #    l=20
+        #),
         width = 1100,
         height = 650,
         dragmode = 'select'
@@ -947,10 +965,32 @@ def update_rankpath(type_data, year_hovered, year_selected_slider, n, checkedVal
                 x = c_x, #df.centroid.x, #c_x
                 y = c_y, #df.centroid.y, #c_y
                 fill='toself',
-                fillcolor = 'red'            
+                fillcolor = 'red',
+                hoverinfo = 'none'
         )
+        rankpath_lines = dict(
+                        x = rp_aux['x'], 
+                        y = rp_aux['y'],
+                        mode = 'lines', 
+                        name = 'Path',
+                        hoverinfo = 'none',
+                        line = dict(color = 'red'),
+                        showlegend = False)
+        rankpath_markers = dict(
+                            x = rp_aux['x'], 
+                            y = rp_aux['y'],
+                            mode = 'markers',
+                            marker = dict(size = rp_aux['dot_size'],# 12,
+                                          color = rp_aux['dot_color']),
+                            name = '',
+                            text = rp_aux['Name'],
+                            showlegend = False)
+
         RankPath_Data.append(county_outline)
         RankPath_Data.append(hover_point)
+        RankPath_Data.append(rankpath_lines)
+        RankPath_Data.append(rankpath_markers)
+        
     
     RankPath = dict(data = RankPath_Data, layout = RankPath_Layout)
     return RankPath
