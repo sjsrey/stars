@@ -904,6 +904,12 @@ def update_rankpath(type_data, year_hovered, year_selected_slider, n, checkedVal
     # Several States had multiple centroids... so I chose to take the value of the convex_hull
     
     
+    # Return Boggest polygon of a multipolygon object in python
+    def return_biggest(mp):
+        areas = [i.area for i in list(mp)]
+        biggest = mp[areas.index(max(areas))]
+        return biggest
+    
     RankPath_Data = []
     for index,row in df_map.iterrows():
         if df_map['geometry'][index].type == 'Polygon':
@@ -914,10 +920,10 @@ def update_rankpath(type_data, year_hovered, year_selected_slider, n, checkedVal
             c_x = c_x.tolist()
             c_y = c_y.tolist()
         elif df_map['geometry'][index].type == 'MultiPolygon':
-            x = df_map['geometry'][index].convex_hull.exterior.xy[0].tolist()
-            y = df_map['geometry'][index].convex_hull.exterior.xy[1].tolist()
-            c_x = [df_map['geometry'][index].convex_hull.centroid.xy[0][0]]
-            c_y = [df_map['geometry'][index].convex_hull.centroid.xy[1][0]]
+            x = return_biggest(df_map['geometry'][index]).exterior.xy[0].tolist()
+            y = return_biggest(df_map['geometry'][index]).exterior.xy[1].tolist()
+            c_x = [return_biggest(df_map['geometry'][index]).centroid.xy[0][0]]
+            c_y = [return_biggest(df_map['geometry'][index]).centroid.xy[1][0]]
         else: 
             print('stop')
         county_outline = dict(
