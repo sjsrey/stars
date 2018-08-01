@@ -8,6 +8,10 @@ import dash_html_components as html
 from dash.dependencies import Input, Output , State
 from scipy import stats
 from scipy.stats import rankdata
+import geopandas as gpd
+
+# For the more recent version of Dash with Tabs: pip install dash-core-components==0.24.0-rc2
+# It was here https://github.com/plotly/dash-core-components/pull/213 andhttps://github.com/plotly/dash-core-components/pull/74
 
 app = dash.Dash()
 app.config['suppress_callback_exceptions']=True # If you have an id in the layout/callbacks that is not in the callbacks/layout
@@ -20,6 +24,9 @@ app.css.append_css({'external_url': 'https://codepen.io/amyoshino/pen/jzXypZ.css
 csv_path = ps.examples.get_path('usjoin.csv')
 shp_path = ps.examples.get_path('us48.shp')
 
+# Geopandas map
+gpd_map = gpd.read_file(shp_path)
+
 usjoin = pd.read_csv(csv_path)
 us48_map = ps.pdio.read_files(shp_path)
 
@@ -27,7 +34,7 @@ us48_map = ps.pdio.read_files(shp_path)
 years = list(range(1929, 2010))                  
 cols_to_calculate = list(map(str, years))
 
-# For dropdowns
+# For years dropdowns
 years_aux = [str(i) for i in years] # Converting each element to string (it could be list(map(str, years)))
 years_options = [{'label': i, 'value': i} for i in years_aux]
 
@@ -73,8 +80,19 @@ for i in cols_to_calculate:
     morans.append(aux)
 
 ############################################################  
+    
+rk_map_pcr_tidy = pd.melt(rk_map_pcr, 
+                          id_vars=['STATE_ABBR', 'geometry', 'Name'],
+                          value_vars=cols_to_calculate, 
+                          var_name='Year', 
+                          value_name='Rank')
 
- 
+# For ranks dropdowns
+ranks_aux = [str(i) for i in sorted(rk_map_pcr_tidy.Rank.unique())] # Converting each element to string (it could be list(map(str, years)))
+ranks_options = [{'label': i + 'th', 'value': i} for i in ranks_aux]
+ranks_options[0]['label'] = '1st'
+ranks_options[1]['label'] = '2nd'
+ranks_options[2]['label'] = '3rd'
 
 ############################################################  
 # Layout     #
@@ -126,7 +144,11 @@ app.layout = html.Div(
                     
                 ], className="row"),
         
-      html.Div([
+      
+        dcc.Tabs(id="tabs", children=[
+        dcc.Tab(label='Spatiotemporal Overview', children=[
+        
+        html.Div([
             dcc.Checklist(
                 id='spatial_travel-check',
                 options=[{'label': ' Spatial Travel Animation ', 'value': 'auto'}],
@@ -194,7 +216,29 @@ app.layout = html.Div(
                             ),           
 					 ], className="four columns"),    
         ], className="row")
-    ], className='ten columns offset-by-one')
+    ], className='ten columns offset-by-one'),
+                             
+    dcc.Tab(label='Rank Path', children=[
+        
+        html.Div([
+            dcc.Dropdown(
+                            id='rankpath_dropdown',
+                            options=ranks_options,
+                            value='1'
+                        ),
+            dcc.Graph(
+                                id='rank-path-graph' 
+                            )
+        ], className="row")                        
+
+    ])
+                             
+    ])
+                             
+    ])
+    
+
+
 )
 
 
@@ -599,11 +643,12 @@ def update_boxplot(type_data, year_hovered, states_selected_choropleth, year_sel
     Output('timepath-graph', 'figure'),
     [Input('type_data_selector', 'value'),
      Input('choropleth-graph','clickData'),
+     Input('scatter-graph','clickData'),
      Input('timeseries-graph','hoverData'),
      Input('years-slider', 'value')],
      [State('years-slider', 'min')])
 
-def update_timepath(type_data, state_clicked, year_hovered, year_selected_slider, minValue):
+def update_timepath(type_data, state_clicked, state_clicked_scatter, year_hovered, year_selected_slider, minValue):
     
     if type_data == 'raw': 
         df_map = df_map_raw
@@ -611,12 +656,15 @@ def update_timepath(type_data, state_clicked, year_hovered, year_selected_slider
     else:
         df_map = df_map_pcr
     
-    if state_clicked is None: 
+    if ((state_clicked is None) & (state_clicked_scatter is None)): 
         chosen_state = 'California'
     
-    else:
+    elif ((state_clicked_scatter is None) & (state_clicked is not None)):
         chosen_state = str(state_clicked['points'][0]['text'])
-        
+    
+    else:
+        chosen_state = str(state_clicked_scatter['points'][0]['text'])
+            
     if year_hovered is None:    
         theIDX = year_selected_slider - minValue
     
@@ -679,9 +727,10 @@ def update_timepath(type_data, state_clicked, year_hovered, year_selected_slider
      Input('initial_years_dropdown','value'),
      Input('final_years_dropdown','value'),
      Input('choropleth-graph','clickData'),
+     Input('scatter-graph','clickData'),
      Input('spatial_interval-event', 'n_intervals')],
      [State('spatial_travel-check', 'values')])
-def update_density(type_data, initial_year, final_year, state_clicked, n, checkedValues):
+def update_density(type_data, initial_year, final_year, state_clicked, state_clicked_scatter, n, checkedValues):
     
     if type_data == 'raw': 
         df_map = df_map_raw
@@ -695,11 +744,14 @@ def update_density(type_data, initial_year, final_year, state_clicked, n, checke
     pair_of_years = [initial_year, final_year]
     
     
-    if state_clicked is None: 
+    if ((state_clicked is None) & (state_clicked_scatter is None)): 
         chosen_state = 'California'
     
-    else:
+    elif ((state_clicked_scatter is None) & (state_clicked is not None)):
         chosen_state = str(state_clicked['points'][0]['text'])
+    
+    else:
+        chosen_state = str(state_clicked_scatter['points'][0]['text'])
    
     ranking = -1
     if (len(checkedValues) != 0):
@@ -785,6 +837,128 @@ def update_density(type_data, initial_year, final_year, state_clicked, n, checke
     return Density
 
 ############################################################     
+    
+
+
+
+
+
+
+@app.callback(
+    Output('rank-path-graph', 'figure'),
+    [Input('type_data_selector', 'value'),
+     Input('timeseries-graph','hoverData'),
+     Input('years-slider','value'), 
+     Input('spatial_interval-event', 'n_intervals')],
+    [State('spatial_travel-check', 'values')],
+)
+def update_rankpath(type_data, year_hovered, year_selected_slider, n, checkedValues):
+    
+    if type_data == 'raw': 
+        df_map = gpd_map
+        rk_map = rk_map_raw
+        title_map = '(Raw)'
+    
+    else:
+        df_map = gpd_map
+        rk_map = rk_map_pcr
+        title_map = '(PCR)'
+    
+    if year_hovered is None: 
+        year = year_selected_slider
+    
+    else:
+        year = year_hovered['points'][0]['x']
+
+    RankPath_Layout = dict(
+        hovermode = 'closest',
+        xaxis = dict(
+            autorange = True, # False,
+            #range = [-125, -65],
+            showgrid = False,
+            zeroline = False,
+            fixedrange = True
+        ),
+        yaxis = dict(
+            autorange = True, #False,
+            #range = [25, 49],
+            showgrid = False,
+            zeroline = False,
+            fixedrange = True
+        ),
+        margin = dict(
+            t=20,
+            b=20,
+            r=20,
+            l=20
+        ),
+        width = 1100,
+        height = 650,
+        dragmode = 'select'
+    )
+           
+    
+    # I had to modify this code a little bit, because of the Multipolygon of shapely
+    # Also, I had to convert to lists the centroids and the exteriors of the Polygon
+    # http://toblerity.org/shapely/shapely.geometry.html
+    # Several States had multiple centroids... so I chose to take the value of the convex_hull
+    
+    
+    RankPath_Data = []
+    for index,row in df_map.iterrows():
+        if df_map['geometry'][index].type == 'Polygon':
+            x,y = row.geometry.exterior.xy
+            x = x.tolist()
+            y = y.tolist()
+            c_x,c_y = row.geometry.centroid.xy
+            c_x = c_x.tolist()
+            c_y = c_y.tolist()
+        elif df_map['geometry'][index].type == 'MultiPolygon':
+            x = df_map['geometry'][index].convex_hull.exterior.xy[0].tolist()
+            y = df_map['geometry'][index].convex_hull.exterior.xy[1].tolist()
+            c_x = [df_map['geometry'][index].convex_hull.centroid.xy[0][0]]
+            c_y = [df_map['geometry'][index].convex_hull.centroid.xy[1][0]]
+        else: 
+            print('stop')
+        county_outline = dict(
+                type = 'scatter',
+                showlegend = False,
+                legendgroup = "shapes",
+                line = dict(color='black', width=1.5),
+                x=x,
+                y=y,
+                marker = dict(size=0.01), # Because of the hull_convex, some unusual dots appeared. So this argument removes them.
+                fill='toself',
+                fillcolor = 'yellow',
+                hoverinfo='none'
+        )
+        hover_point = dict(
+                type = 'scatter',
+                showlegend = False,
+                legendgroup = "centroids",
+                name = row.STATE_NAME,
+                marker = dict(size=4),
+                x = c_x, #df.centroid.x, #c_x
+                y = c_y, #df.centroid.y, #c_y
+                fill='toself',
+                fillcolor = 'red'            
+        )
+        RankPath_Data.append(county_outline)
+        RankPath_Data.append(hover_point)
+    
+    RankPath = dict(data = RankPath_Data, layout = RankPath_Layout)
+    return RankPath
+
+############################################################
+
+
+
+
+
+
+
+
+
 
 
 
