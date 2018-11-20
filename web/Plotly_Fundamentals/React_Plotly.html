@@ -1,0 +1,39 @@
+<html>
+<head>
+	<!--script src="https://cdn.plot.ly/plotly-latest.min.js"></script-->
+	<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+	<script crossorigin src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script crossorigin src="https://unpkg.com/react-plotly.js@1.0.2/dist/create-plotly-component.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script>
+var Plot = createPlotlyComponent(Plotly);
+
+ReactDOM.render(
+React.createElement(Plot, {
+  data: [
+  {
+    type: 'scatter',
+    mode: 'lines+points',
+    x: [1, 2, 3],
+    y: [2, 6, 3],
+    marker: { color: 'red' } },
+
+  {
+    type: 'bar',
+    x: [1, 2, 3],
+    y: [2, 5, 3] }],
+
+
+  layout: {
+    width: 640,
+    height: 480,
+    title: 'A Fancy Plot' } }),
+
+
+document.getElementById('root'));
+</script>
+</body>
+</html>
