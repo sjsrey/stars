@@ -1,0 +1,1031 @@
+<html>
+
+<head>
+	<script src="LIB/plotly.js v1.39.3/plotly.min.js"></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Web STARS</title>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<!--link rel="stylesheet" href="/resources/demos/style.css"-->
+	<style>
+	#ajaxBusy {
+		display: none;
+		margin: 0px 0px 0px -50px; /* left margin is half width of the div, to centre it */
+		padding: 30px 10px 10px 10px;
+		position: absolute;
+		left: 30%;
+		top: 325px;
+		width: 500px;
+		height: 500px;
+		text-align: center;
+		background-color:#9ACD32;
+		//background: #e8e8e8 url(images/ajax_loader_blue_350.gif) no-repeat center center;
+		background: url(images/ajax_loader_blue_350.gif) no-repeat center center;
+		border: 0px solid #000;
+	}
+	.rectangle-button {
+		font-size: large; 
+	}
+	.triangle-button {
+		width: 30px;
+		height: 25px;
+		color: blue;
+		background-color: yellow;
+	}
+	#custom-handle {
+		width: 4em;
+		height: 1.6em;
+		top: 50%;
+		margin-top: -.8em;
+		text-align: center;
+		line-height: 1.6em;
+		font-weight: 700;
+		color: blue;
+		background-color: yellow;
+	}
+	.chartContainer { height: 500px; width: 100%; }
+	.chartArea { width: 600px; height: 100%; float: left; }
+	.chartArea2 { width: 200px; height: 100%; }
+	.chartBetween { width: 10px; height: 100%; float: left; background-color: white; }
+	.triangle-left {
+		border-color:transparent #7d1919 transparent transparent;
+	}
+	.triangle-right {
+		border-color:transparent transparent transparent #7d1919;
+	}
+	</style>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
+	<script type="text/javascript" src="LIB/pyextjs-0.1.2/package/dist/ss.js"></script>
+    <script type="text/javascript" src="LIB/pyextjs-0.1.2/package/dist/Numpy.js"></script>
+    <script type="text/javascript" src="LIB/pyextjs-0.1.2/package/dist/PolySolve.js"></script>
+    <script type="text/javascript" src="LIB/pyextjs-0.1.2/package/dist/Scipy.js"></script>
+	
+	<script type="text/javascript" src="LIB/science.js-master/science.v1.min.js"></script>
+</head>
+
+<body style ="font-family:Arial, Helvetica, sans-serif;">
+	<div style="background-color:#3366ff ;height:80px">
+		<a  target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+				<img src="images/STARS_LOGO.png" alt="STARS" style = "margin:5px 5px 5px 5px;width:130px;height:80px;float:left;">
+		</a>
+		<div style = "margin:15px 0px 0px 0px;float:left;">
+			<font size="6" color="#ccd9ff"> &nbsp;&nbsp;&nbsp; STARS :</font> 
+			<font size="6" color="white"><strong>  Exploratory Spatial Data Analysis (ESDA)</strong> </font> 
+		</div>
+				<a href="https://www.ucr.edu/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/UCR-logo-2.png" alt="UCR" style = "margin:5px 0px 0px 0px;width:80px;height:60px;float:right;">
+				</a>	
+				<a href="https://www.nsf.gov/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/nsf.png" alt="NSF" style = "margin:8px 15px 5px 5px;width:70px;height70px;float:right;">
+				</a>
+				<a href="http://spatial.ucr.edu/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/CGS_logo.png" alt="CGS" style = "margin:5px 10px 0px 0px;width:100px;height:70px;float:right;">
+				</a>
+	
+	</div>
+	<h1> </h1>
+
+	<div class="sub_header" hidden>
+		<div style="margin-right:80px; float:left;">
+			<input type="checkbox" id="timeTravelAnimation" value="auto"> Time Travel Animation 
+		</div>
+		<!--div style="margin-right:5px; float:left;">
+			<button id="year-refresh" class="triangle-button rectangle-button">■</button>
+		</div-->
+		<div style="margin-right:5px; float:left;">
+			<button id="year-left" class="triangle-button">◀</button>
+		</div>
+		<div style="margin-right:30px; float:left;">
+			<button id="year-right" class="triangle-button">▶</button>
+		</div>
+		<div id="slider" style="margin-top:3px; width:800px; float:left;">
+			<div id="custom-handle" class="ui-slider-handle"></div>
+		</div>
+		<div style="margin-left:70px; float:left;">
+			<input type="checkbox" id="fixAxis" value="auto"> Fix Axis across Time
+		</div>
+		<div id="help" style="margin-left:200px; float:left; background-color:transparent;">
+			&nbsp;&nbsp;
+			<a href= "ESDA_intro.html" target="_blank"> Click to See User Documents</a>
+		</div>
+
+	</div>
+	<br><br>
+	<div class="sub_header" hidden>
+		<div style="margin-right:100px; float:left;">
+			<input type="checkbox" id="spatialTravelAnimation" value="auto"> Spatial Travel Animation 
+		</div>
+	</div>
+	<br><br>
+	<div class="chartContainer">
+		<div class="chartArea">
+			<div id="Reset_allCharts" style="text-align:right;">
+				<!--button id="year-refresh">Reset all charts to 1929</button-->
+			</div>
+			<div id="chart_choropleth"></div>
+		</div>
+		<div class="chartBetween"></div>
+		<div id="chart_scatter"    class="chartArea"></div><div class="chartBetween"></div>
+		<div class="chartArea">
+			<div id="state_dropdown" style="text-align:right;">
+				<!--State : &nbsp;
+				<select id="states">
+					<option value="Washington">Washington</option>
+					<option value="Montana">Montana</option>
+					<option value="Maine">Maine</option>
+					<option value="California" selected>California</option>
+				</select-->
+			</div>
+			<div id="chart_timepath"></div>
+		</div>
+		<div class="chartBetween"></div>
+		<div id="chart_timeseries" class="chartArea"></div><div class="chartBetween"></div>
+		<div class="chartArea">
+			<div id="baseYear_dropdown" style="text-align:right;">
+				<!--br>Base Year : &nbsp;
+				<select id="baseYear">
+					<option value="1929">1929</option>
+					<option value="1930">1930</option>
+					<option value="1931">1931</option>
+					<option value="2009" selected>2009</option>
+				</select-->
+			</div>
+			<div id="chart_density"></div>
+		</div>
+		<div class="chartBetween"></div>
+		<div id="chart_boxplot"    class="chartArea"></div><div class="chartBetween"></div>		
+    </div>
+	<h1> </h1>
+
+
+
+<script>
+
+// default color order in Plotly
+//    '#1f77b4',  // muted blue
+//    '#ff7f0e',  // safety orange
+//    '#2ca02c',  // cooked asparagus green
+//    '#d62728',  // brick red
+//    '#9467bd',  // muted purple
+//    '#8c564b',  // chestnut brown
+//    '#e377c2',  // raspberry yogurt pink
+//    '#7f7f7f',  // middle gray
+//    '#bcbd22',  // curry yellow-green
+//    '#17becf'   // blue-teal
+	
+// gloval variable
+app = {
+	year: null,
+	chosenState: null,
+	years: null,
+	df_map_pcr: null,
+	lagged_pcr: null,
+	morans: null,
+	rankIdx: null,
+	rank: null,
+	baseYear: null,
+}
+
+//  } );
+  
+$( document ).ready(function() {
+	// Set up the AJAX indicator
+    $('body').append('<div id="ajaxBusy"><p id="ajaxBusyMsg">Please wait...</p></div>');
+	
+	$( "#ajaxBusy" ).show();
+	$.get('python/STARS_V2.py', {'fyear': 1929, 'fyear': 2009}, function(msg) {
+		//console.log(msg.length);
+		//console.log(msg);
+		
+		// parse JSON from server message
+		var n = msg.indexOf('C:\\Python36\\lib\\site-packages\\pysal\\__init__.py:65:');
+		if (n > 0) msg = msg.substring(0, n);
+		var msg = $.parseJSON(msg);
+		msg['df_map_pcr'] = $.parseJSON(msg['df_map_pcr']);
+		msg['lagged_pcr'] = $.parseJSON(msg['lagged_pcr']);
+		//console.log(msg);
+		
+		// build msg['df_map_pcr']['idx']    ex) {1929: 10, 1930: 11, 1931: 12, ....  }
+		msg['df_map_pcr']['idx'] = {};
+		//msg['years'].forEach(function (year, i) {
+		//	msg['df_map_pcr']['columns'].forEach(function (column, j) {
+		//		if (year.toString() == column) msg['df_map_pcr']['idx'][year] = j;
+		//	});
+		//});
+		msg['df_map_pcr']['columns'].forEach(function (column, j) {
+			msg['df_map_pcr']['idx'][column] = j;
+		});
+		
+		// build msg['lagged_pcr']['idx']    ex) {1929: 0, 1930: 1, 1931: 2, ....     }
+		msg['lagged_pcr']['idx'] = {};
+		msg['years'].forEach(function (year, i) {
+			msg['lagged_pcr']['columns'].forEach(function (column, j) {
+				if (year.toString() == column) msg['lagged_pcr']['idx'][year] = j;
+			});
+		});
+		
+		// get min, max in the msg.df_map_pcr
+		msg.df_map_pcr['min'] = Number.MAX_VALUE;
+		msg.df_map_pcr['max'] = Number.MIN_VALUE;
+		msg.df_map_pcr.data.forEach(function (row, j) {
+			msg.years.forEach(function (year, i) {
+				if (msg.df_map_pcr.min > row[msg.df_map_pcr.idx[year]]) msg.df_map_pcr.min = row[msg.df_map_pcr.idx[year]];
+				if (msg.df_map_pcr.max < row[msg.df_map_pcr.idx[year]]) msg.df_map_pcr.max = row[msg.df_map_pcr.idx[year]];
+			});
+		});
+		
+		// get min, max in the msg.lagged_pcr
+		msg.lagged_pcr['min'] = Number.MAX_VALUE;
+		msg.lagged_pcr['max'] = Number.MIN_VALUE;
+		msg.lagged_pcr.data.forEach(function (row, j) {
+			msg.years.forEach(function (year, i) {
+				if (msg.lagged_pcr.min > row[msg.lagged_pcr.idx[year]]) msg.lagged_pcr.min = row[msg.lagged_pcr.idx[year]];
+				if (msg.lagged_pcr.max < row[msg.lagged_pcr.idx[year]]) msg.lagged_pcr.max = row[msg.lagged_pcr.idx[year]];
+			});
+		});
+		
+		console.log(msg);
+		app.year        =  msg['years'][0];
+		app.years       =  msg['years'];
+		app.df_map_pcr  =  msg['df_map_pcr'];
+		app.lagged_pcr  =  msg['lagged_pcr'];
+		app.morans      =  msg['morans'];
+		//app.baseYear    =  app.years[app.years.length-1];
+		
+		// create reset all charts button 
+		var html = '<button id="year_refresh">Reset all charts to ' + app.year + '</button>';
+		$( "#Reset_allCharts" ).html(html);	
+		$( "#year_refresh" ).click(function(){
+			$( "#slider" ).slider( "value", app.year );
+		});
+		
+		// create dropdown list for the base-year of densitiy chart
+		var html = '<br>Base Year : &nbsp;';
+		html += '<select id="baseYear">';
+		app.years.forEach(function(year, i) {
+			var selected = '';
+			if (i == app.years.length-1) selected = ' selected';
+			html += '<option value=' + year + selected + '>' + year + '</option>';
+		});
+		html += '</select>';
+		$( "#baseYear_dropdown" ).html(html);
+		app.baseYear = $( "#baseYear" ).val() * 1;
+		$( "#baseYear" ).change(function() {
+			var baseYear = this.value;
+			//console.log('baseYear:', baseYear);
+			app.baseYear = baseYear * 1;
+			paintDensity(app.year, {baseYear:app.baseYear});
+		});
+		
+		// create dropdown list for the states of time path chart
+		//	<div id="state_dropdown" style="text-align:right;">
+		//		State : &nbsp;
+		//		<select id="states">
+		//			<option value="Washington">Washington</option>
+		//			<option value="Montana">Montana</option>
+		//			<option value="Maine">Maine</option>
+		//			<option value="California" selected>California</option>
+		//		</select>
+		//	</div>
+		var html = 'State : &nbsp;';
+		html += '<select id="states">';
+		app.df_map_pcr.data.forEach(function(data, i) {
+			var selected = '';
+			if (data[app.df_map_pcr.idx['Name']] == 'California') selected = ' selected';
+			html += '<option value="' + data[app.df_map_pcr.idx['Name']] + '"' + selected + '>' + 
+					data[app.df_map_pcr.idx['Name']] + '</option>';
+		});
+		html += '</select>';
+		$( "#state_dropdown" ).html(html);
+		app.chosenState = $( "#states" ).val();
+		$( "#states" ).change(function() {
+			var chosenState = this.value;
+			console.log('chosenState:', chosenState);
+			app.chosenState = chosenState;
+			//paintDensity(app.year, {baseYear:app.baseYear});
+			paintTimepath(app.year, {chosenState:app.chosenState});
+			paintDensity(app.year, {chosenState:app.chosenState});
+		});
+		
+		var handle = $( "#custom-handle" );
+		$( "#slider" ).slider({
+			min: app.years[0],
+			max: app.years.slice(-1)[0],
+			value: app.year,
+			create: function() {
+				handle.text( $( this ).slider( "value" ) );
+			},
+			slide: function( event, ui ) {
+				handle.text( ui.value );
+				//console.log( ui.value );
+			},
+			change: function( event, ui ) {
+				handle.text( ui.value );
+				app.year = ui.value;
+				$( "#year_refresh" ).text('Refresh all charts to ' + app.year);
+				rankUpdate( ui.value );
+				paintCharts( ui.value );
+			},
+		});	
+		$( "#slider" ).slider( "value", app.year );
+		
+		$( "#year-left" ).click(function(){
+			app.year -= 1;
+			if (app.year < app.years[0]) app.year = app.years[0];
+			else {
+				$( "#slider" ).slider( "value", app.year );
+			}
+		});
+		
+		$( "#year-right" ).click(function(){
+			app.year += 1;
+			if (app.year > app.years.slice(-1)[0]) app.year = app.years.slice(-1)[0];
+			else {
+				$( "#slider" ).slider( "value", app.year );
+			}
+		});
+		
+		$( "#timeTravelAnimation" ).change(function(){
+			if ($( "#timeTravelAnimation" ).is(":checked")) {
+				console.log('Time Travel Animation checked');
+				$( "#spatialTravelAnimation" ).attr("disabled", true);
+				timeTravelAnimation();
+			} else {
+				console.log('Time Travel Animation unchecked');
+			}
+		});
+		
+		$( "#spatialTravelAnimation" ).change(function(){
+			if ($( "#spatialTravelAnimation" ).is(":checked")) {
+				console.log('Spatial Travel Animation checked');
+				$( "#timeTravelAnimation" ).attr("disabled", true);
+				spatialTravelAnimation();
+			} else {
+				console.log('Spatial Travel Animation unchecked');
+			}
+		});
+		
+		$( "#fixAxis" ).change(function(){
+			paintCharts(app.year);
+		});
+		
+		$( ".sub_header" ).show();                                   // Time Travel Animation  +  Year Slider
+		$( "#ajaxBusy" ).hide();
+	});
+
+});	
+
+
+function timeTravelAnimation() {
+	var ttaInterval = setInterval(function () {
+		app.year += 1;
+		if (app.year > app.years.slice(-1)[0]) app.year = app.years[0];
+		$( "#slider" ).slider( "value", app.year );
+		if (!$( "#timeTravelAnimation" ).is(':checked')) {
+			clearInterval(ttaInterval);
+			$( "#spatialTravelAnimation" ).removeAttr("disabled");
+		}
+	}, 100); 	
+}
+
+
+function rankUpdate(year) {
+	app.rankIdx = -1;
+	var list = app.df_map_pcr['data'].map(function(o, i) { return [i, o[app.df_map_pcr['idx'][year]]] });
+	//console.log(list);
+	list.sort((a, b) => b[1]-a[1]);                                  // reverse order
+	app.rank = list.map(function(o) { return o[0] });
+	//console.log(app.rank);
+}
+
+
+function spatialTravelAnimation() {
+	var staInterval = setInterval(function () {
+		app.rankIdx += 1;
+		if (app.rankIdx >= app.rank.length) {
+			app.year += 1;
+			if (app.year > app.years.slice(-1)[0]) app.year = app.years[0];
+			$( "#slider" ).slider( "value", app.year );
+		} else {
+			paintChoropleth(app.year, {rankIdx:app.rankIdx});
+			paintScatter(app.year, {rankIdx:app.rankIdx});
+			paintTimepath(app.year, {rankIdx:app.rankIdx});
+			paintDensity(app.year, {rankIdx:app.rankIdx});
+			paintBoxplot(app.year, {rankIdx:app.rankIdx});
+		}
+		//console.log('app.rankIdx:', app.rankIdx);
+		if (!$( "#spatialTravelAnimation" ).is(':checked')) {
+			clearInterval(staInterval);
+			$( "#timeTravelAnimation" ).removeAttr("disabled");
+			$( "#slider" ).slider( "value", app.year );              // refresh all charts
+		}
+	}, 100); 	
+}
+
+
+function paintCharts(year) {
+	//console.log('paintCharts:', year);
+	
+	paintChoropleth(year, {});
+	paintScatter(year, {});
+	paintTimepath(year, {}); 
+	paintTimeseries(year, {});
+	paintDensity(year, {});  
+    paintBoxplot(year, {});  
+	
+}
+
+
+function paintChoropleth(year, {rankIdx="", eventData=""}) {         // Destructuring Function Parameters
+	Plotly.purge('chart_choropleth');
+
+	var selectedpoints = [];                                         // no selected states
+		
+	var heading = 'PCR (per capita income relative to national average) in ' + year.toString();
+	if (typeof rankIdx === "number") {
+		//console.log('chart_choropleth', year, rankIdx);
+		var msg = (rankIdx+1) + 'th';
+		if (rankIdx == 0) msg = '1st'
+        if (rankIdx == 1) msg = '2nd'
+        if (rankIdx == 2) msg = '3rd'
+		msg += ' '  + app.df_map_pcr['data'][app.rank[rankIdx]][app.df_map_pcr['idx']['STATE_NAME']] + 
+			   ': ' + app.df_map_pcr['data'][app.rank[rankIdx]][app.df_map_pcr['idx'][year]].toFixed(2);
+		heading += '<br>(' + msg + ')';
+		selectedpoints.push(app.rank[rankIdx]);
+	}
+	if (typeof eventData === "object") {
+		//console.log(eventData);
+		selectedpoints = eventData.points.map(function(o) { return o['pointIndex'] });
+	}
+	
+	//var scl  = [[0.0, '#eff3ff'],[0.2, '#c6dbef'],[0.4, '#9ecae1'],[0.6, '#6baed6'],[0.8, '#3182bd'],[1.0, '#08519c']];
+	var scl  = [[0.0, '#7fcdbb'],[0.2, '#41b6c4'],[0.4, '#1d91c0'],[0.6, '#225ea8'],[0.8, '#253494'],[1.0, '#081d58']];
+	var scl2 = [[0.0, '#ffffff'],[1.0, '#FFFF00']]
+	
+	var data = [{
+		type: 'choropleth',
+		locationmode: 'USA-states',
+		locations: app.df_map_pcr['data'].map(function(o) { return o[app.df_map_pcr['idx']['STATE_ABBR']] }),
+		z: app.df_map_pcr['data'].map(function(o) { return o[app.df_map_pcr['idx'][year]] }),
+		text: app.df_map_pcr['data'].map(function(o) { return o[app.df_map_pcr['idx']['Name']] }),
+		colorscale: scl,
+        autocolorscale: false,
+		marker: {
+            line: {
+                color: 'rgb(255,255,255)',
+                width: 1
+            } 
+		},
+		selected: { marker: { opacity: 1.0 } },
+        unselected: { marker: { opacity: 0.1 } },
+        colorbar: {
+            thickness: 10,                                           // default: 30 
+            title: 'PCR'
+        },
+	}];
+	if (selectedpoints.length != 0) data[0]['selectedpoints'] = selectedpoints;
+	if ($( "#fixAxis" ).is(':checked')) {
+		data[0]['zmin'] = app.df_map_pcr.min;
+		data[0]['zmax'] = app.df_map_pcr.max;
+	}
+	//console.log(data);
+	
+	var layout = {
+		title: heading,
+		geo: {
+			scope: 'usa',
+			projection: { type: 'albers usa' },
+			showlakes: true,
+			lakecolor: 'rgb(255, 255, 255)'
+		},
+    }
+	//console.log(layout);
+	
+	Plotly.plot("chart_choropleth", data, layout, {showLink: false});
+	
+	var choroplethDiv = document.getElementById('chart_choropleth');
+	choroplethDiv.on('plotly_selected', function(eventData) {
+		if (typeof eventData !== "object" || !("points" in eventData)) return;
+		console.log(eventData.points);
+		paintScatter(year, {eventData:eventData});
+		paintBoxplot(year, {eventData:eventData});
+		if (eventData["points"].length == 1) {
+			app.chosenState = eventData.points[0]['text'];
+			$( "#states" ).val(app.chosenState);
+			paintTimepath(year, {chosenState:app.chosenState});
+			paintDensity(year, {chosenState:app.chosenState});
+		}
+	});
+	choroplethDiv.on('plotly_click', function(eventData) {
+		if (typeof eventData !== "object" || !("points" in eventData)) return;
+		//console.log(eventData.points);
+		app.chosenState = eventData.points[0]['text'];
+		$( "#states" ).val(app.chosenState);
+		//console.log(app);
+		paintChoropleth(year, {eventData:eventData});
+		paintScatter(year, {eventData:eventData});
+		paintTimepath(year, {chosenState:app.chosenState});
+		paintDensity(year, {chosenState:app.chosenState});
+		paintBoxplot(year, {eventData:eventData});
+	});
+}
+
+
+function paintScatter(year, {rankIdx="", eventData=""}) {
+	Plotly.purge('chart_scatter');
+	//console.log(year, rankIdx, eventData);
+	
+	var the_df_map = app.df_map_pcr['data'].map(function(o) { return o[app.df_map_pcr['idx'][year]] });
+	var the_lagged = app.lagged_pcr['data'].map(function(o) { return o[app.lagged_pcr['idx'][year]] });
+	//console.log(the_df_map);
+	//console.log(the_lagged);
+	var min_df_map = Math.min.apply(Math, the_df_map);
+	var max_df_map = Math.max.apply(Math, the_df_map);
+	var min_lagged = Math.min.apply(Math, the_lagged);
+	var max_lagged = Math.max.apply(Math, the_lagged);
+	
+	if ($( "#fixAxis" ).is(':checked')) {
+		min_df_map = app.df_map_pcr.min;
+		max_df_map = app.df_map_pcr.max;
+		min_lagged = app.lagged_pcr.min;
+		max_lagged = app.lagged_pcr.max;
+	}
+	
+	var selectedpoints = [];
+	if (typeof rankIdx === "number") {
+		selectedpoints.push(app.rank[rankIdx]);
+	}
+	if (typeof eventData === "object") {
+		selectedpoints = eventData.points.map(function(o) { return o['pointIndex'] });
+	}
+	
+	var p = numpy.polyfit(numpy.array(the_df_map), numpy.array(the_lagged), 1);
+	var a = p[1],  b = p[0];
+	var line0 = { 'x': [min_df_map, max_df_map], 'y': [a + min_df_map*b,  a + max_df_map*b] };
+	//console.log(line0);
+	
+	var data = [
+		{
+			'x': the_df_map, 
+			'y': the_lagged,
+			'mode': 'markers',
+			'marker': {'size': 10, 'color': '#0066FF'},
+			selected: { marker: { color: '#FF0066' } },
+			unselected: { marker: { opacity: '#0066FF' } },
+			'name': year.toString(),
+			'text': app.df_map_pcr['data'].map(function(o) { return o[app.df_map_pcr['idx']['Name']] }),
+		},
+		{
+			'x': line0['x'], 
+			'y': line0['y'],
+			'mode': 'lines',
+			'line': {'color': '#009999'},
+			'name': 'Reg'
+		}
+    ]
+	if (selectedpoints.length != 0) data[0]['selectedpoints'] = selectedpoints;
+	
+	if (typeof eventData === "object" && eventData.points.length > 1) {
+		var sel_df_map = eventData.points.map(function(o) { return the_df_map[o['pointIndex']] });
+		var sel_lagged = eventData.points.map(function(o) { return the_lagged[o['pointIndex']] });
+		var min_sel_df = Math.min.apply(Math, sel_df_map);
+		var max_sel_df = Math.max.apply(Math, sel_df_map);
+
+		var p = numpy.polyfit(sel_df_map, sel_lagged, 1);
+		var a = p[1],  b = p[0];
+		var line1 = { 'x': [min_df_map, max_df_map], 'y': [a + min_df_map*b,  a + max_df_map*b] };
+        var line2 = { 'x': [min_sel_df ,max_sel_df], 'y': [a + min_sel_df*b,  a + max_sel_df*b] };
+
+        // recalculation line1 to fit scatter-graph area                                 // y = a * x + b
+        var min_df_new = min_df_map;
+        var max_df_new = max_df_map;
+        var aa = (line1['y'][1] - line1['y'][0]) / (line1['x'][1] - line1['x'][0])
+        var bb = line1['y'][0] - aa * line1['x'][0]
+		if (line1['y'][0] > max_lagged) min_df_new = (max_lagged - bb) / aa;             // x = ( y - b ) / a
+        if (line1['y'][0] < min_lagged) min_df_new = (min_lagged - bb) / aa;             // x = ( y - b ) / a
+        if (line1['y'][1] > max_lagged) max_df_new = (max_lagged - bb) / aa;             // x = ( y - b ) / a
+        if (line1['y'][1] < min_lagged) max_df_new = (min_lagged - bb) / aa;             // x = ( y - b ) / a
+		var line1 = { 'x':[min_df_new, max_df_new], 'y': [a + min_df_new*b,  a + max_df_new*b] };
+
+        data.push(
+        	{
+        		'x': line1['x'], 
+                'y': line1['y'],
+                'mode': 'lines', 
+                //'line': {'color': '#FF6600'},
+                'line': {'color': '#FF0000'}, //0000FF
+                'name': 'Reg'}
+        )
+        data.push(
+        	{
+        		'x': line2['x'], 
+                'y': line2['y'],
+                'mode': 'lines', 
+                'line': {'color': '#FF0000'},
+                'name': 'Reg'}
+        )
+	}
+	//console.log(data);
+	
+	var layout = {
+        'xaxis': {'title': 'Income (PCR),' + year},
+        'yaxis': {'title': 'Spatial Lagged PCR,' + year},
+        'showlegend': false,
+        'title': 'Moran Scatter Plot for <b>' + year + '</b> <br>' + 'X:PCR   Y: average income of neighboring states',
+		'dragmode': 'lasso'
+    }
+	
+	if ($( "#fixAxis" ).is(':checked')) {
+		layout.xaxis['range'] = [app.df_map_pcr.min, app.df_map_pcr.max];
+		layout.yaxis['range'] = [app.lagged_pcr.min, app.lagged_pcr.max];
+	}
+	//console.log(layout);
+	
+	Plotly.plot("chart_scatter", data, layout, {showLink: false});
+	
+	var scatterDiv = document.getElementById('chart_scatter');
+	scatterDiv.on('plotly_selected', function(eventData) {
+		if (typeof eventData !== "object" || !("points" in eventData)) return;
+		//console.log(eventData.points);
+		paintChoropleth(year, {eventData:eventData});
+		paintScatter(year, {eventData:eventData});
+		paintBoxplot(year, {eventData:eventData});
+		if (eventData["points"].length == 1) {
+			app.chosenState = eventData.points[0]['text'];
+			$( "#states" ).val(app.chosenState);
+			paintTimepath(year, {chosenState:app.chosenState});
+			paintDensity(year, {chosenState:app.chosenState});
+		}
+	});
+	scatterDiv.on('plotly_click', function(eventData) {
+		if (typeof eventData !== "object" || !("points" in eventData)) return;
+		//console.log(eventData.points);
+		app.chosenState = eventData.points[0]['text'];
+		$( "#states" ).val(app.chosenState);
+		//console.log(app);
+		paintChoropleth(year, {eventData:eventData});
+		paintScatter(year, {eventData:eventData});
+		paintTimepath(year, {chosenState:app.chosenState});
+		paintDensity(year, {chosenState:app.chosenState});
+		paintBoxplot(year, {eventData:eventData});
+	});
+}
+
+
+
+
+function paintTimepath(year, {rankIdx="", eventData="", chosenState=0}) {
+	Plotly.purge('chart_timepath');
+	
+	var chosen_state = app.chosenState;
+	var states = app.df_map_pcr.data.map(function(o) { return o[app.df_map_pcr.idx['Name']] });
+	//console.log(states);
+	
+	if (typeof chosenState === "string") {
+		chosen_state = chosenState;
+		//console.log(chosenState, chosen_state);
+	}
+	if (typeof rankIdx === "number") {
+		chosen_state = app.df_map_pcr['data'][app.rank[rankIdx]][app.df_map_pcr['idx']['Name']];
+		//console.log(rankIdx, chosen_state);
+	}
+	
+	var state_row_index = states.indexOf(chosen_state);
+	if (state_row_index < 0) return;
+	//console.log(state_row_index);
+	
+	var state_df_map = app.years.map(function(o) { 
+		return app.df_map_pcr.data[state_row_index][app.df_map_pcr.idx[o]] 
+	});
+	var state_lagged = app.years.map(function(o) { 
+		return app.lagged_pcr.data[state_row_index][app.lagged_pcr.idx[o]] 
+	});
+	//console.log(state_df_map); 
+	//console.log(state_lagged);
+	
+	var data = [
+		{
+			'x': state_df_map, 
+			'y': state_lagged,
+			'mode': 'markers',
+			'showlegend': false,
+			'marker': {'size': 4, 'color': '#1f77b4'},               // muted blue
+			'name': '',
+			'text': app.years
+		},
+		{
+			'x': state_df_map, 
+			'y': state_lagged,
+			'mode': 'lines',
+			'showlegend': false,
+			//'line': {'color': '#1f77b4'},                            // muted blue
+			'name': 'Path',
+			'text': app.years,
+			'hoverinfo': 'none'
+		},
+		{
+			'x': [state_df_map[year - app.years[0]]], 
+			'y': [state_lagged[year - app.years[0]]],
+			'mode': 'markers',
+			//'showlegend': false,
+			'marker': {'size': 10, 'color': 'blue'},
+			'name': year,
+			'text': app.years,
+			'hoverinfo': 'none'
+		},
+    ];
+	//console.log(data);
+    
+    var layout = {
+        'xaxis': {'title': 'Income (PCR) of <b>'+ chosen_state + '</b>' },
+        'yaxis': {'title': 'Spatial Lagged PCR,' + year},
+        //'showlegend': false,
+        'title': '<b>Time-path </b>' + 'for <b>' + chosen_state + ""
+    };
+	
+	//if ($( "#fixAxis" ).is(':checked') && $( "#spatialTravelAnimation" ).is(':checked')) {
+	//if ($( "#fixAxis" ).is(':checked') && (!$( "#timeTravelAnimation" ).is(':checked')) && $( "#spatialTravelAnimation" ).is(':checked')) {
+	//	layout.xaxis['range'] = [app.df_map_pcr.min, app.df_map_pcr.max];
+	//	layout.yaxis['range'] = [app.lagged_pcr.min, app.lagged_pcr.max];
+	//}
+	//console.log(layout);
+	
+	Plotly.plot("chart_timepath", data, layout);
+	
+	var timepathDiv = document.getElementById('chart_timepath');
+	timepathDiv.on('plotly_click', function(eventData) {
+		if (typeof eventData !== "object" || !("points" in eventData)) return;
+		//console.log(eventData.points);
+		app.year = eventData.points[0].text;
+		//console.log(app.year);
+		$( "#slider" ).slider( "value", app.year );
+	});
+}
+
+
+function paintTimeseries(year) {
+	Plotly.purge('chart_timeseries');
+	
+	//var theIDX = year - app.years[0];
+	
+	var data = [
+		{
+            'x': app.years, 
+            'y': app.years.map(function(o) { return app.morans[o] }),
+			'mode': 'markers',
+			'marker': {'size': 4, 'color': '#1f77b4'},               // muted blue
+            'name': 'Moran\'s I',
+			'showlegend': false,
+			'text': app.years,
+        },
+		{
+            'x': app.years, 
+            'y': app.years.map(function(o) { return app.morans[o] }),
+            'mode': 'lines', 
+            'name': 'Moran\'s I',
+			'showlegend': false,
+			'text': app.years,
+			'hoverinfo': 'none'
+        },
+        {
+            'x': [app.years[year - app.years[0]]], 
+            'y': [app.morans[year]],
+            'mode': 'markers', 
+            'marker': {'size': 10, 'color': 'blue'},
+            //'name': 'Moran\'s I',
+			'name': year,
+            //'showlegend': false,
+			'text': [app.years[year - app.years[0]]],
+            'hoverinfo': 'none'
+        },
+    ]
+	//console.log(data);
+	
+	var layout = {
+        'xaxis': {'title': 'Years'},
+        'yaxis': {'title': "Global Moran's I"},
+		'title': 'Time Series from ' + app.years[0] + ' to ' + app.years[app.years.length-1]
+    }
+	//console.log(layout);
+	
+	Plotly.plot("chart_timeseries", data, layout);
+	
+	var timeseriesDiv = document.getElementById('chart_timeseries');
+	timeseriesDiv.on('plotly_click', function(eventData) {
+		if (typeof eventData !== "object" || !("points" in eventData)) return;
+		//console.log(eventData.points);
+		app.year = eventData.points[0].text;
+		//console.log(app.year);
+		$( "#slider" ).slider( "value", app.year );
+	});
+}
+
+
+function paintDensity(year, {rankIdx="", eventData="", chosenState=0, baseYear=""}) {
+	Plotly.purge('chart_density');
+	
+	var chosen_state = app.chosenState;
+	var initial_year = year;
+	var final_year   = app.baseYear;
+	var pair_of_years = [initial_year, final_year];
+	
+	var states = app.df_map_pcr.data.map(function(o) { return o[app.df_map_pcr.idx['Name']] });
+	//console.log(states);
+	
+	if (typeof chosenState === "string") {
+		chosen_state = chosenState;
+		//console.log(chosenState, chosen_state);
+	}
+	if (typeof rankIdx === "number") {
+		chosen_state = app.df_map_pcr['data'][app.rank[rankIdx]][app.df_map_pcr['idx']['Name']];
+		//console.log(rankIdx, chosen_state);
+	}
+	if (typeof baseYear === "number") {
+		final_year = baseYear;
+	}
+	
+	var state_row_index = states.indexOf(chosen_state);
+	if (state_row_index < 0) return;
+	//console.log(state_row_index);
+	
+	var initial_state_value = app.df_map_pcr.data[state_row_index][app.df_map_pcr.idx[initial_year]];
+	var final_state_value = app.df_map_pcr.data[state_row_index][app.df_map_pcr.idx[final_year]];
+	//console.log(initial_state_value, final_state_value);
+	
+	var X1 = numpy.array(app.df_map_pcr.data.map(function(o) { return o[app.df_map_pcr.idx[pair_of_years[0]]] }));
+    var X2 = numpy.array(app.df_map_pcr.data.map(function(o) { return o[app.df_map_pcr.idx[pair_of_years[1]]] }));
+	//console.log(X1);
+	//console.log(X2);
+
+	var kde1 = science.stats.kde().sample(X1);
+	var kde2 = science.stats.kde().sample(X2);
+	//console.log(kde1);
+	//console.log(kde2);
+
+	// Joint grid
+	var min_grid_aux = Math.min.apply(Math, X1.concat(X2));
+    var max_grid_aux = Math.max.apply(Math, X1.concat(X2));
+	//console.log('min_grid_aux:', min_grid_aux);
+	//console.log('max_grid_aux:', max_grid_aux);
+	var X_grid = np.linspace(min_grid_aux - 0.1 * Math.abs(max_grid_aux), 
+							 max_grid_aux + 0.1 * Math.abs(max_grid_aux), 
+							 10000);
+	//console.log('X_grid:', X_grid)
+	
+	var dens1 = kde1(X_grid).map(function(o) { return o[1] });
+	var dens2 = kde2(X_grid).map(function(o) { return o[1] });
+	//console.log(dens1);
+	//console.log(dens2);
+	
+	var data = [  
+		{
+			'x': X_grid, 
+			'y': dens2,
+			'mode': 'lines',
+			'fill': 'tozeroy',
+			'name': final_year,
+			'text': 'Year of ' + final_year,
+			//'line': {'color': '#ff7f0e', 'width': 3}                 // safety orange 
+			'line': {'color': '#e377c2', 'width': 3}                 // raspberry yogurt pink
+		},
+		{
+            'x': [final_state_value, final_state_value], // x-values of each point do draw a line
+			'y': [0, kde2([final_state_value])[0][1]],
+            'mode': 'lines',
+            'name': 'name_to_put_line',
+            'text': 'text_to_put_line',
+            'showlegend': false,
+            'line': {'color': '#e377c2', 'opacity': 0.5, 'width': 3}
+		},
+		{
+            'x': X_grid, 
+            'y': dens1,
+            'mode': 'lines',
+            'fill': 'tozeroy',
+            'name': initial_year,
+            'text': 'Year of ' + initial_year,
+            'line': {'color': '#1f77b4', 'width': 3}                 // muted blue
+		}, 
+        {
+            'x': [initial_state_value, initial_state_value], // x-values of each point do draw a line
+			'y': [0, kde1([initial_state_value])[0][1]],
+            'mode': 'lines',
+            'name': 'name_to_put_line',
+            'text': 'text_to_put_line',
+            'showlegend': false,
+            'line': {'color': '#1f77b4', 'width': 3}
+		},
+    ];
+	//console.log(data);
+	
+	var layout = {
+        'xaxis': {'title': 'Income (PCR)'},
+        'yaxis': {'title': 'Kernel Density Estimation'},
+		'annotations': [{
+			x: initial_state_value,
+			y: kde1([initial_state_value])[0][1],
+			text: chosen_state,
+		}],
+		'title': 'US Income Distribution ' + '<b>' + '</b> in <b>' +initial_year + '</b> and <b>' + final_year+' </b> (Focused: <b>' + chosen_state + '</b>)'
+    };
+	if ($( "#fixAxis" ).is(':checked')) {
+		layout.xaxis['range'] = [app.df_map_pcr.min, app.df_map_pcr.max];
+		layout.yaxis['range'] = [0.0, 3.0];
+	}
+	//console.log(layout);
+	
+	Plotly.plot("chart_density", data, layout);
+}
+
+
+function paintBoxplot(year, {rankIdx="", eventData=""}) {
+	Plotly.purge('chart_boxplot');
+	
+	var selectedpoints = [];
+	if (typeof rankIdx === "number") {
+		selectedpoints.push(rankIdx);
+		//console.log(rankIdx, selectedpoints);
+	}
+	if (typeof eventData === "object") {
+		//console.log(eventData);
+		selectedpoints = eventData.points.map(function(o) { return o['pointIndex'] });
+	}
+	//console.log('selectedpoints:', selectedpoints);
+	
+	var trace0 = {
+        y: app.df_map_pcr['data'].map(function(o) { return o[app.df_map_pcr['idx'][year]] }),
+        name: ' ',
+		text: app.df_map_pcr['data'].map(function(o) { return o[app.df_map_pcr['idx']['Name']] }),
+        boxpoints: 'all',                                             
+        jitter: 0.15,                                                 
+        pointpos: 0,                                                  
+        marker: {color: '#0066FF'},
+        line: {color: '#66ffff'},
+        selected: {marker: {color: '#FF0066'}},
+        unselected: {marker: {color: '#0066FF', opacity: 1.0}},
+        //selectedpoints: selectedpoints,
+		type: 'box'
+    }
+	if (selectedpoints.length != 0) trace0['selectedpoints'] = selectedpoints;
+	
+    var data = [trace0];
+    //console.log(data);
+	
+	var layout = {
+        'yaxis': {'title': 'Income(PCR)'},
+		'title': 'US Income Distribution ' + '<b>' + '</b> in <b>' +year + '</b>',
+		'dragmode': 'lasso'
+	}
+	
+	if ($( "#fixAxis" ).is(':checked')) {
+		layout.yaxis['range'] = [app.df_map_pcr.min, app.df_map_pcr.max];
+	}
+	
+	Plotly.plot("chart_boxplot", data, layout);
+	
+	var boxplotDiv = document.getElementById('chart_boxplot');
+	boxplotDiv.on('plotly_selected', function(eventData) {
+		if (typeof eventData !== "object" || !("points" in eventData)) return;
+		//console.log(eventData.points);
+		paintChoropleth(year, {eventData:eventData});
+		paintScatter(year, {eventData:eventData});
+		paintBoxplot(year, {eventData:eventData});
+		if (eventData["points"].length == 1) {
+			app.chosenState = eventData.points[0]['text'];
+			$( "#states" ).val(app.chosenState);
+			paintTimepath(year, {chosenState:app.chosenState});
+			paintDensity(year, {chosenState:app.chosenState});
+		}
+	});
+	boxplotDiv.on('plotly_click', function(eventData) {
+		if (typeof eventData !== "object" || !("points" in eventData)) return;
+		//console.log(eventData.points);
+		
+		// bugfix: return additional 5 points of data[0] in boxplot plotly_click
+		var length_of_points = eventData["points"].length;
+		if (length_of_points > 1) {
+			for (var i=1; i<length_of_points; i++) {
+				delete eventData["points"][i];
+			}
+		}
+		//console.log(eventData.points);
+		
+		app.chosenState = eventData.points[0]['text'];
+		$( "#states" ).val(app.chosenState);
+		//console.log(app);
+		paintChoropleth(year, {eventData:eventData});
+		paintScatter(year, {eventData:eventData});
+		paintTimepath(year, {chosenState:app.chosenState});
+		paintDensity(year, {chosenState:app.chosenState});
+		paintBoxplot(year, {eventData:eventData});
+	});
+}
+
+</script>
+
+
+</body>
+
+</html>
