@@ -1,0 +1,95 @@
+<body style ="font-family:Arial, Helvetica, sans-serif;">
+<div style="background-color:#3366ff ;height:80px">
+	<a  target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+			<img src="images/STARS_LOGO.png" alt="STARS" style = "margin:5px 5px 5px 5px;width:130px;height:80px;float:left;">
+	</a>
+	<div style = "margin:15px 0px 0px 0px;float:left;">
+		<font size="6" color="#ccd9ff"> &nbsp;&nbsp;&nbsp; Space-Time Analysis of Regional Systems (STARS) :</font> 
+		<font size="6" color="white"><strong>  Rank Path  </strong> </font> 
+	</div>
+				<a href="https://www.ucr.edu/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/UCR-logo-2.png" alt="UCR" style = "margin:5px 0px 0px 0px;width:80px;height:60px;float:right;">
+				</a>	
+				<a href="https://www.nsf.gov/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/nsf.png" alt="NSF" style = "margin:8px 15px 5px 5px;width:70px;height70px;float:right;">
+				</a>
+				<a href="http://spatial.ucr.edu/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/CGS_logo.png" alt="CGS" style = "margin:5px 10px 0px 0px;width:100px;height:70px;float:right;">
+				</a>
+
+</div>
+
+
+
+<h3 style="text-align: center;"><strong>Documentation for&nbsp;Rank Path module in Web-STARS</strong></h3>
+<p style="text-align: center;"><strong>( The Web Application URL:&nbsp;<a href="http://sarasen.asuscomm.com/RankPath">http://sarasen.asuscomm.com/RankPath</a> )</strong></p>
+<p style="text-align: center;">Developers: <a href="http://spatial.ucr.edu/peopleHan.html" target="_blank" rel="noopener">Su Han</a>, <a href="http://spatial.ucr.edu/peopleRey.html" target="_blank" rel="noopener">Sergio Rey</a>, <a href="http://spatial.ucr.edu/peopleKang.html" target="_blank" rel="noopener">Wei Kang</a>, <a href="http://spatial.ucr.edu/peopleKnaap.html" target="_blank" rel="noopener">Elijah Knaap</a>, <a href="http://spatial.ucr.edu/peopleCortes.html" target="_blank" rel="noopener">Renan Xavier Cortes</a></p>
+<p style="text-align: left;"><strong>Overview</strong></p>
+<ul>
+<li>This prototype currently visualizes per capita income relative to national average(PCR) from 1929 to 2009. But the Rank Path can be used to visualize any spatio-temporal data such as mortality data. Users will be able to upload and visualize their own data in the final product.</li>
+<li><strong>Rank</strong> is a relative standing or position among the values of data. For example, the richest state is the first rank, the second richest state is the second rank, and the third richest state is the third rank, the poorest state is the last rank,&nbsp;and so on.&nbsp;</li>
+<li><strong>Rank Path</strong> visualization works in the following way: The <strong>firs</strong><strong>t</strong> <strong>e</strong><strong>dge</strong> starts at the centroid of the state that held that rank in the <strong>first</strong><strong> period</strong>, and the&nbsp;<strong>first</strong> <strong>edge</strong> ends at the centroid of the state that held that rank in the <strong>second</strong> <strong>period</strong>. The <strong>second</strong> <strong>edge</strong> begins at the centroid of the state that held the rank in the <strong>second</strong> <strong>period</strong> and the&nbsp;<strong>second</strong> <strong>edge</strong> ends at the centroid of the state that held that rank at the <strong>third</strong> <strong>period</strong>. and so on. The area (i.e. state) of the selected rank is represented as a circle on the map. The size of circle&nbsp;gets bigger every time when the same state gets the same rank across time.&nbsp;</li>
+<li style="text-align: left;">Rank Path gives a new insight&nbsp;into economic mobility and income inequality, which could not be revealed by the conventional mappings and plots.&nbsp;</li>
+</ul>
+</br>
+<p><strong>Functions</strong></p>
+<ul>
+<li><strong>Basic Functions</strong>
+<ul>
+<li>It is first required to check particular ranks among 48 ranks (each 48 rank for respective 48 states is available).</li>
+<li>When multiple rank paths are visualized, the path of the same rank is presented in the same color, and the destination of each movement is represented in the less transparent circle. however, when the only one rank path is visualized, the origin is represented in red and the destination is represented in green.</li>
+<li>"Draw All" button visualizes the selected rank paths, all at once.</li>
+<li>"Animation Auto" button visualizes the spatiotemporal pattern of where each selected rank moved from and to at each year. The thicker edges represent the more recent movement of rank.</li>
+<li>"Animation Manually" button draws the movement of each rank for each year one-by-one.</li>
+</ul>
+</li>
+</ul>
+
+<li><strong>Functions for Advanced Filtering</strong>
+<ul>
+<li>&nbsp;Rank Path can be filtered by places and the distribution.
+<ul>
+<li>Filtering by states can be done by selecting a group of states on the top-right map.</li>
+<li>Filtering by the distribution can be done by selecting the range on the bottom-left plot representing kernel density estimation.</li>
+</ul>
+</li>
+</ul>
+</li>
+</br></br>
+
+<strong>Use Cases</strong>
+</br></br>
+&nbsp;&nbsp;&nbsp;In the example use cases below, a scenario features Sue, a researcher who examines economic mobility and income inequality in spatial and temporal perspectives with the income data(PCR) from 1929 to 2009 at state level.
+
+
+<ul>
+<li><strong>USE CASE 1</strong>: Sue checked 45th Rank to see a single rank path of income and ran the animation while thinking that 45th ranked state is a relatively low-income state among 48 ranks. And she found that the 45th rank path started from Alabama, stayed in the southern U.S. until 1985, but it tends to move to the states such as Montana, Idaho, Utah,&nbsp;and New Mexico in the western U.S after 1986. She also found that Alabama, South Carolina,&nbsp;and Kansas are the three states that have the top three biggest number of 45th ranks. (see the video below for demo)
+<ul>
+<li><video controls="controls" width="500" height="350">
+<source src="http://sarasen.asuscomm.com/RankPath/images/USECASE_1.mp4" type="video/mp4" /></video></li>
+</ul>
+</li>
+<li><strong>USE CASE 2</strong>: Sue checked 1st, 17th and 48th rank to compare the rank paths between the three, and ran the animation. She found that the movement of the 1st rank tends to have west-east direction. Connecticut, New York, Washington DC in the&nbsp;east side of the U.S., and Neveda&nbsp;in the western U.S. are the states that are likely to have the first rank (the richest state). She also found that Mississipi has been the most poorest state from 1929 to 2009 excepting the two different years at 1929 and 1933, and 17th rank, which is the rank relatively in the middle shows much more spatially diverse movements than the path of the 1st and the last rank. At this stage, she also found that Florida is the only state where the path of 17th rank passes and it is relatively rich state among the South. (see the video below for demo)
+<ul>
+<li><video controls="controls" width="500" height="350">
+<source src="http://sarasen.asuscomm.com/RankPath/images/USECASE_2.mp4" type="video/mp4" /></video></li>
+</ul>
+</li>
+<li><strong>USE CASE 3</strong>: Now Sue is only interested in looking at the rank path in some of states belonging to the Southern U.S. So she selected 10 states that she is interested in the South by using a lasso tool on the top-right map. Once she changed the focus of the map to the South, she was interested in looking at the rank path of the richest state and the poor state across time. Since she already knew that Mississippi is one of the poorest states that does not change much over time in the previous step, this time she picked 9th rank, which is the second poorest state among the 10 states that she selected. So she checked the 1st and 9th rank, ran the animation, and examined the spatiotemporal patterns of the two selected rank paths. She found that among the 10 states in the South, Florida used to be the richest state and is likely to move to Virginia as time passes. The rank path of 9th rank was moving between Alabama and South Carolina until 1982, and moved to West Virginia in 1983. (See the video below for demo)
+<ul>
+<li><video controls="controls" width="500" height="350">
+<source src="http://sarasen.asuscomm.com/RankPath/images/USECASE_3.mp4" type="video/mp4" /></video></li>
+</ul>
+</li>
+<li><strong>USE CASE 4</strong>: This time Sue wanted to examine the rank path among the states where PCR is higher than 1 and less than 1.5. This range means the relatively high income states but excludes some of rich states. In this case, she used the kernel density estimation plot on the bottom-right to select the states within the range, and explored the rank paths within the selected states. (see the video below for demo)
+<ul>
+<li><video controls="controls" width="500" height="350">
+<source src="http://sarasen.asuscomm.com/RankPath/images/USECASE_4.mp4" type="video/mp4" /></video></li>
+</ul>
+</li>
+</ul>
+
+</ul>
+
+
+</body>

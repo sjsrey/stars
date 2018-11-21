@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Rank Path</title>
+
+  <link rel="stylesheet" href="LIB/jquery-ui-1.12.1.custom/jquery-ui.css">
+  <link rel="stylesheet" href="LIB/leaflet/leaflet.css" />
+  <style>
+	* { margin: 0; padding: 0; }
+	html, body { height: 100%; }
+	#ajaxBusy {
+		display: none;
+		margin: 0px 0px 0px -50px; /* left margin is half width of the div, to centre it */
+		padding: 30px 10px 10px 10px;
+		position: absolute;
+		left: 30%;
+		top: 325px;
+		width: 500px;
+		height: 500px;
+		text-align: center;
+		background-color:#9ACD32;
+		//background: #e8e8e8 url(images/ajax_loader_blue_350.gif) no-repeat center center;
+		background: url(images/ajax_loader_blue_350.gif) no-repeat center center;
+		border: 0px solid #000;
+	}
+	.clearfix:after { contnt:"."; display:block; visibility:hidden; height:0; clear:both; }
+	.clearfix { display: inline-block; }
+	.rank-checkbox { width:100px; }
+	.triangle-button {
+		width: 30px;
+		height: 25px;
+		color: blue;
+		background-color: yellow;
+	}
+	#custom-handle {
+		width: 4em;
+		height: 1.6em;
+		top: 50%;
+		margin-top: -.8em;
+		text-align: center;
+		line-height: 1.6em;
+		font-weight: 700;
+		color: blue;
+		background-color: yellow;
+	}
+	#Leaflet_map {
+		width: 1400px;
+		height: 830px;
+	}
+	.chartArea { width: 600px; height: 400px; border: 1px solid gray; 
+		margin-left: 10px;
+		//margin-bottom: 15px;
+	}
+	
+		div.scroll {
+			width:660px;
+			height:400px;
+			overflow:auto;
+		
+		}		
+		
+		#alertBox {
+			
+			position:relative;
+			width:700px;
+			min-height:100px;
+			margin-top:80px;
+			border:1px solid #666;
+			background-color:#fff;
+			background-repeat:no-repeat;
+			background-position:20px 30px;
+		}
+		
+		#modalContainer > #alertBox {
+			position:fixed;
+		}
+		
+		#alertBox h1 {
+			margin:0;
+			font:bold 0.9em verdana,arial;
+			background-color:#3073BB;
+			color:#FFF;
+			border-bottom:1px solid #000;
+			padding:4px 0px 5px 5px;
+		}
+		
+		#alertBox p {
+			font:0.7em verdana,arial;
+			overflow: auto;
+			min-height:200px;
+			max-height:200px;
+			padding-left:5px;
+			margin-left:10px;
+			padding-right:5px;
+			margin-right:10px;
+			padding-top:0px;
+			margin-top:0px;				
+		}
+		
+		#alertBox #closeBtn {
+			display:block;
+			position:absolute;
+			width: 383px;
+			//float:center;
+			left:140px;
+			top: 200px;
+			//margin:15px auto;
+			//padding:7px;
+			border:0 none;
+			font:0.7em verdana,arial;
+			text-transform:uppercase;
+			text-align:center;
+			color:#FFF;
+			background-color:#357EBD;
+			border-radius: 3px;
+			text-decoration:none;
+
+			
+			
+		}
+	
+	
+  </style>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+	<script src="LIB/jQuery/jquery-3.3.1.js"></script>
+	<script src="LIB/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+	<script src="LIB/leaflet/leaflet.js"></script>
+	<script src="LIB/Leaflet.PolylineDecorator-master/dist/leaflet.polylineDecorator.js"></script>
+
+	<script src="LIB/plotly.js v1.39.4/plotly.min.js"></script>
+	<script type="text/javascript" src="LIB/pyextjs-0.1.2/package/dist/ss.js"></script>
+	<script type="text/javascript" src="LIB/pyextjs-0.1.2/package/dist/Numpy.js"></script>
+	<script type="text/javascript" src="LIB/pyextjs-0.1.2/package/dist/PolySolve.js"></script>
+	<script type="text/javascript" src="LIB/pyextjs-0.1.2/package/dist/Scipy.js"></script>
+	<script type="text/javascript" src="LIB/science.js-master/science.v1.min.js"></script>
+	
+	<script src="js/US_geojson.js"></script>
+</head>
+
+<body style ="font-family:Arial, Helvetica, sans-serif;">
+<div style="background-color:#3366ff ;height:80px">
+	<a  target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+			<img src="images/STARS_LOGO.png" alt="STARS" style = "margin:5px 5px 5px 5px;width:130px;height:80px;float:left;">
+	</a>
+	<div style = "margin:15px 0px 0px 0px;float:left;">
+		<font size="6" color="#ccd9ff"> &nbsp;&nbsp;&nbsp; Space-Time Analysis of Regional Systems (STARS) :</font> 
+		<font size="6" color="white"><strong>  Rank Path  </strong> </font> 
+	</div>
+				<a href="https://www.ucr.edu/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/UCR-logo-2.png" alt="UCR" style = "margin:5px 0px 0px 0px;width:80px;height:60px;float:right;">
+				</a>	
+				<a href="https://www.nsf.gov/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/nsf.png" alt="NSF" style = "margin:8px 15px 5px 5px;width:70px;height70px;float:right;">
+				</a>
+				<a href="http://spatial.ucr.edu/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/CGS_logo.png" alt="CGS" style = "margin:5px 10px 0px 0px;width:100px;height:70px;float:right;">
+				</a>
+
+</div>
+	</br></br>
+	<div>
+		<h3>Please select the rank &nbsp (1st: richest, 48th: poorest) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href= "intro.html" target="_blank">Click to See User Documents</a></h3> 
+		<br>
+		<table id="rank_checkboxes"></table>
+		<br>
+		<span style="margin-left:100px;"><i>The path of the selected rank will be drawn as time increases.</i></span>
+	</div>
+	<br>
+	<div>	
+		<!--div style="margin-right:5px; float:left;">
+			<button id="year-refresh" class="triangle-button rectangle-button">■</button>
+		</div-->
+		<div style="margin-left:100px; margin-right:30px; float:left;">
+			<button id="from_year_left" class="triangle-button">◀</button>
+			<span id="from_year">1987</span>
+			<button id="from_year_right" class="triangle-button">▶</button>
+		</div>
+		<div id="slider" style="margin-top:7px; width:800px; float:left;">
+			<div id="slider_range" class="slider-range"></div>
+		</div>
+		<div style="margin-right:30px; margin-left:30px; float:left;">
+			<button id="to_year_left" class="triangle-button">◀</button>
+			<span id="to_year">1987</span>
+			<button id="to_year_right" class="triangle-button">▶</button>
+		</div>
+		<div id="amount" style="margin-right:30px; float:left;" hidden>test</div>
+	</div>
+	<br><br>
+	<div hidden>
+		<!--span id="year" style="margin-left:95px;"></span-->
+		<span id="state1" style="margin-left:40px;"></span>
+		<span id="state2" style="margin-left:40px;"></span>
+		<span id="state3" style="margin-left:40px;"></b></span>
+		<span id="state4" style="margin-left:40px;"></span>
+	</div>
+	
+	<br>
+	<div>
+		<div style="margin-left:5px; margin-right:30px; float:left;">
+			<input type="button" id="draw_once" value=" Draw All "></button>
+		</div>
+		<div style="margin-right:30px; float:left;">
+			<input type="button" id="auto_button" value=" Animation Auto "></button>
+		</div>
+		<div style="margin-right:930px; float:left;">
+			<input type="button" id="manual_button" value=" Animation Manually "></button>
+		</div>
+		<div style="width:200px; margin-right:360px; float:left;">
+			<sapn>&nbsp;</span>
+			<sapn id="year" style="font-size: x-large;"></span>
+		</div>
+		<div id="Reset_allCharts" style="margin-right:0px; float:left;">
+			<!--button id="year-refresh">Reset all charts to 1929</button-->
+		</div>
+	</div>
+	
+	
+
+	<br>
+	
+	<div style="clear:both;width:2050px">
+		<div class="Leaflet-map" style="margin-left:5px; margin-right:5px; float:left;">
+			<br>
+			<div id="Leaflet_map"></div>
+		</div>
+		<div class="plotly-chart" style="margin-left:0px; margin-right:0px; float:left;">
+			<div id="year_dropdown" style="" align="right"> <sapn>&nbsp;</span> </div>
+			<div id="chart_choropleth" class="chartArea"></div>
+			<div id="state_dropdown" style="" align="right"> <sapn>&nbsp;</span> </div>
+			<div id="chart_density"  class="chartArea"></div>
+		</div>
+	<div>
+
+	
+  
+
+
+<script type="text/javascript">
+//    '#1f77b4',  // muted blue
+//    '#ff7f0e',  // safety orange
+//    '#2ca02c',  // cooked asparagus green
+//    '#d62728',  // brick red
+//    '#9467bd',  // muted purple
+//    '#8c564b',  // chestnut brown
+//    '#e377c2',  // raspberry yogurt pink
+//    '#7f7f7f',  // middle gray
+//    '#bcbd22',  // curry yellow-green
+//    '#17becf'   // blue-teal
+
+// global variable
+app = {
+	map: null,
+	year: null,
+	from_year: null,
+	to_year: null,
+	years: null,
+	chartYear: null,
+	geojson: null,
+	geojsonLayer: null,
+	df_map_pcr: null,
+	lagged_pcr: null,
+	morans: null,
+	rankIdx: null,
+	rank: null,
+	baseYear: 2009,
+	chosenState: null,
+	checked_ranks: [],
+	circles: {},                       // {rank+' '+stateName: {rank: 1, name: "", count: 4, years: [], layer: obj}, ... }
+	lines: [],      // [{rank: 1, from: {name: "", lat: nnn, lon: nnn}, to: ( ... }, lineLayer: obj, arrowLayer: obj}, ...]
+	//grayscale: null,
+	control: null,
+	layerGroups: {},                   // {rank: rank: 1, count: 4, years: [], layer: obj}, ... }
+	//overlays: {},
+	//colors: ['#ff0000', '#ffbf00', '#ffff00', '#40ff00', '#00ffff', '#0000ff', '#ff00ff'],
+	//colors: ['#ff0000', '#0000ff', '#ff00ff', '#40ff00', '#ffbf00', '#00ffff', '#ffff00'],
+	colors: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22'],
+	opacities: [0.3, 0.4, 0.5, 0.6, 1.0],             // 0.8: before last   , 1.0: last
+	//opacities: [0.5, 0.8, 1.0],             // 0.8: before last, 1.0: last
+	//weights: [2.6, 2.7, 2.8, 2.9, 3.3, 3.6],               // 4.0: before last, 5.0: last
+	weights: [2, 2.5, 3, 3.5, 4, 4.5]
+}
+
+		var width = $(window).width();
+		var height = $(window).height();
+
+
+		
+		
+	if (width < 2000) {
+		swal({
+			
+			title: "Attention!",
+			text: "To utilize all functions in this GIS application, the width of your browser has to be over 2000px. If you get this alert, it means that the width of your browser is less than 2000px. Please expand the width of your browser, or decrease the zoom level of your browser. You are not going to get this alert when you load this page with the browser wider than 2000px",
+			icon: "warning",
+			button: "I UNDERSTAND AND PROCEED",		
+		
+		
+		});
+		
+	}
+
+$( document ).ready(function() {
+	// Set up the AJAX indicator
+    $('body').append('<div id="ajaxBusy"><p id="ajaxBusyMsg">Please wait...</p></div>');
+
+    //var map = L.map('map', {
+    //    center: [39.8283, -98.5795],
+    //    zoom: 5,
+    //    layers: [
+    //        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    //            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    //        })
+    //    ]
+    //});
+	
+	app.map = L.map('Leaflet_map').setView([37.8, -96], 5);
+	
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox.light'
+	}).addTo(app.map);
+	
+			
+	//console.log(US_geojson);
+	app.geojson = US_geojson;
+	
+	// set years, year
+	app.years = [];
+	Object.keys(app.geojson.features[0]['properties']).forEach(function(key, idx) {
+		//console.log(key, idx);
+		if (key.length == 5 || key.substring(0,1) == 'y') {
+			app.years.push(key.substring(1) * 1);
+		}
+	});
+	app.year = app.years[0];
+	
+	// re-assign app.geojson from US_geojson
+	geoJsonBuild();
+
+	// set slider
+	$( "#slider_range" ).slider({
+		range: true,
+		min: app.years[0],
+		max: app.years.slice(-1)[0],
+		values: [ app.years[0], app.years[app.years.length-1] ],
+		create: function() {
+			$( "#from_year" ).text($( this ).slider( "values", 0 ));
+			$( "#to_year" ).text($( this ).slider( "values", 1 ));
+			$( "#amount" ).text( $( this ).slider( "values", 0 ) + " ←→ " + $( this ).slider( "values", 1 ) );
+			app.from_year = $( this ).slider( "values", 0 );
+			app.to_year = $( this ).slider( "values", 1 );
+			//app.year = app.from_year - 1;
+		},
+		slide: function( event, ui ) {
+			$( "#from_year" ).text(ui.values[0]);
+			$( "#to_year" ).text(ui.values[1]);
+		},
+		change: function( event, ui ) {
+			//console.log(ui);
+			$( "#from_year" ).text(ui.values[0]);
+			$( "#to_year" ).text(ui.values[1]);
+			$( "#amount" ).text(ui.values[0] + " ←→ " + ui.values[1] );
+			app.from_year = ui.values[0];
+			app.to_year = ui.values[1];
+			removeLayersOnMap(0);
+			//$( "#year" ).html('');
+		},
+    });
+	
+	$( "#from_year_left" ).click(function() {
+		app.from_year -= 1;
+		if (app.from_year < app.years[0]) app.from_year = app.years[0];
+		else {
+			$( "#slider_range" ).slider( "values", 0, app.from_year);
+		}
+	});
+
+	$( "#from_year_right" ).click(function() {
+		app.from_year += 1;
+		if (app.from_year > app.years[app.years.length-1]) app.from_year = app.years[app.years.length-1];
+		else {
+			$( "#slider_range" ).slider( "values", 0, app.from_year);
+		}
+	});
+	
+	$( "#to_year_left" ).click(function() {
+		app.to_year -= 1;
+		if (app.to_year < app.years[0]) app.to_year = app.years[0];
+		else {
+			$( "#slider_range" ).slider( "values", 1, app.to_year);
+		}
+	});
+
+	$( "#to_year_right" ).click(function() {
+		app.to_year += 1;
+		if (app.to_year > app.years[app.years.length-1]) app.to_year = app.years[app.years.length-1];
+		else {
+			$( "#slider_range" ).slider( "values", 1, app.to_year);
+		}
+	});
+	
+	
+	$( "#ajaxBusy" ).show();
+	$.get('../STARS/python/STARS_V2.py', {'fyear': 1929, 'fyear': 2009}, function(msg) {
+		//console.log(msg.length);
+		//console.log(msg);
+
+		// parse JSON from server message
+		var n = msg.indexOf('C:\\Python36\\lib\\site-packages\\pysal\\__init__.py:65:');
+		if (n > 0) msg = msg.substring(0, n);
+		var msg = $.parseJSON(msg);
+		msg['df_map_pcr'] = $.parseJSON(msg['df_map_pcr']);
+		msg['lagged_pcr'] = $.parseJSON(msg['lagged_pcr']);
+		//console.log(msg);
+		
+		// build msg['df_map_pcr']['idx']    ex) {1929: 10, 1930: 11, 1931: 12, ....  }
+		msg['df_map_pcr']['idx'] = {};
+		//msg['years'].forEach(function (year, i) {
+		//	msg['df_map_pcr']['columns'].forEach(function (column, j) {
+		//		if (year.toString() == column) msg['df_map_pcr']['idx'][year] = j;
+		//	});
+		//});
+		msg['df_map_pcr']['columns'].forEach(function (column, j) {
+			msg['df_map_pcr']['idx'][column] = j;
+		});
+		
+		// build msg['lagged_pcr']['idx']    ex) {1929: 0, 1930: 1, 1931: 2, ....     }
+		msg['lagged_pcr']['idx'] = {};
+		msg['years'].forEach(function (year, i) {
+			msg['lagged_pcr']['columns'].forEach(function (column, j) {
+				if (year.toString() == column) msg['lagged_pcr']['idx'][year] = j;
+			});
+		});
+		
+		console.log(msg);
+		//app.year        =  msg['years'][0];
+		//app.years       =  msg['years'];
+		app.df_map_pcr  =  msg['df_map_pcr'];
+		app.lagged_pcr  =  msg['lagged_pcr'];
+		app.morans      =  msg['morans'];
+		app.chartYear   =  app.years[0];
+		
+		// create reset all charts button 
+		var html = '<button id="year_refresh">&nbsp; Refresh all charts to ' + app.chartYear + ' &nbsp;</button>';
+		$( "#Reset_allCharts" ).html(html);	
+		$( "#year_refresh" ).click(function(){
+			removeLayersOnMap(0);
+			geoJsonBuild();
+			paintChoropleth(app.chartYear, {});
+			paintDensity(app.chartYear, {});
+		});
+		
+		// create dropdown list for the chart year of the plotly charts
+		//	<div id="year_dropdown" style="" align="right">
+		//		<span>Chart Year: &nbsp;</span>
+		//		<select id="chartYear">
+		//			<option value="1929">1929</option>
+		//			<option value="1930">1930</option>
+		//			<option value="1931">1931</option>
+		//			<option value="1932">1932</option>
+		//		</select>
+		//	</div>
+		var html = '<span>Chart Year: &nbsp;</span>';
+		html += '<select id="chartYear">';
+		app.years.forEach(function(year, i) {
+			var selected = '';
+			if (year == app.chartYear) selected = ' selected';
+			html += '<option value=' + year + selected + '>' + year + '</option>';
+		});
+		html += '</select>';
+		$( "#year_dropdown" ).html(html);
+		app.chartYear = $( "#chartYear" ).val() * 1;
+		$( "#chartYear" ).change(function() {
+			//var baseYear = this.value;
+			//console.log('baseYear:', baseYear);
+			app.chartYear = this.value * 1;
+			$( "#year_refresh" ).html('&nbsp; Refresh all charts to ' + app.chartYear + ' &nbsp;');
+			paintChoropleth(app.chartYear, {});
+			paintDensity(app.chartYear, {});
+		});
+		
+		// create dropdown list for the states of time path chart
+		//	<div id="state_dropdown" style="text-align:right;">
+		//		State : &nbsp;
+		//		<select id="states">
+		//			<option value="Washington">Washington</option>
+		//			<option value="Montana">Montana</option>
+		//			<option value="Maine">Maine</option>
+		//			<option value="California" selected>California</option>
+		//		</select>
+		//	</div>
+		var stateNames = app.df_map_pcr.data.map(function(o, i) { return [i, o[app.df_map_pcr.idx['Name']]] });
+		stateNames.sort((a, b) => (a[1]<b[1]) ? -1 : +1);            // sort states names by alphabet order
+		//console.log(stateNames)
+		var html = 'State : &nbsp;';
+		html += '<select id="states">';
+		stateNames.forEach(function(theStateName, i) {
+			var stateName = theStateName[1];
+			var selected = '';
+			if (stateName == 'California') selected = ' selected';
+			html += '<option value="' + stateName + '"' + selected + '>' + stateName + '</option>';
+		});
+		html += '</select>';
+		$( "#state_dropdown" ).html(html);
+		app.chosenState = $( "#states" ).val();
+		$( "#states" ).change(function() {
+			var chosenState = this.value;
+			console.log('chosenState:', chosenState);
+			app.chosenState = chosenState;
+			paintDensity(app.chartYear, {chosenState:app.chosenState});
+		});
+		
+		//console.log(app.chartYear, app.years)
+		paintChoropleth(app.chartYear, {});
+		paintDensity(app.chartYear, {});
+
+		$( "#ajaxBusy" ).hide();
+	});
+
+});
+
+
+$( "#manual_button" ).click(function() {
+	console.log(app)
+	//app.year += 1;
+	if ($( "#year" ).text() == '') {
+		$( "#year" ).html('year: <b>' + app.from_year + '</b>');
+		app.year = app.from_year;
+		//console.log(app.year)
+	} else {
+		if (app.year >= app.to_year) {
+			//$( "#year" ).html('');
+			//return;
+			app.year = app.from_year - 1;
+		}
+		app.year += 1;
+		$( "#year" ).html('year: <b>' + app.year + '</b>');
+		//console.log(app.year)
+	}
+	app.chartYear = app.year;
+	$( "#chartYear" ).val(app.chartYear);
+	$( "#year_refresh" ).html('&nbsp; Refresh all charts to ' + app.chartYear + ' &nbsp;');
+	paintChoropleth(app.chartYear, {});
+	paintDensity(app.chartYear, {});
+	
+	app.checked_ranks = [];
+	var checked = $( '#rank_checkboxes [name="rank_checkboxes"]:checked' );
+	$( '#rank_checkboxes [name="rank_checkboxes"]:checked' ).each(function() {
+		if ($(this).val() == 0) return true;
+		//console.log($(this).val())
+		app.checked_ranks.push($(this).val() * 1);
+	});
+	app.checked_ranks.sort((a, b) => a-b);
+	//console.log(app.checked_ranks)
+	
+	//var rank = app.checked_ranks[0];
+	//drawRankPath(app.year, app.checked_ranks[0], 0);
+	//drawRankPath(app.year, app.checked_ranks[1], 1);
+	for (var rnkIdx=0; rnkIdx<app.checked_ranks.length; rnkIdx++) {
+		drawRankPath(app.year, app.checked_ranks[rnkIdx], rnkIdx);
+	}
+});
+
+
+$( "#auto_button" ).click(function() {
+	console.log("auto_button", app)
+	if ($( "#auto_button" ).val() == ' Animation Auto ') $( "#auto_button" ).val(' Animation Stop ')
+	else {
+		$( "#auto_button" ).val(' Animation Auto ');
+		return;
+	}
+	
+	var animationInterval = setInterval(function () {
+		if ($( "#year" ).text() == '') {
+			$( "#year" ).html('year: <b>' + app.from_year + '</b>');
+			app.year = app.from_year;
+			//console.log(app.year)
+		} else {
+			if (app.year >= app.to_year) {
+				app.year = app.from_year - 1;
+			}
+			app.year += 1;
+			$( "#year" ).html('year: <b>' + app.year + '</b>');
+			//console.log(app.year)
+		}
+		app.chartYear = app.year;
+		$( "#chartYear" ).val(app.chartYear);
+		$( "#year_refresh" ).html('&nbsp; Refresh all charts to ' + app.chartYear + ' &nbsp;');
+		paintChoropleth(app.chartYear, {});
+		paintDensity(app.chartYear, {});
+
+		app.checked_ranks = [];
+		var checked = $( '#rank_checkboxes [name="rank_checkboxes"]:checked' );
+		$( '#rank_checkboxes [name="rank_checkboxes"]:checked' ).each(function() {
+			if ($(this).val() == 0) return true;
+			//console.log($(this).val())
+			app.checked_ranks.push($(this).val() * 1);
+		});
+		app.checked_ranks.sort((a, b) => a-b);
+		//console.log(app.checked_ranks)
+		
+		for (var rnkIdx=0; rnkIdx<app.checked_ranks.length; rnkIdx++) {
+			drawRankPath(app.year, app.checked_ranks[rnkIdx], rnkIdx);
+		}
+		if (app.year >= app.to_year || $( "#auto_button" ).val() == ' Animation Auto ') {
+			clearInterval(animationInterval);
+			$( "#auto_button" ).val(' Animation Auto ');
+		}
+	}, 100); 
+});
+
+
+$( "#draw_once" ).click(function() {
+	console.log("draw_once", app)
+	
+	app.year = app.to_year;
+	$( "#year" ).html('year: <b>' + app.year + '</b>');
+
+	app.chartYear = app.year;
+	$( "#chartYear" ).val(app.chartYear);
+	$( "#year_refresh" ).html('&nbsp; Refresh all charts to ' + app.chartYear + ' &nbsp;');
+	paintChoropleth(app.chartYear, {});
+	paintDensity(app.chartYear, {});
+
+	app.checked_ranks = [];
+	var checked = $( '#rank_checkboxes [name="rank_checkboxes"]:checked' );
+	$( '#rank_checkboxes [name="rank_checkboxes"]:checked' ).each(function() {
+		if ($(this).val() == 0) return true;
+		//console.log($(this).val())
+		app.checked_ranks.push($(this).val() * 1);
+	});
+	app.checked_ranks.sort((a, b) => a-b);
+	//console.log(app.checked_ranks)
+	
+	for (var rnkIdx=0; rnkIdx<app.checked_ranks.length; rnkIdx++) {
+		drawRankPath(app.year, app.checked_ranks[rnkIdx], rnkIdx);
+	}
+	
+	console.log($( "#chart_density" ).val());
+});
+
+
+function drawRankPath(year, rank, chkIdx) {
+	//console.log('drawRankPath', 'year:', year, 'rank:', rank);
+	var f = app.ranks[year][rank-1];
+	var feature = app.geojson.features[f];
+	var stateName = feature.properties['STATE_NAME'];
+	var lat = feature.properties['lat'];
+	var lon = feature.properties['lon'];
+	var value = feature.properties['y'+year];
+	//console.log('drawRankPath', 'year:', year, 'rank:', rank, stateName, lat, lon, value);
+	
+	if (chkIdx < 4) {
+		var repeat = '';
+		if (year > app.from_year) {
+			var last_f = app.ranks[year-1][rank-1];
+			var last_feature = app.geojson.features[last_f];
+			var last_stateName = last_feature.properties['STATE_NAME'];
+			if (stateName == last_stateName) repeat = ' (repeat)';
+		}
+		$( '#state'+(chkIdx+1) ).html(get_OrdinalNumber(rank)+': <b>'+ stateName + '</b>' + repeat);
+	}
+	
+	//app.circles = {};    // {rank+' '+stateName: {rank: 1, name: "", count: 4, years: [], layer: obj},
+	//app.lines = []       // [{rank: 1, from: {name: "", lat: nnn, lon: nnn}, to: ( ... }, lineLayer: obj, arrowLayer: obj}, ...]
+	//layerGropus: {},     // {rank: rank: 1, year: 1929, layer: obj}, ... }
+	removeLayersOnMap(rank);                                         // remove layers from the map
+	
+	// count the lines to be drawn from the start year to the end.
+	var nLinestoDraw = 0;
+	var nLinesDrawn = 0;
+	for (var iYear=app.from_year; iYear<=year; iYear++) {
+		var the_f = app.ranks[iYear][rank-1];
+		var the_feature = app.geojson.features[the_f];
+		var the_stateName = the_feature.properties['STATE_NAME'];
+		var the_lat = the_feature.properties['lat'];
+		var the_lon = the_feature.properties['lon'];
+		var the_value = the_feature.properties['y'+iYear];
+	
+		if (iYear != year) {
+			var next_f = app.ranks[iYear+1][rank-1];
+			var next_feature = app.geojson.features[next_f];
+			var next_stateName = next_feature.properties['STATE_NAME'];
+			var next_lat = next_feature.properties['lat'];
+			var next_lon = next_feature.properties['lon'];
+			var next_value = next_feature.properties['y'+iYear];
+			if (the_stateName != next_stateName) {
+				//console.log("---- draw the line :", the_stateName, ' -> ', next_stateName, 
+				//			'    app.lines.length:', app.lines.length, app.lines);
+				
+				// logic to determine if a line needs to be drawn or not
+				// do not draw the same line from next year to the end.
+				var valid_line = true;
+				//console.log('iYear:', iYear+'->'+(iYear+1), '    --------------------------');
+				for (var jYear=iYear+1; jYear<year; jYear++) {
+					//if (jYear >= app.to_year) continue;
+					var name = app.geojson.features[app.ranks[jYear][rank-1]].properties['STATE_NAME'];
+					var next_name = app.geojson.features[app.ranks[jYear+1][rank-1]].properties['STATE_NAME'];
+					//console.log('iYear:', iYear+'->'+(iYear+1), the_stateName+' -> '+next_stateName, 
+					//		'    jYear:', jYear+'->'+(jYear+1), name+' -> '+next_name);
+					if (name == the_stateName && next_name == next_stateName) {
+						valid_line = false;
+						break;
+					}
+				}
+				if (valid_line) nLinestoDraw += 1;
+			}
+		}
+	}
+	//console.log('nLinestoDraw:', nLinestoDraw);
+	
+	// build the opacity list for the lines to draw
+	var opacities_line = Array(nLinestoDraw).fill(app.opacities[app.opacities.length-1]);
+	if (opacities_line.length > 1) opacities_line[opacities_line.length-2] = app.opacities[app.opacities.length-2];
+	for (var i=0; i<opacities_line.length-2; i++) {
+		var p = parseInt(i/Math.ceil((opacities_line.length-2)/(app.opacities.length-2)));      // p -> Index of opacityList
+		//console.log(p, i, (opacities_line.length-2), (app.opacities.length-2))
+		opacities_line[i] = app.opacities[p];
+	}
+	//console.log('opacities_line:', opacities_line);
+	
+	app.weights
+	// build the weight list for the lines to draw
+	var weights_line = Array(nLinestoDraw).fill(app.weights[app.weights.length-1]);
+	if (weights_line.length > 1) weights_line[weights_line.length-2] = app.weights[app.weights.length-2];
+	for (var i=0; i<weights_line.length-2; i++) {
+		var p = parseInt(i/Math.ceil((weights_line.length-2)/(app.weights.length-2)));      // p -> Index of opacityList
+		//console.log(p, i, (weights_line.length-2), (app.weights.length-2))
+		weights_line[i] = app.weights[p];
+	}
+	//console.log('weights_line:', weights_line);
+	
+	// draw circles and lines from the start year to the end
+	var layerGroup = null;
+	for (var iYear=app.from_year; iYear<=year; iYear++) {
+		var the_f = app.ranks[iYear][rank-1];
+		var the_feature = app.geojson.features[the_f];
+		var the_stateName = the_feature.properties['STATE_NAME'];
+		var the_lat = the_feature.properties['lat'];
+		var the_lon = the_feature.properties['lon'];
+		var the_value = the_feature.properties['y'+iYear];
+		//if (the_stateName in states) states[the_stateName] += ', ' + iYear.toString();
+		//else states[the_stateName] = iYear.toString();
+		
+		if (rank in app.layerGroups) {
+			layerGroup = app.layerGroups[rank];
+			//layerGroup.layer = new L.LayerGroup();
+		} else {
+			layerGroup = {rank: rank, year: iYear, layer: new L.LayerGroup()};
+		}
+	
+		var key = rank+' '+the_stateName;
+		if (key in app.circles) {
+			//app.map.removeLayer(app.circles[key].layer);
+			var count = app.circles[key].count + 1;
+			var years = Array.from(app.circles[key].years);
+			years.push(iYear);
+			//console.log(iYear, 'app.circles[key].years:', app.circles[key].years, 'years:', years);
+			app.circles[key] = {rank: rank, name:the_stateName, count:count, years: years, layer:null};
+		} else {
+			app.circles[key] = {rank: rank, name:the_stateName, count:1, years: [iYear], layer:null};
+			//console.log('app.circles[key].years:', app.circles[key].years);
+		}
+		
+		// logic to determine if a circle needs to be drawn or not
+		// do not draw the same circle from next year to the end.
+		var valid_circle = true;
+		//console.log('iYear:', iYear, '    --------------------------');
+		for (var jYear=iYear+1; jYear<=year; jYear++) {
+			var name = app.geojson.features[app.ranks[jYear][rank-1]].properties['STATE_NAME'];
+			//console.log('iYear:', iYear, the_stateName, '    jYear:', jYear, name);
+			if (name == the_stateName) {
+				valid_circle = false;
+				break;
+			}
+		}
+		//console.log('iYear:', iYear, the_stateName, '    valid_circle:', valid_circle);
+		
+		if (valid_circle) {			
+			var years_message = '';
+			if (app.circles[key].count >= 2) years_message += '['+app.circles[key].count+'] ';
+			years_message += app.circles[key].years[0];
+			var c = 0;                                                   // counter for consecutive year
+			for (var i=1; i<app.circles[key].count; i++) {
+				//var last_year = years_message.substring(years_message.length-4);
+				var last_year = app.circles[key].years[i-1];
+				var the_year = app.circles[key].years[i];
+				//if (the_year == last_year+1) years_message.substring(years_message.length-4) = the_year;
+				if (the_year == last_year+1) {
+					c += 1;
+					//years_message.substring(years_message.length-4) = the_year;
+					//years_message += '-' + the_year;
+					if (c <= 1) years_message += '-' + the_year;
+					else years_message = years_message.substring(0, years_message.length-4) + the_year;
+				}
+				else {
+					years_message += ', ' + the_year;
+					c = 0;
+				}
+			}
+			//console.log('years_message:',years_message);
+			
+			// change the colour if the next state not equal this state
+			var color_circle = 'green';
+			var opacity_circle = 0.4;
+			if (app.checked_ranks.length > 1) color_circle = app.colors[chkIdx % app.colors.length];
+			if (iYear != year) {
+				var next_f = app.ranks[iYear+1][rank-1];
+				var next_feature = app.geojson.features[next_f];
+				var next_stateName = next_feature.properties['STATE_NAME'];
+				if (the_stateName != next_stateName) {
+					color_circle = 'red';
+					opacity_circle = 0.1;
+					if (app.checked_ranks.length > 1) {
+						color_circle = app.colors[chkIdx % app.colors.length];
+					}
+				}
+			}
+		
+			var radius = 40000 + app.circles[key].count * 5000;
+			var circle = L.circle([the_lat, the_lon], {
+				radius: radius,
+				color: color_circle,
+				fillColor: color_circle,
+				fillOpacity: opacity_circle
+			}).bindPopup(get_OrdinalNumber(rank) + ': ' + the_stateName + '<br>' + years_message);
+			
+			app.circles[key]['layer'] = circle;
+			//app.map.addLayer(circle);
+	
+			layerGroup.layer.addLayer(circle);
+		}
+	
+		// draw the line if the next state not equal this state
+		if (iYear != year) {
+			var next_f = app.ranks[iYear+1][rank-1];
+			var next_feature = app.geojson.features[next_f];
+			var next_stateName = next_feature.properties['STATE_NAME'];
+			var next_lat = next_feature.properties['lat'];
+			var next_lon = next_feature.properties['lon'];
+			var next_value = next_feature.properties['y'+iYear];
+			if (the_stateName != next_stateName) {
+				//console.log("---- draw the line :", the_stateName, ' -> ', next_stateName, 
+				//			'    app.lines.length:', app.lines.length, app.lines);
+				
+				// logic to determine if a line needs to be drawn or not
+				// do not draw the same line from next year to the end.
+				var valid_line = true;
+				//console.log('iYear:', iYear+'->'+(iYear+1), '    --------------------------');
+				for (var jYear=iYear+1; jYear<year; jYear++) {
+					if (jYear >= app.to_year) continue;
+					var name = app.geojson.features[app.ranks[jYear][rank-1]].properties['STATE_NAME'];
+					var next_name = app.geojson.features[app.ranks[jYear+1][rank-1]].properties['STATE_NAME'];
+					//console.log('iYear:', iYear+'->'+(iYear+1), the_stateName+' -> '+next_stateName, 
+					//		'    jYear:', jYear+'->'+(jYear+1), name+' -> '+next_name);
+					if (name == the_stateName && next_name == next_stateName) {
+						valid_line = false;
+						break;
+					}
+				}
+				//console.log('iYear:', iYear+'->'+(iYear+1), the_stateName+' -> '+next_stateName, '    valid_line:', valid_line);
+
+				if (valid_line) {				
+					var theline = { x1: the_lat, y1: the_lon, x2: next_lat, y2: next_lon };
+					var coords = getTwoLines(theline, 15, 0.7)[0];       // set only array[0] of return value
+					
+					var color_line = '#3388ff';
+					//var opacity_line = 0.4;
+					var opacity_line = opacities_line[nLinesDrawn];
+					var weight_line = weights_line[nLinesDrawn];
+					if (app.checked_ranks.length > 1) color_line = app.colors[chkIdx % app.colors.length];
+					var line = L.polyline([[coords.x1, coords.y1], [coords.x2, coords.y2]], {
+								color: color_line,
+								opacity: opacity_line,
+								weight:  weight_line,
+								//weight: 5,
+							}).bindPopup(get_OrdinalNumber(rank) + ': ' + the_stateName + ' → ' + next_stateName + '<br>' +
+										' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' + iYear + ' → ' + (iYear+1));
+					var arrowHead = L.polylineDecorator(line, {
+						patterns: [
+							{offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 10, polygon: false, 
+							pathOptions: {
+								color: color_line, 
+								opacity: opacity_line,
+								weight:  weight_line,
+								stroke: true}})}
+						]
+					});
+	
+					app.lines.push({
+						rank: rank,
+						from: {name: the_stateName, lat: coords.x1, lon: coords.y1},
+						to: {name:  next_stateName, lat: coords.x2, lon: coords.y2},
+						lineLayer: line,
+						arrowLayer: arrowHead,
+					});
+					
+					nLinesDrawn += 1;
+					layerGroup.layer.addLayer(line);
+					layerGroup.layer.addLayer(arrowHead);
+				}
+			}
+		}
+
+		app.layerGroups[rank] = layerGroup;
+		//console.log(app.circles);
+	}
+	if (nLinestoDraw != nLinesDrawn) console.log('not match    nLinestoDraw:', nLinestoDraw, '    nLinesDrawn:', nLinesDrawn);
+
+	var overlays = {};
+	$.each(app.layerGroups, function(key, layerGroup) {
+		//console.log(key, layerGroup)
+		//overlays[get_OrdinalNumber(rank)] = layerGroup.layer;
+		//var the_f = app.ranks[iYear][rank-1];
+		//var the_feature = app.geojson.features[the_f];
+		//var the_stateName = the_feature.properties['STATE_NAME'];
+		var color = (app.checked_ranks.length > 1) ? app.colors[getRankIndex(layerGroup.rank) % app.colors.length] : 'green';
+		var name = app.geojson.features[app.ranks[year][layerGroup.rank-1]].properties['STATE_NAME'];
+		//overlays['&nbsp; ~'+year+'&nbsp; '+get_OrdinalNumber(layerGroup.rank)+': '+name] = layerGroup.layer;
+		var legend = '<i style="background-color:'+color+'; opacity: 0.8;"> &nbsp; &nbsp; &nbsp; </i>';
+		//var legend = '<font color="red">1st</font>';
+		overlays[legend+'&nbsp; '+get_OrdinalNumber(layerGroup.rank)+': '+name] = layerGroup.layer;
+		app.map.addLayer(layerGroup.layer);
+	});
+	//console.log(overlays);
+
+	app.control = L.control.layers({}, overlays, {collapsed: true});
+	app.map.addControl(app.control);
+}
+
+
+function getRankIndex(rank) {
+	for (var i=0; i<app.checked_ranks.length; i++) {
+		//console.log('rank:', rank, i, app.checked_ranks[i])
+		if (app.checked_ranks[i] == rank) return i;
+	}
+	return -1;
+}
+
+
+// remove the layers on the map and clear global variable
+// @rank: specific rank like as 1, 2, 3 ... but zero means all ranks 
+// app.circles = {};    // {rank+' '+stateName: {rank: 1, name: "", count: 4, years: [], layer: obj},
+// app.lines = []       // [{rank: 1, from: {name: "", lat: nnn, lon: nnn}, to: ( ... }, lineLayer: obj, arrowLayer: obj}, ...]
+// app.layerGropus: {},     // {rank: rank: 1, year: 1929, layer: obj}, ... }
+function removeLayersOnMap(rank) {
+	// remove circles layers for the rank
+	$.each(app.circles, function(key, circle) {
+		if (rank == 0 || circle.rank == rank) {
+			app.map.removeLayer(circle.layer);
+		}		
+	});
+	
+	// remove lines layers for the rank
+	$.each(app.lines, function(index, line) {
+		if (rank == 0 || line.rank == rank) {
+			app.map.removeLayer(line.lineLayer);
+			app.map.removeLayer(line.arrowLayer);
+		}
+	});
+	
+	// remove layer group for the rank
+	$.each(app.layerGroups, function(key, layerGroup) {
+		if (rank == 0 || layerGroup.rank == rank) {
+			app.map.removeLayer(layerGroup.layer);
+		}		
+	});
+	
+	// remove entry of the rank in app.circles
+	var save_circles = {};
+	$.each(app.circles, function(key, circle) {
+		if (rank != 0 && circle.rank != rank) {
+			save_circles[key] = circle;
+		}		
+	});
+	app.circles = save_circles;
+	//console.log('After remove', app.circles);
+	
+	// remove entry of the rank in app.lines
+	var save_lines = [];
+	$.each(app.lines, function(index, line) {
+		if (rank != 0 && line.rank != rank) {
+			save_lines.push(line);
+		}
+	});
+	app.lines = save_lines;
+	//console.log('After remove', app.lines);
+	
+	// remove entry of the rank in app.layerGroups
+	var save_layerGroups = {};
+	$.each(app.layerGroups, function(key, layerGroup) {
+		if (rank != 0 && layerGroup.rank != rank) {
+			save_layerGroups[key] = layerGroup;
+		}		
+	});
+	app.layerGroups = save_layerGroups;
+	//console.log('After remove', app.layerGroups);
+	
+	if (app.control) app.map.removeControl(app.control);
+	
+	if (rank == 0) $( "#year" ).html('');
+}
+
+function clearSubtitles(rank) { 
+	var htmls = [];
+	for (var i=1; i<=4; i++) {
+		//console.log($( '#state'+i ).html());
+		if (rank != 0 && (!$( '#state'+i ).html().startsWith(get_OrdinalNumber(rank)))) {
+			htmls.push($( '#state'+i ).html());
+		}
+		$( '#state'+i ).html("");
+	}
+	$.each(htmls, function(index, html) {
+		htmls.push($( '#state'+(index+1) ).html(html));
+	});
+	
+	if (rank == 0) {
+		$( "#year" ).text("");
+	}
+}
+
+
+// return two lines from a line
+// @line: connect the center coordinates of the states
+// @d: degrees
+// @r: radius of the circle
+function getTwoLines(line, d, r) {
+	var lines = [null, null];
+
+	var the_opposite_side;
+	
+	if (line.x1 <= line.x2) the_opposite_side = 0;
+	else                    the_opposite_side = 180;
+	var marker11 = getOnePoint(line, d+the_opposite_side, r, 1);
+	var marker12 = getLineSymmetry(line, marker11);
+	
+	if (line.x2 <= line.x1) the_opposite_side = 0;
+	else                    the_opposite_side = 180;
+	var marker21 = getOnePoint(line, d+the_opposite_side, r, 2);
+	var marker22 = getLineSymmetry(line, marker21);
+	
+	lines[0] = { x1: marker11.x, y1: marker11.y, x2: marker22.x, y2: marker22.y };
+	lines[1] = { x1: marker21.x, y1: marker21.y, x2: marker12.x, y2: marker12.y };
+	
+	return lines;
+	
+	function getOnePoint(line, d, r, p) {	
+		var m = (line.y2 - line.y1) / (line.x2 - line.x1);
+		var mDegrees = Math.atan(m) * 180 / Math.PI;
+		
+		var degrees = mDegrees + d;
+		var radian = degrees * Math.PI / 180;
+		
+		var a = Math.cos(radian) * r;
+		var b = Math.sin(radian) * r;
+		
+		if (p == 1) return { x: line.x1+a, y: line.y1+b };
+		if (p == 2) return { x: line.x2+a, y: line.y2+b };
+	}
+	
+	function getLineSymmetry(line, marker) {
+		// a * x + b * y + c = 0
+		var a = (line.y2 - line.y1) / (line.x2 - line.x1);
+		var b = -1;
+		var c = line.y1 - a * line.x1;
+		
+		return {
+			x: marker.x - (2*a) * (a*marker.x + b*marker.y + c) / (a*a + b*b),
+			y: marker.y - (2*b) * (a*marker.x + b*marker.y + c) / (a*a + b*b)
+		};
+	}
+}
+
+
+function get_OrdinalNumber(num) {
+	var text = num + 'th';
+		if (Math.floor(num/10%10) != 1) {
+			if (num%10 == 1) text = num + 'st';
+			if (num%10 == 2) text = num + 'nd';
+			if (num%10 == 3) text = num + 'rd';
+		}
+	return text;
+}
+
+
+function paintChoropleth(year, {rankIdx="", eventData=""}) {         // Destructuring Function Parameters
+	Plotly.purge('chart_choropleth');
+
+	var selectedpoints = [];                                         // no selected states
+		
+	var heading = 'US Income by State in ' + year.toString();
+	if (typeof rankIdx === "number") {
+		//console.log('chart_choropleth', year, rankIdx);
+		var msg = (rankIdx+1) + 'th';
+		if (rankIdx == 0) msg = '1st'
+        if (rankIdx == 1) msg = '2nd'
+        if (rankIdx == 2) msg = '3rd'
+		msg += ' '  + app.df_map_pcr['data'][app.rank[rankIdx]][app.df_map_pcr['idx']['STATE_NAME']] + 
+			   ': ' + app.df_map_pcr['data'][app.rank[rankIdx]][app.df_map_pcr['idx'][year]].toFixed(2);
+		heading += '<br>(' + msg + ')';
+		selectedpoints.push(app.rank[rankIdx]);
+	}
+	if (typeof eventData === "object") {
+		//console.log(eventData);
+		selectedpoints = eventData.points.map(function(o) { return o['pointIndex'] });
+	}
+	
+	//var scl  = [[0.0, '#eff3ff'],[0.2, '#c6dbef'],[0.4, '#9ecae1'],[0.6, '#6baed6'],[0.8, '#3182bd'],[1.0, '#08519c']];
+	var scl  = [[0.0, '#7fcdbb'],[0.2, '#41b6c4'],[0.4, '#1d91c0'],[0.6, '#225ea8'],[0.8, '#253494'],[1.0, '#081d58']];
+	var scl2 = [[0.0, '#ffffff'],[1.0, '#FFFF00']]
+	
+	var data = [{
+		type: 'choropleth',
+		locationmode: 'USA-states',
+		locations: app.df_map_pcr['data'].map(function(o) { return o[app.df_map_pcr['idx']['STATE_ABBR']] }),
+		z: app.df_map_pcr['data'].map(function(o) { return o[app.df_map_pcr['idx'][year]] }),
+		text: app.df_map_pcr['data'].map(function(o) { return o[app.df_map_pcr['idx']['Name']] }),
+		colorscale: scl,
+        autocolorscale: false,
+		marker: {
+            line: {
+                color: 'rgb(255,255,255)',
+                width: 1
+            } 
+		},
+		selected: { marker: { opacity: 1.0 } },
+        unselected: { marker: { opacity: 0.1 } },
+        colorbar: {
+            thickness: 10,                                           // default: 30 
+            title: '(PCR)'
+        },
+	}];
+	if (selectedpoints.length != 0) data[0]['selectedpoints'] = selectedpoints;
+	//console.log(data);
+	
+	var layout = {
+		title: heading,
+		dragmode: 'lasso',
+		geo: {
+			scope: 'usa',
+			projection: { type: 'albers usa' },
+			showlakes: true,
+			lakecolor: 'rgb(255, 255, 255)'
+		},
+    }
+	//console.log(layout);
+	
+	Plotly.plot("chart_choropleth", data, layout, {showLink: false});
+	
+	var choroplethDiv = document.getElementById('chart_choropleth');
+	choroplethDiv.on('plotly_selected', function(eventData) {
+		if (typeof eventData !== "object" || !("points" in eventData)) return;
+		console.log(eventData.points);
+		if (eventData["points"].length == 1) {
+			app.chosenState = eventData.points[0]['text'];
+			$( "#states" ).val(app.chosenState);
+			paintDensity(year, {chosenState:app.chosenState});
+		} else {
+			console.log(eventData.points);
+			paintDensity(year, {});
+			removeLayersOnMap(0); 
+			geoJsonBuild(eventData.points);
+		}
+	});
+	// The 'plotly_click' event hard to fire because dragmode is 'lasso' in layout.
+	choroplethDiv.on('plotly_click', function(eventData) {           
+		console.log(eventData);
+		if (typeof eventData !== "object" || !("points" in eventData)) return;
+		app.chosenState = eventData.points[0]['text'];
+		$( "#states" ).val(app.chosenState);
+		//console.log(app);
+		paintChoropleth(year, {eventData:eventData});
+		paintDensity(year, {chosenState:app.chosenState});
+	});
+}
+
+
+function paintDensity(year, {rankIdx="", eventData="", chosenState=0, baseYear=""}) {
+	Plotly.purge('chart_density');
+	
+	var chosen_state = app.chosenState;
+	var initial_year = year;
+	var final_year   = app.baseYear;
+	var pair_of_years = [initial_year, final_year];
+	
+	var states = app.df_map_pcr.data.map(function(o) { return o[app.df_map_pcr.idx['Name']] });
+	//console.log(states);
+	
+	if (typeof chosenState === "string") {
+		chosen_state = chosenState;
+		//console.log(chosenState, chosen_state);
+	}
+	if (typeof rankIdx === "number") {
+		chosen_state = app.df_map_pcr['data'][app.rank[rankIdx]][app.df_map_pcr['idx']['Name']];
+		//console.log(rankIdx, chosen_state);
+	}
+	if (typeof baseYear === "number") {
+		final_year = baseYear;
+	}
+	
+	var state_row_index = states.indexOf(chosen_state);
+	if (state_row_index < 0) return;
+	//console.log(state_row_index);
+	
+	var initial_state_value = app.df_map_pcr.data[state_row_index][app.df_map_pcr.idx[initial_year]];
+	//var final_state_value = app.df_map_pcr.data[state_row_index][app.df_map_pcr.idx[final_year]];
+	//console.log(initial_state_value, final_state_value);
+	
+	var X1 = numpy.array(app.df_map_pcr.data.map(function(o) { return o[app.df_map_pcr.idx[pair_of_years[0]]] }));
+    //var X2 = numpy.array(app.df_map_pcr.data.map(function(o) { return o[app.df_map_pcr.idx[pair_of_years[1]]] }));
+	//console.log(X1);
+	//console.log(X2);
+
+	var kde1 = science.stats.kde().sample(X1);
+	//var kde2 = science.stats.kde().sample(X2);
+	//console.log(kde1);
+	//console.log(kde2);
+
+	// Joint grid
+	//var min_grid_aux = Math.min.apply(Math, X1.concat(X2));
+    //var max_grid_aux = Math.max.apply(Math, X1.concat(X2));
+	//console.log('min_grid_aux:', min_grid_aux);
+	//console.log('max_grid_aux:', max_grid_aux);
+	//var X_grid = np.linspace(min_grid_aux - 0.1 * Math.abs(max_grid_aux), 
+	//						 max_grid_aux + 0.1 * Math.abs(max_grid_aux), 
+	//						 10000);
+	//console.log('X_grid:', X_grid)
+	
+	//var dens1 = kde1(X_grid).map(function(o) { return o[1] });
+	//var dens2 = kde2(X_grid).map(function(o) { return o[1] });
+	//console.log(dens1);
+	//console.log(dens2);
+	
+	var kdeStates = kde1(X1).map(function(o, i) { return [i, o[0], o[1]] });
+	kdeStates.sort((a, b) => a[1]-b[1]);
+	//console.log(kdeStates);
+	
+	var data = [
+/*	
+		{
+			'x': X_grid, 
+			'y': dens2,
+			'mode': 'lines',
+			'fill': 'tozeroy',
+			'name': final_year,
+			'text': 'Year of ' + final_year,
+			//'line': {'color': '#ff7f0e', 'width': 3}                 // safety orange 
+			'line': {'color': '#e377c2', 'width': 3}                 // raspberry yogurt pink
+		},
+		{
+            'x': [final_state_value, final_state_value], // x-values of each point do draw a line
+			'y': [0, kde2([final_state_value])[0][1]],
+            'mode': 'lines',
+            'name': 'name_to_put_line',
+            'text': 'text_to_put_line',
+            'showlegend': false,
+            'line': {'color': '#e377c2', 'opacity': 0.5, 'width': 3}
+		},
+*/
+		{
+            //'x': X_grid, 
+            //'y': dens1,
+			'x': kdeStates.map(function(o) { return o[1] }),
+            'y': kdeStates.map(function(o) { return o[2] }),
+            'mode': 'lines',
+            'fill': 'tozeroy',
+            'name': '',
+			'text': kdeStates.map(function(o) { return app.df_map_pcr.data[o[0]][app.df_map_pcr.idx['Name']] }),
+			'showlegend': false,
+			'line': {'color': '#e377c2', 'width': 3}                 // raspberry yogurt pink
+		},		
+        {
+            'x': [initial_state_value, initial_state_value],         // x-values of each point do draw a line
+			'y': [0, kde1([initial_state_value])[0][1]],
+            'mode': 'lines',
+            'name': '',
+            'text': chosen_state,
+            'showlegend': false,
+            'line': {'color': '#e377c2', 'width': 3}
+		},
+    ];
+	//console.log(data);
+	
+	var layout = {
+        'xaxis': {
+			rangeslider: {                       // There is no event to fire for this 'rangeslider' in the API yet.
+				visible: true,
+			},
+			//range: [0, 2],
+			'title': 'Income Per Capita Relative Ratio (PCR)'
+		},
+        'yaxis': {
+			fixedrange: true,
+			//range: [0, 3],
+			'title': 'Density Estimation'
+		},
+		'annotations': [{
+			x: initial_state_value,
+			y: kde1([initial_state_value])[0][1],
+			text: chosen_state,
+		}],
+		//'title': 'Densities for ' + '<b>' + chosen_state + '</b> in ' +initial_year + ' and ' + final_year
+		'title': 'US Income Distribution in ' +initial_year
+    };
+	//console.log(layout);
+	
+	Plotly.plot("chart_density", data, layout);
+	
+	var densityDiv = document.getElementById('chart_density');
+	densityDiv.on('plotly_relayout', function(eventData) {
+		if (typeof eventData !== "object") return;
+		// {xaxis.range[0]: 0.6452331814575472, xaxis.range[1]: 1.0926080928259434}
+		// {xaxis.autorange: true, xaxis.showspikes: false}
+		// {xaxis.autorange: true}
+		//console.log(eventData);
+		if ('xaxis.autorange' in eventData && eventData['xaxis.autorange'] == true) {
+			paintChoropleth(year, {});
+			removeLayersOnMap(0);
+			geoJsonBuild();
+			return;
+		}
+		
+		if (!('xaxis.range[0]' in eventData) || !('xaxis.range[1]' in eventData)) return;
+		//console.log(eventData['xaxis.range[0]'], eventData['xaxis.range[1]']);
+		var points = [];
+		for (var i=0; i<kdeStates.length; i++) {
+			if (kdeStates[i][1] < eventData['xaxis.range[0]']) continue;
+			if (kdeStates[i][1] > eventData['xaxis.range[1]']) continue;
+			points.push({pointIndex: kdeStates[i][0]});
+		}
+		//console.log(points);
+		paintChoropleth(year, {});
+		removeLayersOnMap(0);
+		geoJsonBuild(points);
+	});
+}
+
+
+function geoJsonBuild(points) {
+
+	//app.geojson = US_geojson;
+	app.geojson = {type: "FeatureCollection", features: []};
+	if (Array.isArray(points)) {
+		//console.log("points:", points)
+		for (var i=0; i<points.length; i++) {
+			var point = points[i];
+			var feature = US_geojson.features[point.pointIndex];
+			app.geojson.features.push(feature);
+		}
+	} else {
+		//console.log("points:", points);
+		for (var i=0; i<US_geojson.features.length; i++) {
+			var feature = US_geojson.features[i];
+			app.geojson.features.push(feature);
+		}
+	}
+	console.log(app.geojson)
+	
+	
+	// layer that shows data
+	if (app.geojsonLayer != null && app.map.hasLayer(app.geojsonLayer)) app.map.removeLayer(app.geojsonLayer);	
+	app.geojsonLayer = L.geoJson(app.geojson, {
+		style: mapStyle,
+		//onEachFeature: onEachFeature,
+	}).addTo(app.map);
+	
+	function mapStyle(feature) {
+		//var v = (item in feature.properties && feature.properties[item] != -9999) ? feature.properties[item] : "No Data";
+		//var nz = getClass1(v * 1.0, "z");
+		//if (nz.length == 0) nz = app.colorGradient1.length;        // may be 9 (the last member)
+		////app[mIDX].nPolygonbyClass[0] += 1;
+		//app[mIDX].nPolygonbyClass[nz] += 1;
+		return {
+			weight: 0.5,
+			//opacity: 1,
+			color: '#00FFFF',
+			//weight: 1,
+			opacity: 0.5,
+			//color: '#00FFFF',
+			dashArray: '1',
+			//fillOpacity: getOpacity1(feature),
+			//fillColor: getColor1(feature.properties[item]),
+			fillColor: 'pink',
+		};
+	}
+
+
+	// set rank_checkboxes
+	var features_length = app.geojson.features.length;
+	var row = 4;
+	//features_length = 230
+	var col = Math.ceil(features_length / row);
+	//console.log('row:', row, 'col:', col);
+	var array = [];
+	for (var r=0; r<row; r++) array.push(new Array(col));
+	var i = 0;
+	for (var c=0; c<col; c++) {
+		for (var r=0; r<row; r++) {	
+			if (i < features_length) array[r][c] = ++i;
+		}
+	}
+	
+	var html = '';
+	for (var r=0; r<row; r++) {
+		html += '<tr>';
+		if (r == 0) {
+			html += '<td class="rank-checkbox0">';
+			html += '<input type="checkbox" name="rank_checkboxes" id="rank_checkbox0" value="0"> All';
+			html += '</td>'
+		} else 
+			html += '<td class="rank-checkbox"></td>';
+		for (var c=0; c<col; c++) {
+			var rank = array[r][c];
+			if (!rank) continue;
+			html += '<td class="rank-checkbox">';
+			html += '<input type="checkbox" name="rank_checkboxes" id="rank_checkbox'+rank+'" value="'+rank+'"> '+
+					get_OrdinalNumber(rank);
+			html += '</td>'
+		}
+		html += '</tr>';
+	}
+	//console.log(i, html);
+	$("#rank_checkboxes").html(html);
+	//$("#rank_checkbox1").prop('checked', true);                      // for testing
+	//$("#rank_checkbox5").prop('checked', true);                      // for testing
+	
+	$( "#rank_checkbox0" ).change(function() {
+		if ($( "#rank_checkbox0" ).is(":checked")) {
+			$( '#rank_checkboxes [name="rank_checkboxes"]' ).prop('checked', true);
+		} else {
+			$( '#rank_checkboxes [name="rank_checkboxes"]' ).prop('checked', false);
+			clearSubtitles(0);                                       // remove all subtitles and clear the year
+		}
+		removeLayersOnMap(0);                                        // remove all layers and global variables
+		//$( "#year" ).html('');
+	});
+	
+	for (var i=1; i<=features_length; i++) {
+		$( "#rank_checkbox"+i ).change(function() {
+			//console.log($(this).is(":checked") ? 'checked' : 'unchecked');
+			if (!$(this).is(":checked")) {
+				var rank = $(this).val() * 1;
+				//console.log('clear', rank);
+				clearSubtitles(rank);
+				//removeLayersOnMap(rank);
+			}
+			removeLayersOnMap(0);                                    // remove all layers and global variables
+			//$( "#year" ).html('');
+		});
+	}
+
+//	// set years, year
+//	app.years = [];
+//	//app.geojson.features[0]['properties'].map(function(properties) {
+//	Object.keys(app.geojson.features[0]['properties']).forEach(function(key, idx) {
+//		//console.log(key, idx);
+//		if (key.length == 5 || key.substring(0,1) == 'y') {
+//			app.years.push(key.substring(1) * 1);
+//		}
+//	});
+//	app.year = app.years[0];
+	
+	// set app.ranks from app.geojson  {1929: [2, 3, ...], 1930: [13, 34, ...], 1931: [45, 5, ...], ... }
+	app.ranks = {};
+	//for (var year in app.years) {
+	app.years.forEach(function (year, idx) {
+		var list = app.geojson.features.map(function(o, i) { return [i, o.properties['y'+year]] });
+		//console.log(list);
+		list.sort((a, b) => b[1]-a[1]);                                  // reverse order
+		app.ranks[year] = list.map(function(o) { return o[0] });
+	});
+	console.log(app.ranks);
+	
+}
+</script>
+</body>
+</html>
