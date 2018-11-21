@@ -1,0 +1,355 @@
+
+<!doctype html>
+<html>
+<head>
+	<link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://spatial.ucr.edu/_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="http://spatial.ucr.edu/_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="http://spatial.ucr.edu/_static/css-styles.css" />
+
+
+	<title>Web STARS</title>
+    <style type="text/css">
+		* {
+			margin:0;
+			padding:0;
+		}
+		
+		html, body {
+			height:100%;
+		}
+		
+		#wrap {
+			min-height:100%;
+		
+		}
+		
+
+		
+		#content {
+			padding-bottom: 150px;
+		}
+		
+		#footer {
+			height:200px;
+			margin-top:-150px;
+			background: #ffffff;
+		}
+
+a:link{
+	
+	text-decoration:none;
+
+}
+
+body,td{
+
+margin: 0;
+padding: 0;
+font-size:12px;
+font-family:Arial, Helvetica, sans-serif;
+color:#333;
+
+}
+
+.homeBannerWrap ul, .sideContentHome ul, .staticSide ul{
+	margin:0;
+	padding:0;
+	list-style:none;
+
+}
+
+.homeBannerWrap ul li{
+		display:none;
+		position:absolute;
+
+}
+
+.homeBannerWrap{
+	position:relative;
+	height:100%;
+	overflow:hidden;
+	background-color:#EEE;
+	margin:0px;
+	margin-bottom:0px;
+
+	text-decoration:none;
+}
+
+
+#imageCycle li a{
+	display:block;
+	
+}
+#imageCycle li a:hover{
+	text-decoration:none;
+
+}
+
+.homeBannerCom{
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	right:0px;
+	padding:10px;
+	background:rgba(0,0,0,.50);
+	color:#ffffff ;
+	font-weight:bold;
+	text-align:left;
+	font-size:20px;
+	text-shadow:2px 2px 3px #333;
+	z-index:999;
+}
+
+.homeBanner img{
+	width:1000px;
+	height:100%;
+	
+}
+
+.button {
+   float:left;
+   border-top: 1px solid #f79797;
+   background: #d66565;
+   background: -webkit-gradient(linear, left top, left bottom, from(#9c3e3e), to(#d66565));
+   background: -webkit-linear-gradient(top, #9c3e3e, #d66565);
+   background: -moz-linear-gradient(top, #9c3e3e, #d66565);
+   background: -ms-linear-gradient(top, #9c3e3e, #d66565);
+   background: -o-linear-gradient(top, #9c3e3e, #d66565);
+   padding: 5px 10px;
+   -webkit-border-radius: 8px;
+   -moz-border-radius: 8px;
+   border-radius: 8px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: white;
+   font-size: 24px;
+   font-family: Helvetica, Arial, Sans-Serif;
+   text-decoration: none;
+   vertical-align: middle;
+   }
+.button:hover {
+   border-top-color: #782828;
+   background: #782828;
+   color: #ccc;
+   }
+.button:active {
+   border-top-color: #5c1b1b;
+   background: #5c1b1b;
+   }
+
+
+.button2 {
+	float:right;
+   border-top: 1px solid #96d1f8;
+   background: #65a9d7;
+   background: -webkit-gradient(linear, left top, left bottom, from(#3e779d), to(#65a9d7));
+   background: -webkit-linear-gradient(top, #3e779d, #65a9d7);
+   background: -moz-linear-gradient(top, #3e779d, #65a9d7);
+   background: -ms-linear-gradient(top, #3e779d, #65a9d7);
+   background: -o-linear-gradient(top, #3e779d, #65a9d7);
+   padding: 5px 10px;
+   -webkit-border-radius: 8px;
+   -moz-border-radius: 8px;
+   border-radius: 8px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: white;
+   font-size: 24px;
+   font-family: Helvetica, Arial, Sans-Serif;
+   text-decoration: none;
+   vertical-align: middle;
+   }
+.button2:hover {
+   border-top-color: #28597a;
+   background: #28597a;
+   color: #ccc;
+   }
+.button2:active {
+   border-top-color: #1b435e;
+   background: #1b435e;
+   }
+
+   	div.scroll {
+		width:100%;
+		height:100%;
+		overflow:auto;
+	
+	}	
+
+.left_image{ width:190px; height:190px; opacity: 1; filter: alpha(opacity=100);  no-repeat; } 
+.left_image:hover { opacity: 0.8; filter: alpha(opacity=30); } - See more at: http://www.corelangs.com/css/box/hover.html#sthash.CGl9pARz.dpuf
+
+.right_image{ width:190px; height:190px; opacity: 1; filter: alpha(opacity=100); no-repeat; } 
+.right_image:hover { opacity: 0.8; filter: alpha(opacity=30); } - See more at: http://www.corelangs.com/css/box/hover.html#sthash.CGl9pARz.dpuf
+		
+    </style>
+</head>
+
+	
+  <body>
+		<div id="wrap">
+			<div style="background-color:#3366ff ;height:80px">
+				<a  target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/STARS_LOGO.png" alt="STARS" style = "margin:5px 5px 5px 5px;width:130px;height:80px;float:left;">
+				</a>
+				<div style = "margin:15px 0px 0px 0px;float:left;">
+					<font size="6" color="white"> &nbsp;&nbsp;&nbsp; STARS: Space-Time Analysis of Regional Systems </font> 
+					<font size="6" color="white"><strong>   </strong> </font> 
+				</div>
+				<a href="https://www.ucr.edu/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/UCR-logo-2.png" alt="UCR" style = "margin:5px 0px 0px 0px;width:80px;height:60px;float:right;">
+				</a>	
+				<a href="https://www.nsf.gov/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/nsf.png" alt="NSF" style = "margin:8px 15px 5px 5px;width:70px;height70px;float:right;">
+				</a>
+				<a href="http://spatial.ucr.edu/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/CGS_logo.png" alt="CGS" style = "margin:5px 10px 0px 0px;width:100px;height:70px;float:right;">
+				</a>
+			
+			</div>
+			
+			
+			<center><div id="content">	
+				<div id="empty" style="background-color:#D0D0D0;height:10px;width:100%;"></div>	
+				
+				<div id="empty" style="background-color:#fff;height:60px;"></div>
+				<font size="6"  style="background-color:4d4d4d"><strong> We are introducing a Web-based version of STARS </strong></font></br></br></br></br>
+	
+
+				<div id="main" style="background-color:#fff;height:100px;width:1100px">	
+					<font size="5" color="#595959" > Web-based Space-Time Analysis of Regional Systems (STARS) is an open-source package designed
+								for the dynamic exploratory analysis of data measured for areal units at multiple points in time. 
+					</font>
+				</div>	
+				
+				<div id="button_AREA" style="background-color:#fff;height:100%;width:1020px;padding-bottom:40px;">
+					
+					<!--div id="goal_description" style="background-color:#fff;height:150px;text-align:left;line-height:300%">
+					<ul>
+						<li> <font size="4"> Disparities in the mortality burden for screenable cancers exist in California, especially in Hispanic communities.</font> 
+							
+						<li> <font size="4">Many neighborhood contextual factors contribute to improved attendance to cancer screening (e.g., acculturation, education, socioeconomic status, access). </font> 
+							
+						<li> <font size="4" color="#0000b3" >Our goal is to develop an interactive web-based tool that can be used by many stakeholders (researcher, providers, community members) to visualize these concepts for our local San Diego county.</font> 
+					</ul>
+					</div-->
+					
+						<a href="http://sarasen.asuscomm.com/STARS/ESDA.html" target="_blank" class="button" style="width:500px;padding-left:0px;float:left;">
+							<span> &nbsp;Exploratory Spatial Data Analysis &nbsp;&nbsp;&nbsp;
+								<font size="3" > http://sarasen.asuscomm.com/STARS/ESDA.html </font>
+							</span>
+						</a>
+				
+						<a href="http://sarasen.asuscomm.com/RankPath" target="_blank" class="button2" style="width:500px;padding-left:0px;float:right;">
+							<span> Rank Path Visualization </span>
+								<font size="3" > http://sarasen.asuscomm.com/RankPath </font>
+						</a>
+				</div>	
+
+				
+				<div id="description" style="background-color:#fff;width:1020px;height:350px;">
+					<div id="empty" style="background-color:#fff;height:40px;"></div>
+				
+
+					
+					<!--div class="homeBannerWrap" style = "height:330px;width:990px;padding-top:5px;">
+				
+						<ul id="imageCycle">
+				
+						<li><a target="_blank" href="http://vision.sdsu.edu/su42/sdcancermap/">
+							<div class="homeBannerCom">Side-by-Side Synchronous Visualization !</div>
+							<div class="homeBanner"><img style="margin-top:0px;" src="img/map.jpg" width = "100%" height = "100%"/></div></a>
+						</li>
+				
+						<li><a target="_blank" href="http://vision.sdsu.edu/su42/sdcancermap/health.html">
+							<div class="homeBannerCom">Correlation Analysis between Health Outcomes and Socioeconomic and Demographic Factors !</div>
+							<div class="homeBanner"><img style="margin-top:0px;" src="img/chart.jpg" width = "100%" height = "100%"/></div></a>
+						</li>
+						
+						</ul>
+				
+					</div-->
+					
+					<div id="image_AREA" style="background-color:#ccc;height:0px;width:1020px">
+						<div class = "left_image" class="L_map" style = "height:330px;width:500px;padding-left:0px;float:left;border:5px">
+							<a href="http://sarasen.asuscomm.com/STARS/ESDA.html"target="_blank" ><img src = "images/ESDA.png" alt="ESDA" style = "width:100%;height:100%;float:right;border:1px solid black" /></a>
+						</div>
+						
+						<div class = "right_image"  class="R_map" style = "height:330px;width:500px;padding-right:0px;float:right;border:5px">
+							<a href="http://sarasen.asuscomm.com/RankPath" target="_blank"><img src = "images/RANKPATH.png" alt="Rank Path" style = "width:100%;height:100%;float:right;border:1px solid black" /></a>
+						</div>
+						
+						
+					</div>
+				</div>
+			
+				<div id="empty" style="background-color:#fff;height:60px;width:1000px"></div>
+				
+				<div id="main" style="background-color:#fff;height:100px;width:1100px">	
+					<font size="5" color="#595959" > More Anlytical Modules will be forthcoming !
+					</font>
+				</div>
+			    
+				
+			</div></center>
+		</div>
+		
+		
+		<!--div id="footer">
+			<div id="empty" style="background-color:#404040;height:2px;"></div>
+		
+			<center><tr>
+				<td class="companyName" colspan="5">
+					<p></br><strong> &copy; San Diego State University, 2018. Center for Human Dynamics in the Mobile Age (HDMA)</strong></p><a href="http://humandynamics.sdsu.edu/" target="_blank"><img style="height:70px;padding-top:10px;" alt="hdma logo" src="img/SDSU_3Color-small.gif" /></a>
+				</td>
+			</tr></center>		
+		
+		</div-->
+    <footer id="footer" class="footer footer-css" style="z-index: 200">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-5">
+                    <img class="img-responsive center-block" width="100%" src="images/UCR_logo_long.png">
+                    <h2>Center for Geospatial Sciences</h2>
+                </div>
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-5">
+                    <!--<p><a href="mailto:"><i class="fa fa-envelope"></i> cssucr@ucr.edu</a></p>-->
+                    <p><a href="tel:+19518279221"><i class=""> Tel:(951)827-9221</i></a></p>
+                    <p><a href="https://twitter.com/spatialucr" class="twitter-follow-button" data-show-count="false">Follow @spatialucr</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+                    <!--<table class="table" style="border-top: 0px;width: 1px; margin-bottom:0px">
+                        <tbody style="border-top: 0px;">
+                        <tr style="border-top: 0px;">
+                            <td style="border-top: 0px;"><a href="mailto:"><span class="glyphicon glyphicon-envelope"></span></a></td>
+                            <td style="border-top: 0px;"><a href="tel:"><i class="fa fa-mobile" aria-hidden="true"></i></a></td>
+                            <td style="border-top: 0px;"><a href=""><i class="fa fa-twitter"></i></a></td>
+                        </tr>
+                        </tbody>
+                    </table>-->
+                    <p>Suite 159, Tomas Rivera Library <BR> 900 University Ave <BR> Riverside, CA 92521</p>
+                </div>
+            </div>
+        </div>
+    </footer>	
+	
+	<footer class="footer">
+	<div class="container">
+		<p class="pull-right">
+		<a href="#">Back to top</a>
+		
+		</p>
+		<p>
+			&copy; Copyright 2018 Center for Geospatial Sciences.<br/>
+
+		</p>
+	</div>
+	</footer>	
+		
+  </body>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+
+<title>ESDA Intro</title>
+<style type="text/css">
+	
+		
+</style>
+
+</head>
+
+<body style ="font-family:Arial, Helvetica, sans-serif;">
+
+	<div style="background-color:#3366ff ;height:80px">
+		<a  target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+				<img src="images/STARS_LOGO.png" alt="STARS" style = "margin:5px 5px 5px 5px;width:130px;height:80px;float:left;">
+		</a>
+		<div style = "margin:15px 0px 0px 0px;float:left;">
+			<font size="6" color="#ccd9ff"> &nbsp;&nbsp;&nbsp; STARS :</font> 
+			<font size="6" color="white"><strong>  Exploratory Spatial Data Analysis (ESDA)</strong> </font> 
+		</div>
+				<a href="https://www.ucr.edu/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/UCR-logo-2.png" alt="UCR" style = "margin:5px 0px 0px 0px;width:80px;height:60px;float:right;">
+				</a>	
+				<a href="https://www.nsf.gov/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/nsf.png" alt="NSF" style = "margin:8px 15px 5px 5px;width:70px;height70px;float:right;">
+				</a>
+				<a href="http://spatial.ucr.edu/" target="_blank" class="logo"><!-- Add the class icon to your logo image or logo icon to add the margining-->
+						<img src="images/CGS_logo.png" alt="CGS" style = "margin:5px 10px 0px 0px;width:100px;height:70px;float:right;">
+				</a>
+	
+	</div>
+<h3 style="text-align: center;"><strong>Documentation for&nbsp;<strong>exploratory spatial data analysis (ESDA) module in Web-STARS</strong></strong></h3>
+<p style="text-align: center;"><span style="color: #3366ff;"><strong>( The Web Application URL:&nbsp;<a style="color: #3366ff;" href="http://sarasen.asuscomm.com/STARS/ESDA.html" target="_blank" >http://sarasen.asuscomm.com/STARS/ESDA.html</a>&nbsp;)</strong></span></p>
+<p style="text-align: center;">Developers: <a href="http://spatial.ucr.edu/peopleHan.html" target="_blank" rel="noopener">Su Han</a>, <a href="http://spatial.ucr.edu/peopleRey.html" target="_blank" rel="noopener">Sergio Rey</a>, <a href="http://spatial.ucr.edu/peopleKnaap.html" target="_blank" rel="noopener">Elijah Knaap</a>, <a href="http://spatial.ucr.edu/peopleKang.html" target="_blank" rel="noopener">Wei Kang</a>, <a href="http://spatial.ucr.edu/peopleCortes.html" target="_blank" rel="noopener">Renan Xavier Cortes</a></p>
+<p><strong>Overview</strong></p>
+<ul>
+<li>ESDA module in Web-STARS is a prototype for the dynamic exploratory analysis of data measured for areal units at multiple points in time.&nbsp;</li>
+<li>ESDA module has 6 plots: choropleth map(1), Moran scatter plot(2), Time-path(3), Time Series(4), Kernel Density Estimation(5), Box Plot(6). Each plot is interactive and linked to another. The 6 interactively linked plots provide insights to understand spatio-temporal&nbsp;patterns of data.</li>
+<li>This prototype currently visualizes per capita income relative to national average(PCR) from 1929 to 2009.&nbsp;Users will be able to upload and visualize their own data in the final product. </li>
+<li>&nbsp;STARS was originally developed as a desktop based software and implemented in Python (Rey 2010).&nbsp;</li>
+</ul>
+<p><strong>Spatial Statics in ESDA, Web-STARS</strong></p>
+<p>&nbsp; Spatial Lag (Anselin 1988)</p>
+<ul>
+<li>weighted average of neighboring values</li>
+<li>neighbors defined by spatial weights (wij)</li>
+<li>yiL = wi1.y1 + wi2.y2 + ... + wiN.y = &Sigma;j wij.yj</li>
+<li><a href="https://pysal.readthedocs.io/en/latest/library/weights/spatial_lag.html" target="_blank" rel="noopener">weights.spatial_lag</a> in Pysal was used to compute y values in Scatter Plot and Time-Path in ESDA (The regression line in the Scatter Plot was created by using the polyfit in <a href="https://github.com/fernandezajp/PyExtJS" target="_blank" rel="noopener">PyExtJS</a>)</li>
+<li>A Brief Introduction to Spatial Regression is available <a href="http://www.bisolutions.us/A-Brief-Introduction-to-Spatial-Regression.php" target="_blank" rel="noopener">here.</a></li>
+</ul>
+<p>&nbsp; Moran's I (Moran 1950)</p>
+<ul>
+<li>Moran's I (index) measures spatial autocorrelation - i.e. how much close objects are in comparison with other close objects</li>
+<li>Moran's I can be classified as positive, negative and no spatial autocorrelation.
+<ul>
+<li>Positive spatial autocorrelation is when similar values cluster together in a map.</li>
+<li>Negative spatial autocorrelation is when dissimilar values cluster together in a map.</li>
+<li>The slope of regression line in Moran Scatter plot(2) is equal to the Global Moran's I in Time Series(4) at the selected year. </li>
+
+</ul>
+</li>
+<li>See <a href="https://gisgeography.com/spatial-autocorrelation-moran-i-gis/" target="_blank" rel="noopener">this website</a> for details.&nbsp;</li>
+<li><a href="https://pysal.readthedocs.io/en/latest/library/esda/moran.html" target="_blank" rel="noopener">esda.moran</a> in Pysal&nbsp;was used to compute Moran's I</li>
+</ul>
+<p>&nbsp; Kernel Density Estimation</p>
+<ul>
+<li>The concept of KDE is described in this <a href="https://mathisonian.github.io/kde/" target="_blank" rel="noopener">website</a>.</li>
+<li><a href="http://bl.ocks.org/curran/b595fde4d771c5784421" target="_blank" rel="noopener">Science.js</a> was used for the implementation.</li>
+</ul>
+<p><strong>FUNCTIONS in ESDA</strong></p>
+<ul>
+
+
+<li>ESDA module has 6 plots: choropleth map(1), Moran scatter plot(2), Time-path(3), Time Series(4), Kernel Density Estimation(5), Box Plot(6) and supports two animations: Time Travel Animation(A) and Spatial Travel Animation(B). Every plot visualizes PCR(per capita income relative to national average).</li>
+<li><img src="http://sarasen.asuscomm.com/STARS/images/ESDA2.png" alt="ESDA_6Plots" width="900" height="500" /></li>
+<ul>
+<li><strong>Choropleth Map</strong>: click event changes the selected state in&nbsp;choropleth map(1), Moran scatter&nbsp;Plot(2), Time-path(3), Kernel Density Estimation(5), and Box Plot(6). Lasso select* changes the selected points (states) in&nbsp;choropleth map(1), Moran scatter plot(2), and&nbsp;Box Plot(6).&nbsp;
+<ul>
+<li><video controls="controls" width="300" height="150">
+<source src="http://sarasen.asuscomm.com/STARS/images/Choropleth.mp4" type="video/mp4" /></video></li>
+</ul>
+</li>
+<li><strong>Moran Scatter Plot</strong>:&nbsp;click event changes the selected state in&nbsp;choropleth map(1), Moran scatter plot(2), Time-path(3), Kernel Density Estimation(5), and Box Plot(6).&nbsp;Lasso select* changes the selected points (states) in&nbsp;choropleth map(1), Moran scatter plot(2), and&nbsp;Box Plot(6).
+<ul>
+<li><video controls="controls" width="300" height="150">
+<source src="http://sarasen.asuscomm.com/STARS/images/MoranScatter.mp4" type="video/mp4" /></video></li>
+</ul>
+</li>
+<li><strong>Time Path</strong>: click event changes the selected year in&nbsp;choropleth map(1), Moran scatter plot(2), Time-path(3), Kernel Density Estimation(5), and Box Plot(6).
+<ul>
+<li><video controls="controls" width="300" height="150">
+<source src="http://sarasen.asuscomm.com/STARS/images/TimePath.mp4" type="video/mp4" /></video></li>
+</ul>
+</li>
+<li><strong>Time Series</strong>:&nbsp;&nbsp;click event changes the selected year in&nbsp;choropleth map(1), Moran scatter plot(2), Time-path(3), Kernel Density Estimation(5), and Box Plot(6).
+<ul>
+<li><video controls="controls" width="300" height="150">
+<source src="http://sarasen.asuscomm.com/STARS/images/TimeSeries.mp4" type="video/mp4" /></video></li>
+</ul>
+</li>
+<li><strong>Kernel Density Estimation</strong>: The base layer can be changed in the drop-down box.</li>
+<li><strong>Box Plot</strong>:&nbsp;click event changes the selected state in&nbsp;choropleth map(1), Moran scatter plot(2), Time-path(3), Kernel Density Estimation(5), and Box Plot(6). Lasso select* changes the selected points (states) in&nbsp;choropleth map(1), Moran scatter plot(2), and&nbsp;Box Plot(6).
+<ul>
+<li><video controls="controls" width="300" height="150">
+<source src="http://sarasen.asuscomm.com/STARS/images/BoxPlot.mp4" type="video/mp4" /></video></li>
+</ul>
+</li>
+<li><strong>Time Travel Animation</strong>: As the year changes on the slider bar, each of 6 views changes to represent the data of the currently selected year. The slider bar can be also manually moved. While the animation running. The "State" drop-down box can be changed. This selection will change the focused state on the top-right corner of Time-path.
+<ul>
+<li><video controls="controls" width="300" height="150">
+<source src="http://sarasen.asuscomm.com/STARS/images/TimeAnimation.mp4" type="video/mp4" /></video></li>
+</ul>
+</li>
+<li><strong>Spatial Travel Animation</strong>: Each state from the richest to the poorest is automatically selected one by one, and the corresponding state is also selected in Moran Scatter Plot (2), Time-path(3), Kernel Density Estimation(5) and box plot(6).
+<ul>
+<li><video controls="controls" width="300" height="150">
+<source src="http://sarasen.asuscomm.com/STARS/images/SpatialAnimation.mp4" type="video/mp4" /></video></li>
+</ul>
+</li>
+</ul>
+
+
+
+
+<p>&nbsp;<strong>USE CASES</strong></p>
+<p>&nbsp;forthcoming...</p>
+<p><em><strong>References</strong></em></p>
+<p>Moran, P. A. (1950). Notes on continuous stochastic phenomena.&nbsp;<em>Biometrika</em>,&nbsp;<em>37</em>(1/2), 17-23.</p>
+<p>Rey, S. J., &amp; Janikas, M. V. (2010). STARS: Space-time analysis of regional systems. In&nbsp;<em>Handbook of Applied Spatial Analysis</em>&nbsp;(pp. 91-112). Springer, Berlin, Heidelberg.</p>
+
+</body>	
