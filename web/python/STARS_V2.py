@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/home/suhan/public_html/cgi-bin/anaconda3/envs/osnap/bin/python
 import cgitb, cgi, json, sys, re, os
 import time
 from datetime import datetime
@@ -37,7 +37,7 @@ shp_path = ps.examples.get_path('us48.shp')
 #print(os.path.basename(shp_path))
 
 # relative path ???
-cache_path = 'C:/inetpub/wwwroot/stars/cache/' + \
+cache_path = '/home/suhan/public_html/STARS/cache/' + \
 			 os.path.basename(csv_path) + '(' + str(os.path.getsize(csv_path)) + ')_' + \
 			 os.path.basename(shp_path) + '(' + str(os.path.getsize(shp_path)) + ').json'
 #print(cache_path)
