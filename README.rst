@@ -22,12 +22,13 @@ Installation
 Using Conda (All Platforms)
 ---------------------------
 
+0. ``git clone https://github.com/sjsrey/stars.git``
 1. Install `Anaconda Python Distribution
    <https://www.continuum.io/downloads>`_
 2. ``conda create -n stars python=2``
 3. ``conda activate stars``
 4. ``pip install numpy==1.8 matplotlib scipy``
-5. ``cd stars; python -i starsgui.py``
+5. ``cd stars/stars; python -i starsgui.py``
 
 Vagrant under Ubuntu
 --------------------
