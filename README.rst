@@ -24,8 +24,9 @@ Using Conda (All Platforms)
 
 1. Install `Anaconda Python Distribution
    <https://www.continuum.io/downloads>`_
-2. ``conda create -n stars python=2 numpy=1.8 matplotlib scipy``
+2. ``conda create -n stars python=2``
 3. ``source activate stars``
+4. ``pip install numpy==1.8 matplotlib scipy``
 4. ``cd stars; python -i starsgui.py``
 
 Vagrant under Ubuntu
