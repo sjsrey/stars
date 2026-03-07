@@ -16,12 +16,12 @@ and numeric values).
 """
 
 
-from Tkinter import *
+from tkinter import *
 from Utility import format
-from numpy.oldnumeric import shape
+from numpy import shape
 from types import *
 
-import tkFont
+import tkinter.font
 
 
 
@@ -73,8 +73,8 @@ class DataTable:
         master = self.master
         values = self.values
         # determine the largest width of a cell
-        labelFont = tkFont.Font ( family=self.labelFamily, size=self.labelSize)
-        cellFont = tkFont.Font (family=self.cellFamily, size =self.cellSize)
+        labelFont = tkinter.font.Font ( family=self.labelFamily, size=self.labelSize)
+        cellFont = tkinter.font.Font (family=self.cellFamily, size =self.cellSize)
         n,k = shape(values)
         self.n = n
         self.k = k
@@ -592,8 +592,8 @@ class MixedDataTable(DataTable):
 
         master = self.master
         # determine the largest width of a cell
-        labelFont = tkFont.Font ( family=self.labelFamily, size=self.labelSize)
-        cellFont = tkFont.Font (family=self.cellFamily, size =self.cellSize)
+        labelFont = tkinter.font.Font ( family=self.labelFamily, size=self.labelSize)
+        cellFont = tkinter.font.Font (family=self.cellFamily, size =self.cellSize)
         n = len(self.values)
         k = len(self.values[0])
         self.n = n
@@ -885,7 +885,7 @@ class MixedDataTable(DataTable):
 if __name__ == '__main__':
 
     # here is how we would use our new Table class
-    from numpy.oldnumeric import *
+    import numpy as np
 
     # cook up some data
     n=300

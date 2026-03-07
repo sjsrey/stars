@@ -23,7 +23,7 @@ class CommandHistory:
         if file==None:
             file = self.name
         so = ""
-        k = self.history.keys()
+        k = list(self.history.keys())
         k.sort()
         for ck in k:
             cmdid = self.history[ck]

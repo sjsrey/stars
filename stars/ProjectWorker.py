@@ -21,18 +21,19 @@ import Matcher as MATCH
 import ArcView as ARCVIEW
 import FileIO as FIO
 import Projection
-from Tkinter import *
+from tkinter import *
 import Gis
 import os as OS
 import shutil as SHUTIL
 import weight
+from pysal_weights import STARSWeights
 
 import stars
 options = Options()
 STARSHOME = options.getSTARSHOME()
 
 def notDone():
-    print 'Not implemented'
+    print('Not implemented')
 
 class ProjVariable:
     """Variables for STARS Project
@@ -163,7 +164,7 @@ class ProjectMaker:
             galFiles = self.stars.options["weight"]["gal"][0].split()
             for galFile in galFiles:
                 gfile = OS.path.join(self.projectDir,galFile) 
-                print gfile, "GFILE"
+                print(gfile, "GFILE")
                 self.importMatrix(gfile+".gal","gal")
         except:
             self.report("No Existing Binary Gal Files.")
@@ -211,7 +212,7 @@ class ProjectMaker:
         self.arcInfo = arc
         self.projectedMaps = {}
         self.shapeFileName = self.createOutputFile(self.projPrefix,".shp")
-        print self.shapeFileName
+        print(self.shapeFileName)
         
     def readAttributeInfo(self):
         """Reads CSV File for Project of type CS
@@ -225,7 +226,7 @@ class ProjectMaker:
         self.addInitialShapesVariable()
 
     def addInitialShapesVariable(self):
-        iKeys = self.initial.keys()
+        iKeys = list(self.initial.keys())
         s = range(len(self.initial[iKeys[0]]))
         self.initial["Shape IDs"] = s 
 
@@ -233,7 +234,7 @@ class ProjectMaker:
         """Returns a tableList from the initial project info."""
 
         tableList = []
-        fields = self.initial.keys()
+        fields = list(self.initial.keys())
         rows = len(self.initial[fields[0]])
         if sample == 1:
             if rows > 50:
@@ -246,7 +247,7 @@ class ProjectMaker:
         """Returns a tableList from the join data info."""
         joinVars = self.data2Join.newVars
         tableList = []
-        fields = joinVars.keys()
+        fields = list(joinVars.keys())
         rows = len(joinVars[fields[0]])
         csnames = self.getVariable("csnames")
         joinVars["csnames"] = csnames[0]
@@ -316,8 +317,8 @@ class ProjectMaker:
         self.name2CSID = {}
         for i in range(len(self.unique)):
             self.name2CSID[ self.unique[i] ] = i
-        if len(self.row2Id.keys()) != self.n:
-            print """Aggregation Employed:  More shapes than cross-sectional units."""
+        if len(list(self.row2Id.keys())) != self.n:
+            print("""Aggregation Employed:  More shapes than cross-sectional units.""")
             self.aggOn = 1
         else:
             self.aggOn = 0
@@ -354,7 +355,7 @@ class ProjectMaker:
     def getDBFVariableNames(self):
         """Returns list of DBF Variable Names"""
 
-        return self.initial.keys()
+        return list(self.initial.keys())
 
     def getDBFVariable(self,name):
         """Returns list of values from named dbf field.
@@ -366,13 +367,13 @@ class ProjectMaker:
     def getAllVariableNames(self):
         """Returns list of Project Variable Names"""
 
-        return self.varDict.keys()
+        return list(self.varDict.keys())
 
     def getTSVariableNames(self):
         """Returns list of Project Variable Names"""
 
         varList = []
-        for i in self.varDict.keys():
+        for i in list(self.varDict.keys()):
             if self.varDict[i].type == "TS":
                 varList.append(i)
         return varList
@@ -381,7 +382,7 @@ class ProjectMaker:
         """Returns list of Project Variable Names"""
 
         varList = []
-        for i in self.varDict.keys():
+        for i in list(self.varDict.keys()):
             if self.varDict[i].type == "CS":
                 varList.append(i)
         return varList
@@ -390,7 +391,7 @@ class ProjectMaker:
         """Returns list of Project Variable Names"""
 
         varList = []
-        for i in self.varDict.keys():
+        for i in list(self.varDict.keys()):
             if self.varDict[i].type == "CSTS":
                 varList.append(i)
         return varList
@@ -398,7 +399,7 @@ class ProjectMaker:
     def getVariableTypes(self):
         """Returns list of Project Variable Types"""
 
-        keys = self.varDict.keys()
+        keys = list(self.varDict.keys())
         types = [ self.varDict[i].type for i in keys ]
 
     def getVariable(self,name):
@@ -500,7 +501,7 @@ class ProjectMaker:
             type = "CSTS"
         else:
             type = "CS"
-        sids = range(len(self.id2Row.keys()))
+        sids = range(len(list(self.id2Row.keys())))
         newVariable = []
         for name in colNames:
             newColumn = []
@@ -521,7 +522,7 @@ class ProjectMaker:
                 elif cohesionType == 'String':
                     newColumn.append( allVals[0] )
                 else:
-                    print "Incorrect or no cohesion method specified"
+                    print("Incorrect or no cohesion method specified")
             newVariable.append(newColumn)
         self.createVariable(varName, type, newVariable)
 
@@ -563,7 +564,7 @@ class ProjectMaker:
         masterVals = self.getVariable(master)[0]
         masterVals = [ i.strip("\"") for i in masterVals ]
         bridge = MATCH.createBridge(slaveVals,masterVals)
-        print bridge
+        print(bridge)
         fields = cs.names
         fields.remove(slave)
         for i in fields:
@@ -586,15 +587,15 @@ class ProjectMaker:
         batch = MATCH.batchSplit(fields)
         varNames = batch['strings']
         varNames.sort()
-        timeInfo = map(int,batch['ints'])
+        timeInfo = list(map(int,batch['ints']))
         timeInfo.sort()
-        timeInfo = map(str,timeInfo)
+        timeInfo = list(map(str,timeInfo))
         ordered = {}
         for i in varNames:
-            ts = map(str,timeInfo)
+            ts = list(map(str,timeInfo))
             names = [ i+ts[t] for t in range(len(ts)) ]
             ordered[i] = names
-        for i in ordered.keys():
+        for i in list(ordered.keys()):
             newName = i
             allTime = ordered[i]
             newVar = []
@@ -634,7 +635,7 @@ class ProjectMaker:
     def readGAL(self,fileName):
         """Stub for reading Gal Matrices."""
 
-        if self.prjInfo.has_key('weights'):
+        if 'weights' in self.prjInfo:
             self.prjInfo['weights'].append( ['gal',fileName] )
         else:
             self.prjInfo['weights'] = [['gal',fileName]]
@@ -650,7 +651,8 @@ class ProjectMaker:
     
 
     def makeGalWeights(self,wtType=weight.WT_ROOK):
-        galInfo = weight.spweight(self.shapeFileName, wtType=type)
+        wt_type = 'queen' if wtType == weight.WT_QUEEN else 'rook'
+        galInfo = STARSWeights.from_shapefile(self.shapeFileName, wt_type=wt_type)
         galInfo.fixIslands()
         n = len(galInfo.numneigh)
         sout= []
@@ -662,7 +664,8 @@ class ProjectMaker:
         return sout
         
     def makeGalWeightsAgg(self,wtType=weight.WT_ROOK):
-        galInfo = weight.spweight(self.shapeFileName, wtType=type)
+        wt_type = 'queen' if wtType == weight.WT_QUEEN else 'rook'
+        galInfo = STARSWeights.from_shapefile(self.shapeFileName, wt_type=wt_type)
         galInfo.fixIslands()
         csids = range(self.n)
         sout= []
@@ -678,7 +681,7 @@ class ProjectMaker:
                 unique.remove(i)
             except:
                 pass
-            unique = map(str,unique)
+            unique = list(map(str,unique))
             sout.append("%d %d"%(i, len(unique)))
             sout.append(" ".join(unique))
         sout = "\n".join(sout)
@@ -731,13 +734,13 @@ class ProjectMaker:
 
     def processMatrices(self):
         format = {'gal':[], 'spv':[], 'fmt':[]}
-        for matrixFile in self.matrices.keys():
+        for matrixFile in list(self.matrices.keys()):
             baseName = OS.path.basename(matrixFile)
             self.copyFile2Dir(matrixFile,self.projectDir)
             type = self.matrices[matrixFile]
             rootName = baseName.split(".")[0]
             format[type].append(rootName)
-        for type in format.keys():
+        for type in list(format.keys()):
             files = format[type]
             if len(files) != 0:
                 self.prjInfo[type] = " ".join(files)
@@ -746,7 +749,7 @@ class ProjectMaker:
         """Copies file1 to file2"""
         cmd = "cp " + file1 + " " + file2
         OS.popen(cmd)
-        print "copying " + file1 + "\n" + file2
+        print("copying " + file1 + "\n" + file2)
 
     def copyFile2Dir(self,file,dir):
         """Copies file to new dir"""
@@ -762,7 +765,7 @@ class ProjectMaker:
         self.prjInfo['coords'] = coords
 
     def writePRJ(self):
-        if len(self.matrices.keys()) != 0:
+        if len(list(self.matrices.keys())) != 0:
             self.processMatrices()
         self.prjInfo['data'] = self.projPrefix
         if self.arc == 1:
@@ -822,7 +825,7 @@ class ProjectMaker:
             # belonging to the cs unit
             shapeId = poly2shape[polyid]
             csid = self.row2Id[shapeId]
-            if csidPolyCount.has_key(csid):
+            if csid in csidPolyCount:
                 csidPolyCount[csid] = csidPolyCount[csid] + 1 
             else:
                 csidPolyCount[csid] = 0
@@ -921,7 +924,7 @@ class ProjectMaker:
     def matrixSummary(self):
         try:
             info = []
-            for matrixFile in self.matrices.keys():
+            for matrixFile in list(self.matrices.keys()):
                 entry = self.matrices[matrixFile] + ": " + matrixFile 
                 info.append(entry)
             info = "\n".join(info)
@@ -943,7 +946,7 @@ class ProjectMaker:
         if len(tsVals) == self.t:
             self.stringTime = tsVals
         else:
-            print "Time period labels do not match the number of time periods"
+            print("Time period labels do not match the number of time periods")
         
     def projectSummary(self):
         """Reports all the summary information for the current project."""
@@ -962,7 +965,7 @@ class ProjectMaker:
 
         string2Print = (str) string to print to screen
         """
-        print string2Print
+        print(string2Print)
 
     # shape stuff
     def getPolygons(self):

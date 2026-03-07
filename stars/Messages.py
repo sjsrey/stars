@@ -15,14 +15,14 @@ This module contains messages for STARS users.
 class Message:
     def __init__(self,string):
         so = "STARS: "+string
-        print so
+        print(so)
 
 
 class Error:
     """STARS error message handler."""
     def __init__(self,string):
         so = "STARS Error: "+string
-        print so
+        print(so)
 
 def Opening():
         so = """
@@ -31,7 +31,7 @@ def Opening():
         STARS is free software and comes with ABSOLUTELY NO WARRANTY.
         You are welcome to redistribute it under certain conditions.
         Type 'license()' for more infomration."""
-        print so
+        print(so)
 
 def license():
         so = """
@@ -45,16 +45,16 @@ def license():
 
            The Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA 02111-1307, USA."""
-        print so
+        print(so)
 
 
 def shelp(method=None):
     """Prints help information for STARS methods."""
     if method:
-        print method.__doc__
-        print "For help on classes: from ModuleName import *"
+        print(method.__doc__)
+        print("For help on classes: from ModuleName import *")
     else:
-        print """shelp useage:
+        print("""shelp useage:
         shelp(ModuleName)
 
         where ModuleName is one of:
@@ -62,7 +62,7 @@ def shelp(method=None):
             Inequality
             Mobility
             Markov
-            SpEcon"""
+            SpEcon""")
 
  
 

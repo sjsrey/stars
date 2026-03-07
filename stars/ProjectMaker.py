@@ -18,7 +18,7 @@ import sdialogue as sd
 from ProjectWorker import *
 from DataViewer import MixedDataTable
 import Matcher as MATCH
-import Tkinter as tk
+import tkinter as tk
 
 class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
     """Application level GUI Wrapper"""
@@ -38,7 +38,7 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         x0 = int((w - windowWidth) / 2.)
         y0 = int((h - windowHeight) / 2.)
         geom = "%dx%d+%d+%d"%(windowWidth,windowHeight,0,0)
-        print geom
+        print(geom)
         self.master.geometry(geom)
         self.root = self.master
         self.project = None
@@ -178,7 +178,7 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         if fileName:
             self.prj = 1
             self.proj = ProjectMaker(fileName,prj=1)
-            print self.proj.stars.catalogue()
+            print(self.proj.stars.catalogue())
             timeType =  self.proj.stars.timeFreq
             start = self.proj.stars.timeInfo[1]
             end = self.proj.stars.timeInfo[2]
@@ -393,14 +393,14 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
                 matNames.append('queen')
                 qd.destroy()
             for name,stringOut in zip(matNames,mats):
-                print 'writing GAL file(s)'
+                print('writing GAL file(s)')
                 nameOut = self.proj.projPrefix+"_"+name+".gal"
                 nameOut = os.path.join(self.proj.projectDir,nameOut)
                 fo=open(nameOut,'w')
                 fo.write(stringOut)
                 fo.close()
                 self.proj.matrices[nameOut]='gal'
-                print 'done writing GAL files(s)'
+                print('done writing GAL files(s)')
                 
 
 
@@ -619,7 +619,7 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
                         name="STARS Variables (CS, CSTS)",
                         columnLabels = names)
             except:
-                print "No CS or CSTS Variables identified"
+                print("No CS or CSTS Variables identified")
             tsVars = d.results[1]
             try:
                 tab = self.proj.createTableList(tsVars)
@@ -630,7 +630,7 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
                         name="STARS Variables (TS)",
                         columnLabels = names)
             except:
-                print "No TS Variables identified"
+                print("No TS Variables identified")
             
     def variableCSTable(self):
         vars = self.proj.getCSVariableNames()
@@ -678,7 +678,7 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         baseData = self.proj.createInitialTable(sample=sample)
         top = Toplevel(self.root)
         table = MixedDataTable(top,baseData,name="Base Data",
-                            columnLabels=self.proj.initial.keys())  
+                            columnLabels=list(self.proj.initial.keys()))  
 
     def readCSV_CS(self):
         FILE_TYPES=[("Files","*.csv")]
@@ -810,7 +810,7 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         """
         starsFile = askopenfilename(filetypes=[("STARS Projects","*.prj")])
         if starsFile:
-            print starsFile
+            print(starsFile)
             self.starsFile = starsFile
         
 
@@ -830,7 +830,7 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         try:
             self.avproject.summary()
         except:
-            print 'No ArcView Project Open'
+            print('No ArcView Project Open')
 
     def writeProjectFiles(self):
         """Wrapper to write all files necessary for a STARS Project."""
@@ -842,7 +842,7 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         self.proj.writeCSO()
         self.proj.writeDHT(delimiter=" ")
         self.proj.writeDAT(delimiter=" ")
-        print "Finished creating project!"
+        print("Finished creating project!")
         self.report("Finished creating project!")
 
 
@@ -884,10 +884,10 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
     
 
     def writeGAL(self):
-        print 'writing GAL'
+        print('writing GAL')
         iGal = ReadGisFile(self.filePrefix+".gis")
         mGal = gis2Contiguity(iGal[0], iGal[1], iGal[2])
-        gKeys = mGal.keys()
+        gKeys = list(mGal.keys())
         gKeys.sort()
         fgal = open(self.filePrefix+".gal", "w")
         fgal.write("%s\n"%(len(gKeys)))
@@ -896,11 +896,11 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
             try:
                 neighs = [ str(i) for i in mGal[i][1] ]
                 neighs =  (" ").join(neighs) 
-                print neighs
+                print(neighs)
                 fgal.write("%s\n"%(neighs))
             except:
                 fgal.write("%s\n"%(""))
-                print 'attention: island'
+                print('attention: island')
         fgal.close()
         
     def saveCheck(self):
@@ -910,10 +910,10 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         if self.proj.arc == 1:
             flag *= self.projectedCoordsOn
 
-        if not self.starsProjectOn: print 'No Stars Project Defined.'
+        if not self.starsProjectOn: print('No Stars Project Defined.')
         if self.proj.arc == 1:
             if not self.projectedCoordsOn:
-                print 'Please plot shapefile before saving project.'
+                print('Please plot shapefile before saving project.')
         return flag
 
 
@@ -922,6 +922,6 @@ class SProjectMaker(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
 
 
 if __name__ == '__main__':
-    from Tkinter import *
+    from tkinter import *
     v = SProjectMaker()
     v.mainloop()

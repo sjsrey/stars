@@ -27,11 +27,10 @@ Observation objects that it manages.
 
 """
 
-from numpy.oldnumeric import *
-from numpy.oldnumeric.mlab import *
+import numpy as np
+from numpy import *
 import classifier
-from pdf import *
-import sets
+import pdf
 
 class Observation:
     """
@@ -62,8 +61,8 @@ class Observation:
         Prints information on the cross-sectional and time signatures of the
         observation.
         """
-        print 'cs entity',self.cs
-        print 'ts entity', self.ts
+        print('cs entity',self.cs)
+        print('ts entity', self.ts)
 
 class IView:
     """
@@ -212,7 +211,7 @@ class IBox(IView):
                                value = value)
             self.observations[i] = iobs
 
-        self.observationKeys = self.observations.keys()
+        self.observationKeys = list(self.observations.keys())
 
         box = classifier.BoxClass(values,fence = fence)
         self.lowOutliers = box.lowOutliers
@@ -360,14 +359,14 @@ class IMap(IView):
         self.poly2cs = poly2cs
         self.cs2poly = cs2poly
         pid=0
-        for poly in poly2cs.keys():
+        for poly in list(poly2cs.keys()):
             csid = poly2cs[poly][0]
             iObs = Observation(ts=[t],
                  cs=[csid],
                  variable=[variable],
                  value=[values[csid-1]])
             self.observations[poly] = iObs
-        self.observationKeys = self.observations.keys()
+        self.observationKeys = list(self.observations.keys())
 
     def matchObservations(self,otherViewObservations):
         """
@@ -419,7 +418,7 @@ class IScatter(IView):
                  value=[valuesX[id],valuesY[id]])
             self.observations[id] = iObs
 
-        self.observationKeys = self.observations.keys()
+        self.observationKeys = list(self.observations.keys())
 
     def matchObservations(self,otherViewObservations):
         """
@@ -468,17 +467,17 @@ class ICScatterPlot(IView):
         cs2key = {}
         ts2key = {}
 
-        if rank(z) == 1:
+        if np.ndim(z) == 1:
             if len(z) == n:
-                zmat = matrixmultiply(diag(z),ones((n,t)))
+                zmat = diag(z) @ ones((n,t))
             else:
-                zmat = matrixmultiply(ones((n,t)),diag(z))
+                zmat = ones((n,t)) @ diag(z)
         else:
             zn,zt = shape(z)
             if zt == 1:
-                zmat = matrixmultiply(diag(z[:,0].tolist()),ones((n,t)))
+                zmat = diag(z[:,0].tolist()) @ ones((n,t))
             elif zn == 1:
-                zmat = matrixmultiply(ones((n,t)),diag(z[0]))
+                zmat = ones((n,t)) @ diag(z[0])
             else:
                 zmat = z
 
@@ -492,17 +491,17 @@ class ICScatterPlot(IView):
                     variable = [ x,y,z ],
                     value = [xvalue,yvalue,zvalue])
                 self.observations[(i,t)] = iObs
-                if cs2key.has_key(i):
+                if i in cs2key:
                     cs2key[i].append((i,t))
                 else:
                     cs2key[i] = [(i,t)]
-                if ts2key.has_key(t):
+                if t in ts2key:
                     ts2key[t].append((i,t))
                 else:
                     ts2key[t] = [(i,t)]
         self.cs2key = cs2key
         self.ts2key = ts2key
-        self.observationKeys = self.observations.keys()
+        self.observationKeys = list(self.observations.keys())
         self.minx = min(min(x))
         self.maxx = max(max(x))
         self.miny = min(min(y))
@@ -555,7 +554,7 @@ class ICScatterPlot(IView):
             ts = obs.ts
             csIds = obs.cs
             for cs in csIds:
-                if self.cs2key.has_key(cs):
+                if cs in self.cs2key:
                     matchedKeys.extend(self.cs2key[cs])
         return matchedKeys 
 
@@ -580,7 +579,7 @@ class ITimeSeries(IView):
                 variable = [variable],
                 value = values[tid])
             self.observations[tsid[tid]] = obs
-        self.observationKeys = self.observations.keys()
+        self.observationKeys = list(self.observations.keys())
         
     def matchObservations(self,otherViewObservations):
         """
@@ -642,7 +641,7 @@ class IHistogram(IView):
             self.observations[id] = obs
             self.idObservations[obs] = id
 
-        self.observationKeys = self.observations.keys()
+        self.observationKeys = list(self.observations.keys())
         self.classification = classification
         self.nBins = nBins
         self.Bins = bins
@@ -696,14 +695,14 @@ class IHistogram(IView):
         self.counts = classResults.binCounts
         nbounds = len(self.bounds)
 
-        print self.bounds
-        print max(values)
+        print(self.bounds)
+        print(max(values))
 
         self.bins = {}
         for binid in range(nbounds):
             self.bins[binid] = []
         nr=range(len(values))
-        print min(classes), max(classes)
+        print(min(classes), max(classes))
         for i in nr:
             ci = classes[i]
             self.bins[ci].append(i)
@@ -783,11 +782,11 @@ class IHistogram(IView):
         bins = self.getBinsforIds(ids)
         binSelectCount = {}
         for bin in bins:
-            if binSelectCount.has_key(bin):
+            if bin in binSelectCount:
                 binSelectCount[bin] += 1
             else:
                 binSelectCount[bin] = 1
-        for binKey in binSelectCount.keys():
+        for binKey in list(binSelectCount.keys()):
             bininfo = binSelectCount[binKey]
             bincount = self.counts[binKey]
             binSelectCount[binKey] = [bininfo,bincount]
@@ -822,8 +821,8 @@ class ITimePath(IView):
                                variable = [xVariableName,yVariableName],
                                value = [xValues[i],yValues[i]])
             self.observations[i] = iObs
-        self.ids = self.observations.keys()
-        self.observationKeys = self.observations.keys()
+        self.ids = list(self.observations.keys())
+        self.observationKeys = list(self.observations.keys())
         
     def matchObservations(self,otherViewObservations):
         """
@@ -897,14 +896,14 @@ class IDensity(IView):
             self.observations[id] = obs
             binId = binIds[id]
             id2bin[id] = binId
-            if bin2id.has_key(binId):
+            if binId in bin2id:
                 bin2id[binId].append(id)
             else:
                 bin2id[binId] = [id]
 
         self.bin2id = bin2id
         self.id2bin = id2bin
-        self.observationKeys = self.observations.keys()
+        self.observationKeys = list(self.observations.keys())
 
     def matchObservations(self,otherViewObservations):
         """
@@ -984,14 +983,14 @@ class ICDF(IView):
             self.observations[id] = obs
             binId = binIds[id]
             id2bin[id] = binId
-            if bin2id.has_key(binId):
+            if binId in bin2id:
                 bin2id[binId].append(id)
             else:
                 bin2id[binId] = [id]
 
         self.bin2id = bin2id
         self.id2bin = id2bin
-        self.observationKeys = self.observations.keys()
+        self.observationKeys = list(self.observations.keys())
 
     def matchObservations(self,otherViewObservations):
         """
@@ -1057,7 +1056,7 @@ class IPCP(IView):
             iObs = Observation(ts=[t], cs=[id],variable=self.variableNames,value=vals)
             self.observations[id] = iObs
         
-        self.observationKeys = self.observations.keys()
+        self.observationKeys = list(self.observations.keys())
         #z is for conditioned variable - first var user inputs for now
         self.colorId = {}
         if self.zName:
@@ -1132,17 +1131,17 @@ class ITable(IView):
                     variable = varName[id],
                     value = vflat[id])
             for ts in tsid[id]:
-                if ts2id.has_key(ts):
+                if ts in ts2id:
                     ts2id[ts].append(id)
                 else:
                     ts2id[ts]=[id]
             for cs in csid[id]:
-                if cs2id.has_key(cs):
+                if cs in cs2id:
                     cs2id[cs].append(id)
                 else:
                     cs2id[cs]=[id]
             for var in varName[id]:
-                if var2id.has_key(var):
+                if var in var2id:
                     var2id[var].append(id)
                 else:
                     var2id[var]=[id]
@@ -1154,7 +1153,7 @@ class ITable(IView):
         self.cs2id = cs2id
         self.var2id = var2id
 
-        self.ids = self.observations.keys()
+        self.ids = list(self.observations.keys())
         self.observationKeys = self.ids
         dimensions = {}
         dimensions["cs"] = cs2id
@@ -1178,14 +1177,14 @@ class ITable(IView):
         for oid in otherViewObservations:
             for dimension in dimensions:
                 ourDimension = self.dimensions[dimension]
-                if oid.dimensions.has_key(dimension):
+                if dimension in oid.dimensions:
                     otherKeys = oid.dimensions[dimension]
                     for otherKey in otherKeys:
-                        if ourDimension.has_key(otherKey):
+                        if otherKey in ourDimension:
                             matched.extend(ourDimension[otherKey])
         if matched:
             # remove duplicates
-            matched = sets.Set(matched)
+            matched = set(matched)
             matched = list(matched)
         return matched
                
@@ -1200,8 +1199,7 @@ class ITable(IView):
         return self.matchObservations(otherViewObservations, dimensions=["cs","ts"])
 
 if __name__ == '__main__':
-    from numpy.oldnumeric import *
-    from numpy.oldnumeric.random_array import *
+    from numpy import *
     t=IView()
     t.select([1,2,3])
 
@@ -1250,7 +1248,7 @@ if __name__ == '__main__':
         r2 = row + ncoord + 1
         polyDict[pId] = [ float(coord.strip()) \
                                for coord in gisdata[r1:r2]]
-        if cpolyDict.has_key(csId):
+        if csId in cpolyDict:
             cpolyDict[csId].append(pId)
         else:
             cpolyDict[csId] = [pId]

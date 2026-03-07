@@ -58,17 +58,17 @@ class shape:
         It provides a listing of shape file characteristics:
             file name, type and number of records.
         """
-        print "======================="
-        print "Shape File Name: " + str(self.filename)
+        print("=======================")
+        print("Shape File Name: " + str(self.filename))
         if self.shptype == SHP_POLYGON:
-            print "Type: Polygon"
+            print("Type: Polygon")
         elif self.shptype == SHP_POINT:
-            print "Type: Point"
-        print "Number of records: " + str(len(self.shplist))
-        print "Bounding box:"
-        print "   Xmin, Ymin:  " + ",".join(["%.8f" % i for i in self.shpbox[:2]])
-        print "   Xmax, Ymax:  " + ",".join(["%.8f" % i for i in self.shpbox[2:]])
-        print "======================="
+            print("Type: Point")
+        print("Number of records: " + str(len(self.shplist)))
+        print("Bounding box:")
+        print("   Xmin, Ymin:  " + ",".join(["%.8f" % i for i in self.shpbox[:2]]))
+        print("   Xmax, Ymax:  " + ",".join(["%.8f" % i for i in self.shpbox[2:]]))
+        print("=======================")
             
     def parttest(self):
         """
@@ -246,22 +246,22 @@ class bbox(list):
         
         
 if __name__ == "__main__":
-    fname = raw_input("Enter the shape file name (include .shp): ")
+    fname = input("Enter the shape file name (include .shp): ")
     t0 = time.time()
     test = shapefile(fname)
     t1 = time.time()
-    print "-------------------------------------"
-    print "time elapsed: " + str(t1-t0)
+    print("-------------------------------------")
+    print("time elapsed: " + str(t1-t0))
     test.summary()
     multipart = test.parttest()
-    print "multiple parts " + str(multipart)
+    print("multiple parts " + str(multipart))
 #various and sundry things to print out
 #    print "filename is " + str(test.filename)
 #    print "shape type is " + str(test.shptype)
 #    print "bounding box is " + str(test.shpbox)
-    print "first shape \n" + str(test.shplist[0])
+    print("first shape \n" + str(test.shplist[0]))
     nshp = len(test.shplist)
-    print "last shape \n" + str(test.shplist[nshp-1])
+    print("last shape \n" + str(test.shplist[nshp-1]))
 #    for i in range(nshp):
 #        print i+1
 #        print "bounding box \n" + str(test.shplist[i][0])
@@ -269,13 +269,13 @@ if __name__ == "__main__":
 #        print "point list \n" + str(test.shplist[i][2])
 
     bobox = test.shpbox
-    print str(bobox)
-    print str(type(bobox))
+    print(str(bobox))
+    print(str(type(bobox)))
     a = test.shplist[0][0]
-    print str(a)
+    print(str(a))
     aa = bbox(a)
-    print str(aa)
-    print str(type(aa))
+    print(str(aa))
+    print(str(type(aa)))
     
         
     

@@ -14,19 +14,19 @@ This module implements the primitive graphics classes for STARS.
 """
 
 from types import *
-from Tkinter import *
-from tkFileDialog import *
-import time, string, tkColorChooser, pickle
-import tkFont
+from tkinter import *
+from tkinter.filedialog import *
+import time, string, tkinter.colorchooser, pickle
+import tkinter.font
 import sys
 import re
 import math
 from random import *
-from numpy.oldnumeric.random_array import *
-
-from numpy.oldnumeric import *
-from numpy.oldnumeric.mlab import *
-from numpy.oldnumeric.linear_algebra import *
+import numpy as np
+from numpy import *
+from numpy.random import *
+from numpy.linalg import *
+matrixmultiply = np.dot  # compatibility alias
 
 from Subscriber import *
 from iview import *
@@ -224,7 +224,7 @@ class View(Screen):
             self.canvas.bind("<Shift-ButtonRelease-1>",self.roamWindowStop)
 
 
-            print 'zoom off'
+            print('zoom off')
         else:
             self.canvas.unbind("<Button-1>")
             self.canvas.unbind("<Button1-Motion>")
@@ -234,7 +234,7 @@ class View(Screen):
             self.canvas.bind("<Button1-Motion>",self.zoomWindowStretch)
             self.canvas.bind("<ButtonRelease-1>",self.zoomWindowStop)
             self.zoomOn=1
-            print "startzoom"
+            print("startzoom")
 
 
     def startZooming(self):
@@ -277,7 +277,7 @@ class View(Screen):
             self.canvas.delete('zoomWindow')
             self.zoomWindowOn = 0
         except:
-            print 'no zoomWindow defined'
+            print('no zoomWindow defined')
 
     def zoomWindowCreate(self,coords):
         if self.zoomOn:
@@ -304,7 +304,7 @@ class View(Screen):
             self.updatePercent(percent)
 
         except:
-            print 'back at original scale'
+            print('back at original scale')
 
   
     def updatePercent(self,percent):
@@ -325,16 +325,16 @@ class View(Screen):
         if h != self.height or w != self.width:
             self.height = h
             self.width = w
-            print 'redraw required'
-            print 'height, width', h,w
+            print('redraw required')
+            print('height, width', h,w)
         else:
             if self.__resizeCount:
-                print "resize not enabled"
+                print("resize not enabled")
         self.__resizeCount += 1
 
     def reset(self, event):
         """Reset graphical view to original size"""
-        print 'resetting'
+        print('resetting')
         self.root.geometry(self.__geometry)
         
                                  
@@ -627,7 +627,7 @@ class View(Screen):
         """
         very important method.
         """
-        print "not done yet"
+        print("not done yet")
         
     def iconify(self):
         """
@@ -655,7 +655,7 @@ class View(Screen):
         """
         debug handle
         """
-        a=raw_input("pause")
+        a=input("pause")
         
     def drawCanvasTitle(self, titleString):
         """
@@ -726,7 +726,7 @@ class View(Screen):
         return geometry of someting as a list of ints
         """
         s = something.geometry()
-        return map(int, re.sub("[x+]"," ",s).split())
+        return list(map(int, re.sub("[x+]"," ",s).split()))
 
     def cleanup(self):
         """
@@ -743,7 +743,7 @@ class View(Screen):
         self.observer.setInteractionMode(INTERACTIONMODES[mode])
         #self.observer.setInteractionMode("ANY")
         self.interactionBroadcast() 
-        for viewkey in self.observer.items.keys():
+        for viewkey in list(self.observer.items.keys()):
             view = self.observer.items[viewkey]
             view.changeInteractionMode(mode)
             view.clearAll()
@@ -753,7 +753,7 @@ class View(Screen):
         signal to clear all views of selected widgets.
         """
         self.interactionBroadcast() 
-        for viewkey in self.observer.items.keys():
+        for viewkey in list(self.observer.items.keys()):
             view = self.observer.items[viewkey]
             view.clearAll()
 
@@ -761,7 +761,7 @@ class View(Screen):
 
 
     def interactionBroadcast(self):
-        print "need to override"
+        print("need to override")
 
     def changeInteractionMode(self,mode):
         """
@@ -858,7 +858,7 @@ class View(Screen):
         debug method
         """
         for i in self.matcher.selected:
-            print i
+            print(i)
 
     def travel(self):
         """
@@ -887,7 +887,7 @@ class View(Screen):
         """
         matchedIds = []
         for wid in widgetIds:
-            if self.widget2Id.has_key(wid):
+            if wid in self.widget2Id:
                 id = self.widget2Id[wid]
                 matchedIds.append(id)
         return matchedIds
@@ -903,7 +903,7 @@ class View(Screen):
         """
         matchedIds = []
         for id in ids:
-            if self.id2Widget.has_key(id):
+            if id in self.id2Widget:
                 wid = self.id2Widget[id]
                 matchedIds.append(wid)
         return matchedIds
@@ -930,10 +930,10 @@ class View(Screen):
         This could be wrapped around an interface to allow the
         printing of the eps file rather than just the creation of
         the file.""" 
-        print 'in printToFile'
+        print('in printToFile')
         bb = self.canvas.bbox("all") # Bounding box of all elements on canvas
         # Give 10 pixels room to breathe
-        print bb
+        print(bb)
         bb=reshape(array(bb),[len(bb),1])
         x = max(bb[0] - 10,0)
         y = max(bb[1] - 10,0)
@@ -1177,7 +1177,7 @@ class View(Screen):
         """
         handler for middle-button release
         """
-        print 'middle release'
+        print('middle release')
 
     def mouseRightButton(self,event):
         """
@@ -1199,7 +1199,7 @@ class View(Screen):
         """
         stat='coords:'+str(event.x)+','+str(event.y)
         tg=self.canvas.gettags('current')
-        print 'ctrlMouseMiddle'
+        print('ctrlMouseMiddle')
 
     def ctrlMouseRight(self,event):
         """
@@ -1207,7 +1207,7 @@ class View(Screen):
         """
         stat='coords:'+str(event.x)+','+str(event.y)
         tg=self.canvas.gettags('current')
-        print 'ctrlMouseRight'
+        print('ctrlMouseRight')
 
     def shiftMouseMiddle(self,event):
         """
@@ -1290,7 +1290,7 @@ class View(Screen):
             wids = self.getWidgetsForIds(ids)
             widgetIds = wids
         for widget in widgetIds:
-            if self.origColors.has_key(widget):
+            if widget in self.origColors:
                 color = self.origColors[widget]    
                 self.canvas.itemconfigure(widget,fill=color,outline=options.DEFAULTOVALBORDER)
 
@@ -1398,7 +1398,7 @@ class View(Screen):
         """
         stub to be implemented in subclass views to handle traveling.
         """
-        print "need to override"
+        print("need to override")
 
     def buildMethods(self):
         """
@@ -1426,8 +1426,8 @@ class View(Screen):
         """
         debug method to print bridge between widget and Id
         """
-        for pid in self.widget2Id.keys():
-            print "screen widget %s, observationId %d"%(pid,self.widget2Id[pid])
+        for pid in list(self.widget2Id.keys()):
+            print("screen widget %s, observationId %d"%(pid,self.widget2Id[pid]))
 
     def updateTime(self):
         """
@@ -2030,7 +2030,7 @@ class Plot(View):
             self.widget2Id[g] = c
             self.idInfo[c] = [self.x[c], self.y[c]] #actual x,y vals for tags
             c = c+1
-        self.widgetKeys = self.widget2Id.keys()
+        self.widgetKeys = list(self.widget2Id.keys())
 
     def drawYLabel(self):
         """Draws the Y-Axis label on the canvas"""
@@ -2131,7 +2131,7 @@ class Plot(View):
         oid = self.canvas.find_overlapping(self.lastx,self.lasty,self.lastx,self.lasty)
         if len(oid) > 0:
             for i in oid:
-                if self.widget2Id.has_key(i):
+                if i in self.widget2Id:
                     wid = i
                 else:
                     wid = ()
@@ -2281,7 +2281,7 @@ class MoranScatter(Plot,Subscriber):
             
             self.idInfo[c] = [self.x[c], self.y[c]] #actual x,y vals for tags
             c = c+1
-        self.widgetKeys = self.widget2Id.keys()
+        self.widgetKeys = list(self.widget2Id.keys())
         self.canvas.tag_bind("OVAL", "<Control-1>")
         
     def ctrlMouseLeft(self,event):
@@ -2300,7 +2300,7 @@ class MoranScatter(Plot,Subscriber):
         """
         XXX debug method only?
         """
-        print 'Draw LEO with csid - ', csString
+        print('Draw LEO with csid - ', csString)
         
     def getMeanAxis(self):
         """
@@ -2515,7 +2515,7 @@ class TimePath(Plot,Subscriber):
         oid = self.canvas.find_overlapping(self.lastx,self.lasty,self.lastx,self.lasty)
         if len(oid) > 0:
             for i in oid:
-                if self.widget2Id.has_key(i):
+                if i in self.widget2Id:
                     wid = i
                 else:
                     wid = ()
@@ -2616,7 +2616,7 @@ class TimePath(Plot,Subscriber):
             self.idInfo[c] = [self.x[c], self.y[c], self.intervalList[c]] #actual x,y vals for tags
             self.pointXY[g] = (i,self.scaledYCords[c])
             c = c+1
-        self.widgetKeys = self.widget2Id.keys()
+        self.widgetKeys = list(self.widget2Id.keys())
         sWids = sort(self.widgetKeys)
         self.startWidget = sWids[0]
         self.finishWidget = sWids[-1]
@@ -2877,7 +2877,7 @@ class Map(View,Subscriber):
             wids = self.getWidgetsForIds(ids)
             widgetIds = wids
         for widget in widgetIds:
-            if self.origColors.has_key(widget):
+            if widget in self.origColors:
                 color = self.origColors[widget]    
                 self.canvas.itemconfigure(widget,outline='black')
                 self.canvas.itemconfigure(widget,fill=color)
@@ -2919,7 +2919,7 @@ class Map(View,Subscriber):
 
     def drawCentroids(self):
         """plot polygon centroids"""
-        for centroid in self.centroids.keys():
+        for centroid in list(self.centroids.keys()):
             x,y = self.centroids[centroid]
             self.canvas.create_oval(x-2,y-2,x+2,y+2,fill="GREEN",tag=("CENTROID"))
 
@@ -2975,7 +2975,7 @@ class Map(View,Subscriber):
         self.poly2widget = {}
         self.widget2poly = {}
         self.polyLabel2Id = {}
-        polyKeys = self.coords.keys()
+        polyKeys = list(self.coords.keys())
         polyKeys = sort(polyKeys)
         for polyKey in polyKeys:
             ci = cic%6
@@ -2995,12 +2995,12 @@ class Map(View,Subscriber):
             self.widget2Id[p] = cic 
             self.poly2widget[polyKey] = p
             self.widget2poly[p] = polyKey
-            if self.id2Widget.has_key(cic):
+            if cic in self.id2Widget:
                 self.id2Widget[cic].append(p)
             else:
                 self.id2Widget[cic] = [p]
             cic+=1
-        self.widgetKeys = self.widget2Id.keys()
+        self.widgetKeys = list(self.widget2Id.keys())
         self.canvas.tag_bind("MAPITEM", "<Control-1>")
         self.xMidPoint = self.width/2.
 
@@ -3036,7 +3036,7 @@ class Map(View,Subscriber):
             lstrings= [ "  %.3f (%d)"%(bins[i],bCounts[i]) for i in rn ] 
             fontSize = options.AXISFONTSIZE 
             fontType = "Times"
-            FONTCHECK= tkFont.Font(family=fontType, size=fontSize)
+            FONTCHECK= tkinter.font.Font(family=fontType, size=fontSize)
             maxWidth=max([FONTCHECK.measure(s) for s in lstrings])
 
 
@@ -3148,7 +3148,7 @@ class Map(View,Subscriber):
                 fontSize = options.AXISFONTSIZE 
             else:
                 fontSize = options.AXISFONTSIZE - 2 
-            FONTCHECK= tkFont.Font(family=fontType, size=fontSize)
+            FONTCHECK= tkinter.font.Font(family=fontType, size=fontSize)
 
         
             boundMax = max(bins)
@@ -3444,7 +3444,7 @@ class Histogram(Plot,Subscriber):
         self.ovalBorder = ovalBorder
         self.histoString = 'Histogram'
         self.setTitle(self.histoString)
-        print "BINS", nBins
+        print("BINS", nBins)
         
         self.matcher = IHistogram(self.xLabel,self.x,tsIds,csIds,
         classification=classification,nBins=nBins,bins=bins)
@@ -3497,9 +3497,9 @@ class Histogram(Plot,Subscriber):
         self.xIntegerRange = arange(self.MinX, self.MaxX+1)
         self.bins = self.matcher.bins
         self.bounds = self.matcher.bounds
-        self.numberOfBins  = len(self.bins.keys())
+        self.numberOfBins  = len(list(self.bins.keys()))
         
-        self.binKeys = self.bins.keys()
+        self.binKeys = list(self.bins.keys())
         self.binVolumes = {}
         for i in self.binKeys:
             self.binVolumes[i] = len(self.bins[i])
@@ -3664,7 +3664,7 @@ class Histogram(Plot,Subscriber):
                 self.binSlices[i] = []
                 c = c+1
        
-        self.widgetKeys = self.widget2Id.keys() 
+        self.widgetKeys = list(self.widget2Id.keys()) 
                 
     def getSlice2Highlight(self,csid):
         """find id's of slices to highlight to represent unit csid
@@ -3793,7 +3793,7 @@ class Histogram(Plot,Subscriber):
         
     def mouseLeftButton(self,event):
         """Override View method"""
-        print 'mouseLeftButton'
+        print('mouseLeftButton')
         self.modButton = "none" 
         x1=self.canvas.canvasx(event.x)
         x2=x1
@@ -3898,11 +3898,11 @@ class Histogram(Plot,Subscriber):
         bins = {}
         for widget in widgetList:
             bin = self.widget2Bin[widget]
-            if bins.has_key(bin):
+            if bin in bins:
                 bins[bin] = bins[bin] + 1
             else:
                 bins[bin] = 1
-        for bin in bins.keys():
+        for bin in list(bins.keys()):
             widgetList = self.bin2Widget[bin]
             newWidgets = widgetList[0:bins[bin]]
             widgets2highlight = widgets2highlight + newWidgets
@@ -3921,11 +3921,11 @@ class Histogram(Plot,Subscriber):
         bins = {}
         for widget in widgetList:
             bin = self.widget2Bin[widget]
-            if bins.has_key(bin):
+            if bin in bins:
                 bins[bin] = bins[bin] + 1
             else:
                 bins[bin] = 1
-        for bin in bins.keys():
+        for bin in list(bins.keys()):
             widgetList = self.bin2Widget[bin]
             newWidgets = widgetList[- bins[bin] :]
             widgets2highlight = widgets2highlight + newWidgets
@@ -4216,7 +4216,7 @@ class TimeSeries(Plot,Subscriber):
             self.idInfo[c] = [self.x[c], self.y[c], self.intervalList[c]] #actual x,y vals for tags
             self.pointXY[g] = (i,self.scaledYCords[c])
             c = c+1
-        self.widgetKeys = self.widget2Id.keys()        
+        self.widgetKeys = list(self.widget2Id.keys())        
         
     def mouseLeftButtonRelease(self,event):
         stat='coords:'+str(event.x)+','+str(event.y)
@@ -4311,7 +4311,7 @@ class TimeSeries(Plot,Subscriber):
         oid = self.canvas.find_overlapping(self.lastx,self.lasty,self.lastx,self.lasty)
         if len(oid) > 0:
             for i in oid:
-                if self.widget2Id.has_key(i):
+                if i in self.widget2Id:
                     wid = i
                 else:
                     wid = ()
@@ -4591,7 +4591,7 @@ class BoxPlot(View,Subscriber):
         self.items2ids = items2ids
         self.ids2items = ids2items
         self.widget2Id = self.widgets2Ids
-        self.widgetKeys = self.widget2Id.keys()
+        self.widgetKeys = list(self.widget2Id.keys())
 
     def cleanWidgets(self,oid):
         if len(oid) == 1:
@@ -4620,7 +4620,7 @@ class BoxPlot(View,Subscriber):
                 self.publish(originCommand,newObs)
             else:
                 # debug
-                print 'no new obs'
+                print('no new obs')
 
             self.cursorReset()
 
@@ -4648,7 +4648,7 @@ class BoxPlot(View,Subscriber):
         self.matcher.select(ids)
         ids = self.matcher.selected
         wids = self.getWidgetsForIds(ids)
-        cordIds = self.widget2Cords.keys()
+        cordIds = list(self.widget2Cords.keys())
         for id in wids:
             if id in cordIds:
                 cords = self.widget2Cords[id]
@@ -4673,7 +4673,7 @@ class BoxPlot(View,Subscriber):
         self.matcher.select(ids)
         ids = self.matcher.selected
         wids = self.getWidgetsForIds(ids)
-        cordIds = self.widget2Cords.keys()
+        cordIds = list(self.widget2Cords.keys())
         for id in wids:
             if id in cordIds:
                 cords = self.widget2Cords[id]
@@ -4697,7 +4697,7 @@ class BoxPlot(View,Subscriber):
             wids = self.getWidgetsForIds(ids)
             widgetIds = wids
         for widget in widgetIds:
-            if self.origColors.has_key(widget):
+            if widget in self.origColors:
                 color = self.origColors[widget]    
                 self.canvas.itemconfigure(widget,fill=color)
         t2=time.time()
@@ -4802,7 +4802,7 @@ class CScatterPlot(Plot,Subscriber):
         self.scaledYCords = scaledYcords
         self.widget2Obs = widget2Obs
         self.obs2Widget = obs2Widget
-        self.widgetKeys = widget2Obs.keys()
+        self.widgetKeys = list(widget2Obs.keys())
         self.id2Widget = obs2Widget
         self.origColors = origColors
         self.widgetTemp = widgetTemp
@@ -4833,7 +4833,7 @@ class CScatterPlot(Plot,Subscriber):
         ids = self.matcher.matchObservations(observations)
         # need to remove dups otherwise matcher deselects everything in next
         # call
-        ids = dict.fromkeys(ids).keys()
+        ids = list(dict.fromkeys(ids).keys())
         self.matcher.select(ids)
         ids = self.matcher.selected
         wids = self.getWidgetsForIds(ids)
@@ -4842,7 +4842,7 @@ class CScatterPlot(Plot,Subscriber):
     def getWidgetsForIds(self,ids):
         matchedIds = []
         for id in ids:
-            if self.id2Widget.has_key(id):
+            if id in self.id2Widget:
                 wid = self.id2Widget[id]
                 matchedIds.append(wid)
         return matchedIds
@@ -4878,8 +4878,8 @@ class CScatterPlot(Plot,Subscriber):
             wids = self.getWidgetsForIds(ids)
             widgetIds = wids
         for widget in widgetIds:
-            print widget
-            if self.origColors.has_key(widget):
+            print(widget)
+            if widget in self.origColors:
                 color = self.origColors[widget]    
                 self.canvas.itemconfigure(widget,fill=color,outline=color)
 
@@ -5030,11 +5030,11 @@ class Density(Plot,Subscriber):
         self.origColors = origColors
         self.widget2Bin = widget2Bin
         self.bin2Widget = bin2Widget
-        self.widgetKeys = widget2Bin.keys()
+        self.widgetKeys = list(widget2Bin.keys())
         self.seg2bin = seg2bin
         id2Widget = {}
 
-        for idkey in self.matcher.id2bin.keys():
+        for idkey in list(self.matcher.id2bin.keys()):
             bin = self.matcher.id2bin[idkey]
             bintag = "segment_%d"%bin
             wid = self.bin2Widget[bintag]
@@ -5047,7 +5047,7 @@ class Density(Plot,Subscriber):
             if self.widgetKeys.count(id) > 0:
                 binId = self.widget2Bin[id]
                 mbinId = self.seg2bin[binId]
-                if self.matcher.bin2id.has_key(mbinId):
+                if mbinId in self.matcher.bin2id:
                     obsIds = self.matcher.bin2id[mbinId]
                     for obsId in obsIds:
                         if matchedIds.count(obsId) == 0:
@@ -5076,7 +5076,7 @@ class Density(Plot,Subscriber):
             wids = self.getWidgetsForIds(ids)
             widgetIds = wids
         for widget in widgetIds:
-            if self.origColors.has_key(widget):
+            if widget in self.origColors:
                 color = self.origColors[widget]    
                 self.canvas.itemconfigure(widget,fill=color)
         t2=time.time()
@@ -5168,11 +5168,11 @@ class CDF(Plot,Subscriber):
         self.origColors = origColors
         self.widget2Bin = widget2Bin
         self.bin2Widget = bin2Widget
-        self.widgetKeys = widget2Bin.keys()
+        self.widgetKeys = list(widget2Bin.keys())
         self.seg2bin = seg2bin
         id2Widget = {}
 
-        for idkey in self.matcher.id2bin.keys():
+        for idkey in list(self.matcher.id2bin.keys()):
             bin = self.matcher.id2bin[idkey]
             bintag = "segment_%d"%bin
             wid = self.bin2Widget[bintag]
@@ -5185,7 +5185,7 @@ class CDF(Plot,Subscriber):
             if self.widgetKeys.count(id) > 0:
                 binId = self.widget2Bin[id]
                 mbinId = self.seg2bin[binId]
-                if self.matcher.bin2id.has_key(mbinId):
+                if mbinId in self.matcher.bin2id:
                     obsIds = self.matcher.bin2id[mbinId]
                     for obsId in obsIds:
                         if matchedIds.count(obsId) == 0:
@@ -5233,7 +5233,7 @@ class CDF(Plot,Subscriber):
             wids = self.getWidgetsForIds(ids)
             widgetIds = wids
         for widget in widgetIds:
-            if self.origColors.has_key(widget):
+            if widget in self.origColors:
                 color = self.origColors[widget]    
                 self.canvas.itemconfigure(widget,fill=color)
         t2=time.time()
@@ -5374,7 +5374,7 @@ class PCP(Plot,Subscriber):
                     pass
             
             c = c+1
-        self.widgetKeys = self.widget2Id.keys()
+        self.widgetKeys = list(self.widget2Id.keys())
         self.canvas.tag_bind("CONNECTOR", "<Control-1>")
         
     def drawTicks(self):
@@ -5485,7 +5485,7 @@ class PCP(Plot,Subscriber):
             wids = self.getAllWidgetsForIds(ids)
             widgetIds = wids
         for widget in widgetIds:
-            if self.origColors.has_key(widget):
+            if widget in self.origColors:
                 color = self.origColors[widget]    
                 self.canvas.itemconfigure(widget,fill=color)     
                 
@@ -5509,9 +5509,8 @@ class PCP(Plot,Subscriber):
 
 if __name__ == '__main__':
 
-    from numpy.oldnumeric import *
+    from numpy import *
     from gView import *
-    import whrandom
 
 
     class ViewController:
@@ -5555,12 +5554,12 @@ if __name__ == '__main__':
             self.observer.listItems()
 
         def iconify(self):
-            for key in self.observer.items.keys():
+            for key in list(self.observer.items.keys()):
                 view = self.observer.items[key]
                 view.iconify()
 
         def deiconify(self):
-            for key in self.observer.items.keys():
+            for key in list(self.observer.items.keys()):
                 view = self.observer.items[key]
                 view.deiconify()
 
@@ -5626,7 +5625,7 @@ if __name__ == '__main__':
                 r2 = row + ncoord + 1
                 polyDict[pId] = [ float(coord.strip()) \
                                        for coord in gisdata[r1:r2]]
-                if cpolyDict.has_key(csId):
+                if csId in cpolyDict:
                     cpolyDict[csId].append(pId)
                 else:
                     cpolyDict[csId] = [pId]
@@ -5740,7 +5739,7 @@ if __name__ == '__main__':
             v2 = v1
             v2.sort()
             v3 = [v1.index(i) for i in v2] 
-            print v1, v3
+            print(v1, v3)
             v4 = normal(1000, 191, self.n-1)
             v4 = v4.tolist()
             v5 = normal(400, 50, self.n-1)

@@ -12,9 +12,9 @@ with a class derived from Frame for its quit method
 Borrowed/modified from Programming Python
 """
 
-from Tkinter import *
-from tkMessageBox import *
-from tkFileDialog import *
+from tkinter import *
+from tkinter.messagebox import *
+from tkinter.filedialog import *
 #from ScrolledText import ScrolledText
 #from PP2E.launchmodes import PortableLauncher, System
 

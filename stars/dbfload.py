@@ -174,18 +174,18 @@ class DbfLoader:
         fields = self.get_field_names()
         nfields = len(fields)
         n = self.recordCount
-        print "="*23
+        print("="*23)
         so="DBF name: %s"%self.filename
         so+="\nNumber of records: %d"%n
         so+="\nNumber of fields: %d"%nfields
-        print so
+        print(so)
         fields = self.get_field_names()
         types = self.get_field_types()
         maxf = max([len(field) for field in fields])
         for field,type in zip(fields,types):
-            print "%21s %s"%(field,type)
+            print("%21s %s"%(field,type))
         
-        print "="*23
+        print("="*23)
 
 
     def table2list(self):
@@ -241,9 +241,9 @@ class DbfFieldDef:
 def demo1():
     dl1 = DbfLoader('county.dbf')
     dl1.reportOn()
-    print 'sample records:'
+    print('sample records:')
     for i1 in range(min(3,dl1.recordCount)):
-        print dl1.allRecords[i1]
+        print(dl1.allRecords[i1])
 
 if (__name__=='__main__'):
     import pdb

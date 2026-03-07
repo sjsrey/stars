@@ -28,7 +28,7 @@ import sys
 import os
 
 def exitHandler(message):
-    raw_input(message)
+    input(message)
     sys.exit()
 
 class Options:
@@ -189,16 +189,16 @@ class Options:
         return exampleFile
 
 if __name__ == '__main__':
-    from numpy.oldnumeric import *
-    import Tkinter as Tk
+    import numpy as np
+    import tkinter as Tk
     import DataViewer as DV
 
     class App(Options):
         """ """
         def __init__(self):
             Options.__init__(self)
-            print 'in const'
-            print self.getSTARSHOME()
+            print('in const')
+            print(self.getSTARSHOME())
             top = Tk.Tk()
             a=zeros((10,10))
             self.a = a
@@ -217,7 +217,7 @@ if __name__ == '__main__':
 
 
     test=App()
-    print 'STARSHOME: ',test.getSTARSHOME()
+    print('STARSHOME: ',test.getSTARSHOME())
     # draw a table in the win32 platform font size
     #test.setPLATFORM('win32')
     #test.draw()

@@ -26,7 +26,7 @@ class Database:
     def addVariable(self,variable):
         self.variables[variable.name] = variable
         varType = variable.varType
-        if self.varTypes.has_key(varType):
+        if varType in self.varTypes:
             vnames = self.varTypes[varType]
             if vnames.count(variable.name) == 0:
                 self.varTypes[varType].append(variable.name)
@@ -34,12 +34,12 @@ class Database:
             self.varTypes[varType] = [variable.name]
 
     def deleteVariable(self,variable):
-        variables = [ x for x in self.variables.items() if x[0] != \
+        variables = [ x for x in list(self.variables.items()) if x[0] != \
             variable.name]
         self.variablesTemp = dict(variables)
         self.varTypes.clear()
         self.variables.clear()
-        vars = self.variablesTemp.items()
+        vars = list(self.variablesTemp.items())
         for var in vars:
             self.addVariable(var[1])
  
@@ -61,13 +61,13 @@ class Database:
             return 0
 
     def getVariableNames(self):
-        return self.variables.keys()
+        return list(self.variables.keys())
 
     def getMatrixNames(self):
-        return self.matrices.keys()
+        return list(self.matrices.keys())
 
     def varTypeSummary(self):
-        varTypes = self.varTypes.keys()
+        varTypes = list(self.varTypes.keys())
         so = "Variable Classifications\n"
         for varType in varTypes:
             vars = self.varTypes[varType]
@@ -96,8 +96,8 @@ class Database:
 
 
     def listItems(self):
-        variableNames = self.variables.keys()
-        matrixNames = self.matrices.keys()
+        variableNames = list(self.variables.keys())
+        matrixNames = list(self.matrices.keys())
         nvar=len(variableNames)
         nmat=len(matrixNames)
         so="Project has %d variables and %d matrices.\n"%(nvar,nmat)

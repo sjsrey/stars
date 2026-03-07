@@ -14,10 +14,12 @@ methods can be attached to menu callbacks.
 
 """
 import sys, os, string
-from Tkinter import *                        # widget classes
+from tkinter import *                        # widget classes
 from guimixin import *        # mix-in methods
 from guimaker import *        # frame, plus menu/toolbar builder
-from numpy.oldnumeric import *
+import numpy as np
+from numpy import *
+matrixmultiply = np.dot  # compatibility alias
 import pickle
 import os.path
 import version
@@ -214,13 +216,13 @@ class SProject(Project):
         #gisDim  = "100000" # serge kludge for presentation
         #print gisDim, self.screenDim
         if gisDim != [self.screenDim]:
-            print 'scaling coordinates, please wait'
+            print('scaling coordinates, please wait')
             self.y1 = self.vheight * options.OUTERBOXPLOTS[0]
             self.y0 = self.vheight * options.OUTERBOXPLOTS[1]
             self.x1 = self.vwidth * options.OUTERBOXPLOTS[0]
             self.x0 = self.vwidth * options.OUTERBOXPLOTS[1]
 
-            keys = self.coords.keys()
+            keys = list(self.coords.keys())
             allXs = []
             allYs = []
 
@@ -294,12 +296,12 @@ class SProject(Project):
             poly2cs = self.poly2cs
             cs2poly = self.cs2poly
             polyTemp={}
-            for poly in coords.keys():
+            for poly in list(coords.keys()):
                 xy = coords[poly]
                 xyChar = PolyChar(xy)
                 polyTemp[poly] = xyChar
             centroids = {}
-            cs2polykeys = cs2poly.keys()
+            cs2polykeys = list(cs2poly.keys())
             cs2polykeys.sort()
             xvar = []
             yvar = []
@@ -315,7 +317,7 @@ class SProject(Project):
                 centroids[csKey] = centroid
             self.centroids = centroids
 
-            cs2polykeys = cs2poly.keys()
+            cs2polykeys = list(cs2poly.keys())
             cs2polykeys.sort()
             xvar = []
             yvar = []
@@ -360,7 +362,7 @@ class SProject(Project):
 
         n = len(centroids)
         rn = range(n)
-        keys = centroids.keys()
+        keys = list(centroids.keys())
         neighbors = {}
         for i in rn[:-1]:
             for j in rn[i+1:]:
@@ -380,16 +382,16 @@ class SProject(Project):
                         gabrielNeighbor = 0
                         break
                 if gabrielNeighbor:
-                    if neighbors.has_key(keyI):
+                    if keyI in neighbors:
                         neighbors[keyI].append(keyJ)
                     else:
                         neighbors[keyI] = [keyJ]
-                    if neighbors.has_key(keyJ):
+                    if keyJ in neighbors:
                         neighbors[keyJ].append(keyI)
                     else:
                         neighbors[keyJ] = [keyI]
         gal = dict([ (item[0],[len(item[1]),item[1]]) for item in \
-            neighbors.items() ])
+            list(neighbors.items()) ])
         mat = spMatrix("Gabriel")
         mat.dict = gal
         self.dataBase.addMatrix(mat)
@@ -403,7 +405,7 @@ class SProject(Project):
         centroids = self.centroids
         n = len(centroids)
         rn = range(n)
-        keys = centroids.keys()
+        keys = list(centroids.keys())
         neighbors = {}
         for i in rn[:-1]:
             for j in rn[i+1:]:
@@ -414,18 +416,18 @@ class SProject(Project):
                 dj = dmat[j,:]
                 minmaxz = min([ max([di[z],dj[z]]) for z in range(n) ])
                 if dij <= minmaxz:
-                    if neighbors.has_key(keyI): 
+                    if keyI in neighbors: 
                         neighbors[keyI].append(keyJ)
                     else:
                         neighbors[keyI] = [keyJ]
-                    if neighbors.has_key(keyJ):
+                    if keyJ in neighbors:
                         neighbors[keyJ].append(keyI)
                     else:
                         neighbors[keyJ] = [keyI]
 
 
         gal = dict([ (item[0],[len(item[1]),item[1]]) for item in \
-            neighbors.items() ])
+            list(neighbors.items()) ])
         mat = spMatrix("Relative")
         mat.dict = gal
         self.dataBase.addMatrix(mat)
@@ -439,7 +441,7 @@ class SProject(Project):
         centroids = self.centroids
         n = len(centroids)
         rn = range(n)
-        keys = centroids.keys()
+        keys = list(centroids.keys())
         neighbors = {}
         for i in rn[:-1]:
             for j in rn[i+1:]:
@@ -449,18 +451,18 @@ class SProject(Project):
                 di = sort(dmat[i,:])
                 dj = sort(dmat[j,:])
                 if dij <= di[1]+dj[1]:
-                    if neighbors.has_key(keyI): 
+                    if keyI in neighbors: 
                         neighbors[keyI].append(keyJ)
                     else:
                         neighbors[keyI] = [keyJ]
-                    if neighbors.has_key(keyJ):
+                    if keyJ in neighbors:
                         neighbors[keyJ].append(keyI)
                     else:
                         neighbors[keyJ] = [keyI]
 
 
         gal = dict([ (item[0],[len(item[1]),item[1]]) for item in \
-            neighbors.items() ])
+            list(neighbors.items()) ])
         mat = spMatrix("SOI")
         mat.dict = gal
         self.dataBase.addMatrix(mat)
@@ -518,7 +520,7 @@ class SMap(Map,SBroadcast):
             x = var[:,tsId]
             self.values = array(x)
             self.binData()
-            polyKeys = self.coords.keys()
+            polyKeys = list(self.coords.keys())
             origColors = self.binIds
 
             for polyKey in polyKeys:
@@ -534,7 +536,7 @@ class SMap(Map,SBroadcast):
                 self.canvas.itemconfigure(pid,outline="Black")
 
             observations = self.matcher.observations
-            for observationKey in observations.keys():
+            for observationKey in list(observations.keys()):
                 observation = observations[observationKey]
                 observation.ts = [tsId]
                 observations[observationKey] = observation
@@ -549,7 +551,7 @@ class SMap(Map,SBroadcast):
         oid = self.canvas.find_overlapping(self.lastx,self.lasty,self.lastx,self.lasty)
         if len(oid) > 0:
             for i in oid:
-                if self.widget2poly.has_key(i):
+                if i in self.widget2poly:
                     wid = i
                 else:
                     wid = ()
@@ -575,7 +577,7 @@ class SMap(Map,SBroadcast):
         oid = self.canvas.find_overlapping(self.lastx,self.lasty,self.lastx,self.lasty)
         if len(oid) > 0:
             for i in oid:
-                if self.widget2poly.has_key(i):
+                if i in self.widget2poly:
                     wid = i
                 else:
                     wid = ()
@@ -655,7 +657,7 @@ class SMap(Map,SBroadcast):
 
             if w.matType == "sparse":
                 dict = w.dict
-                ids = dict.keys()
+                ids = list(dict.keys())
                 for id in ids:
                     p1 = centroids[id]
                     neighbors = dict[id][1]
@@ -690,7 +692,7 @@ class SMap(Map,SBroadcast):
             b = c.binary
             centroids = self.project.centroids
             dict = w.dict
-            keys = dict.keys()
+            keys = list(dict.keys())
             for key in keys:
                 neighbors = dict[key][1]
                 p1 = centroids[key]
@@ -887,7 +889,7 @@ class SMoranScatter(MoranScatter,SBroadcast):
         oid = self.canvas.find_overlapping(self.lastx,self.lasty,self.lastx,self.lasty)
         if len(oid) > 0:
             for i in oid:
-                if self.widget2Id.has_key(i):
+                if i in self.widget2Id:
                     wid = i
                 else:
                     wid = ()
@@ -1075,7 +1077,7 @@ class STimeSeries(TimeSeries,SBroadcast):
         oid = self.canvas.find_overlapping(self.lastx,self.lasty,self.lastx,self.lasty)
         if len(oid) > 0:
             for i in oid:
-                if self.widget2Id.has_key(i):
+                if i in self.widget2Id:
                     wid = i
                 else:
                     wid = ()
@@ -1225,7 +1227,7 @@ class SpaceTimeButtonMatrix(View):
                 ab[cellTag] = (i,j)
         self.widget2cell = widget2cell
         self.cellDict = cellDict
-        self.widgetKeys = self.cellDict.keys()
+        self.widgetKeys = list(self.cellDict.keys())
         self.coords=coords
         self.ab = ab
 
@@ -1629,7 +1631,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
             for i,menu in menus:
                 if i!=0 and i!=5:
                     menu['state']=DISABLED
-            fileMenu=fileMenu.children.values()[0]
+            fileMenu=list(fileMenu.children.values())[0]
             fileMenu.entryconfigure(2,state=DISABLED)
             fileMenu.entryconfigure(4,state=DISABLED)
             fileMenu.entryconfigure(5,state=DISABLED)
@@ -1643,7 +1645,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
             menus = zipper(self.menus)
             for i,menu in menus:
                 menu['state']=NORMAL
-            fileMenu=fileMenu.children.values()[0]
+            fileMenu=list(fileMenu.children.values())[0]
             fileMenu.entryconfigure(2,state=NORMAL)
             fileMenu.entryconfigure(4,state=NORMAL)
             fileMenu.entryconfigure(5,state=NORMAL)
@@ -1769,7 +1771,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         last = before.split("/")[-1]
         self.project.ReadGalMatrix(last)
         self.report("Imported GAL Matrix: " + fileName)
-        self.report("Matrices Available: " + str(self.project.dataBase.matrices.keys()))
+        self.report("Matrices Available: " + str(list(self.project.dataBase.matrices.keys())))
         self.session.addCommand("ReadGalMatrix(\""+last+"\")")
 
     def listVariablesPartial(self):
@@ -1780,15 +1782,15 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
     def varSelector(self):
         class VarSelector(ScrolledList):
             def on_select(self,index):
-                print "select", self.get(index)
+                print("select", self.get(index))
             def on_double(self,index):
-                print "double", self.get(index)
+                print("double", self.get(index))
         tmp = Toplevel(self.master)
         s = VarSelector(tmp,singleSelect=1)
         vnames = self.project.dataBase.getVariableNames()
         for vname in vnames:
             s.append(vname)
-        print s.getSelections()
+        print(s.getSelections())
 
     def listVariable(self):
         varNames = self.get_CS_CSTS_variable_names(exclude=['Time'])
@@ -1901,7 +1903,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         self.report(self.project.listRegionNames())
 
     def listMatrices(self):
-        self.report("Matrices available: " + str(self.project.dataBase.matrices.keys()))
+        self.report("Matrices available: " + str(list(self.project.dataBase.matrices.keys())))
 
     def listData(self):
         self.listVariables()
@@ -2053,7 +2055,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         sd.UserEntry(d,label="New Variable Name",helpText=txt)
         d.draw()
         if d.status:
-            print d.results
+            print(d.results)
             eventName = d.results[0]['Event']
             baseName = d.results[1]['Base']
             event = self.project.dataBase.getVariable(eventName)
@@ -2233,7 +2235,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
     def createDistanceMatrix(self):
         self.project.distMatOn = 1
         cs2poly = self.project.cs2poly
-        cs2polykeys = cs2poly.keys()
+        cs2polykeys = list(cs2poly.keys())
         cs2polykeys.sort()
         xvar = []
         yvar = []
@@ -2418,7 +2420,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
             wName = d.results[0]['Matrix']
             w = self.project.dataBase.getMatrix(wName)
             self.w=w
-            id=w.dict.keys()
+            id=list(w.dict.keys())
             id.sort()
             nneigh = [ w.dict[i][0] for i in id]
             maxn=max(nneigh)
@@ -3595,7 +3597,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
 
         d.draw()
         if d.status:
-            print d.results
+            print(d.results)
             variableName = d.results[0]['Variable']
             variable = self.project.dataBase.getVariable( variableName )
             regimeName = d.results[1]['Variable']
@@ -3855,10 +3857,10 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
             rowLabels = [ "%8.3f"%(x) for x in rowLabels]
             name="Classic Markov: %s Interval: %d"%(var.name,markovRes.interval)
             varIds = [ [var.name] for id in ids[0] ]
-            print "MAT", mat
-            print "VARIDS", varIds
-            print "ids", ids[2], ids[1]
-            print "ids2\n", len(ids[2]), len(ids[1])
+            print("MAT", mat)
+            print("VARIDS", varIds)
+            print("ids", ids[2], ids[1])
+            print("ids2\n", len(ids[2]), len(ids[1]))
             tab=STable(name,top,self.project,
                     mat,varIds,ids[2],ids[1],
                     rowLabels=rowLabels,
@@ -4109,7 +4111,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
             poly2cs = self.project.poly2cs
             cs2poly = self.project.cs2poly
             bins = range(1,5,1)
-            bins = dict(zip(km.ids,km.ids)).keys()
+            bins = list(dict(zip(km.ids,km.ids)).keys())
             bins.sort()
             nbins = len(bins)
             timePeriod = 0
@@ -4299,7 +4301,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
                              poly2cs,cs2poly,classification="uniqueValues",
                              legendType="qualitative")
             except:
-                print "Error: You may be trying to map a continuous variable"
+                print("Error: You may be trying to map a continuous variable")
 
     def userDefinedD(self):
         import sdialogue as sd
@@ -4732,7 +4734,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
             try:
                 userDefs = d.results[1].split(",")
                 xmin,xmax = eval(userDefs)
-                print 'User Defined Bounds'
+                print('User Defined Bounds')
             except:
                 xmin = None
                 xmax = None
@@ -4771,7 +4773,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
             try:
                 userDefs = d.results[1].split(",")
                 xmin,xmax = eval(userDefs)
-                print 'User Defined Bounds'
+                print('User Defined Bounds')
             except:
                 xmin = None
                 xmax = None
@@ -4865,12 +4867,12 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         self.disableMenus()
 
     def iconify(self):
-        for key in viewObserver.items.keys():
+        for key in list(viewObserver.items.keys()):
             view = viewObserver.items[key]
             view.iconify()
 
     def deiconify(self):
-        for key in viewObserver.items.keys():
+        for key in list(viewObserver.items.keys()):
             view = viewObserver.items[key]
             view.deiconify()
 
@@ -4881,7 +4883,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         self.report("arrangeAll called")
 
     def closeWindows(self):
-        for key in viewObserver.items.keys():
+        for key in list(viewObserver.items.keys()):
             view = viewObserver.items[key]
             view.Quit()
         self.project.closeController()
@@ -4889,10 +4891,10 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         self.listViews()
     def listViews(self):
         lnames = {}
-        for key in viewObserver.items.keys():
+        for key in list(viewObserver.items.keys()):
             view = viewObserver.items[key]
             lnames[view.listName] = key
-        keys = lnames.keys()
+        keys = list(lnames.keys())
         keys.sort()
         class dialogScrolledList(ScrolledList):
             def __init__(self,master,entries):
@@ -4913,19 +4915,19 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
             s.append(item)
 
     def mapLegendsOff(self):
-        for key in viewObserver.items.keys():
+        for key in list(viewObserver.items.keys()):
            view = viewObserver.items[key]
            if hasattr(view,'legend'):
                view.legendMode.set(0)
                view.changeLegend()
     def mapLegendsLeft(self):
-        for key in viewObserver.items.keys():
+        for key in list(viewObserver.items.keys()):
            view = viewObserver.items[key]
            if hasattr(view,'legend'):
                view.legendMode.set(1)
                view.changeLegend()
     def mapLegendsRight(self):
-        for key in viewObserver.items.keys():
+        for key in list(viewObserver.items.keys()):
            view = viewObserver.items[key]
            if hasattr(view,'legend'):
                view.legendMode.set(2)
@@ -4933,17 +4935,17 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
 
     def interactionOff(self):
         viewObserver.setInteractionMode("off")
-        for key in viewObserver.items.keys():
+        for key in list(viewObserver.items.keys()):
             view = viewObserver.items[key]
             view.changeInteractionMode(OFF)
     def interactionLinking(self):
         viewObserver.setInteractionMode("linking")
-        for key in viewObserver.items.keys():
+        for key in list(viewObserver.items.keys()):
             view = viewObserver.items[key]
             view.changeInteractionMode(LINKING)
     def interactionBrushing(self):
         viewObserver.setInteractionMode("brushing")
-        for key in viewObserver.items.keys():
+        for key in list(viewObserver.items.keys()):
             view = viewObserver.items[key]
             view.changeInteractionMode(BRUSHING)
 
@@ -5072,7 +5074,7 @@ class App(GuiMixin, GuiMaker):   # or GuiMakerFrameMenu
         return names
 
 if __name__ == '__main__':
-    import Tkinter
+    import tkinter
     import sys
     main = App()
     main.disableMenus()
@@ -5087,9 +5089,9 @@ if __name__ == '__main__':
         def example():
             main.example()
         def catalogue():
-            print main.project.catalogue()
+            print(main.project.catalogue())
         def matrixNames():
-            print main.getMatrixNames()
+            print(main.getMatrixNames())
         def openProject():
             main.openProject()
         def getVariable(name):

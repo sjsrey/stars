@@ -51,10 +51,10 @@ class CanvasCoords:
         self.xy_scale = self.canvas_x/self.x_range
 
     def print_coordinate_system(self):
-        print "canvas = (%d,%d)" % (self.canvas_x, self.canvas_y)
-        print "canvas origin = (%d,%d)" % (self.x_origin, self.y_origin)
-        print "range of physical x coordinate =", self.x_range
-        print "xy_scale (from physical to canvas): ", self.xy_scale
+        print("canvas = (%d,%d)" % (self.canvas_x, self.canvas_y))
+        print("canvas origin = (%d,%d)" % (self.x_origin, self.y_origin))
+        print("range of physical x coordinate =", self.x_range)
+        print("xy_scale (from physical to canvas): ", self.xy_scale)
     
     # --- transformations between physical and canvas coordinates: ---
     
@@ -111,7 +111,7 @@ class CanvasCoords:
     p2c4 = physical2canvas4
 
 if __name__ == '__main__':
-    from Tkinter import *
+    from tkinter import *
     root = Tk()
     c = Canvas(root,width=400, height=400)
     c.pack()

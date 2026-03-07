@@ -7,9 +7,7 @@ AUTHOR(S):  Sergio J. Rey sjrey@users.sourceforge.net
 ----------------------------------------------------------------------
 """
 
-from numpy.oldnumeric import *
-from numpy.oldnumeric.mlab import *
-from numpy.oldnumeric.user_array import *
+import numpy as np
 from copy import copy
 import os.path
 
@@ -17,26 +15,26 @@ import os.path
 import Utility
 from stars import *
 from Errors import *
-            
+
 def csts(values,n,t):
-    values = array(values)
-    values = reshape(values,[n,t])
+    values = np.array(values)
+    values = np.reshape(values,[n,t])
     return values
 
 def tscs(values,n,t):
-    values = array(values)
-    values = reshape(values,[t,n])
-    values = transpose(values)
+    values = np.array(values)
+    values = np.reshape(values,[t,n])
+    values = np.transpose(values)
     return values
 
 def cs(values,n,t):
-    return reshape(array(values),[n,1])
+    return np.reshape(np.array(values),[n,1])
 
 def ts(values,n,t):
-    return reshape(array(values),[t,1])
+    return np.reshape(np.array(values),[t,1])
 
-varMenu = {"CSTS": csts, "TSCS": tscs, "TS": ts, "CS": cs}    
- 
+varMenu = {"CSTS": csts, "TSCS": tscs, "TS": ts, "CS": cs}
+
 def lag(y,wsp):
     """Constructs the spatial lag of a variable.
 
@@ -58,23 +56,22 @@ def lag(y,wsp):
     """
     if wsp.matType == "sparse":
         winfo = wsp.dict
-        ids = winfo.keys()
-        ids.sort()
-        n = len(ids)
+        ids = sorted(winfo.keys())
         ylag = []
         for id in ids:
             i = winfo[id]
-            nNeighbors = i[0] * 1.
+            nNeighbors = float(i[0])
             neighbors = i[1]
-            nsum = sum(take(y,neighbors)) / nNeighbors 
+            # axis=0 preserves time dimension for CSTS (n x t) variables
+            nsum = np.sum(np.take(y, neighbors, axis=0), axis=0) / nNeighbors
             ylag.append(nsum)
     else:
         w = wsp.full()
-        ylag = matrixmultiply(w,y)
-        ylag = ylag.tolist()
+        ylag = (w @ y).tolist()
     return ylag
 
-class Variable(UserArray):
+
+class Variable(np.ndarray):
     """STARS Variable.
 
     Arguments (1):
@@ -100,17 +97,25 @@ class Variable(UserArray):
         72
     """
     variableType = "Variable"
-    def __init__(self,values):
-        UserArray.__init__(self,values)
-        self.id = id(self)
-        self.note = ""
+
+    def __new__(cls, values):
+        obj = np.asarray(values).view(cls)
+        return obj
+
+    def __array_finalize__(self, obj):
         dim = self.shape
-        self.n = dim[0]
-        if len(dim) == 2:
-            self.t = dim[1]
-        else:
-            self.t = 1
-        
+        self.n = dim[0] if len(dim) > 0 else 0
+        self.t = dim[1] if len(dim) > 1 else 1
+        if obj is None:
+            return
+        self.id = getattr(obj, 'id', id(self))
+        self.note = getattr(obj, 'note', '')
+        self.variableType = getattr(obj, 'variableType', 'Variable')
+        self.name = getattr(obj, 'name', '')
+        self.varType = getattr(obj, 'varType', '')
+        self.regionNames = getattr(obj, 'regionNames', [])
+        self.timeString = getattr(obj, 'timeString', '')
+
     def addNote(self,message):
         self.note = message
 
@@ -123,14 +128,14 @@ class Variable(UserArray):
     def setType(self,varType):
         self.varType = varType
 
-   
     def setRegionNames(self,regionNames):
         self.regionNames = regionNames
 
     def setTimeString(self,timeString):
         self.timeString = timeString
 
-class SVariable(UserArray):
+
+class SVariable(np.ndarray):
     """STARS Variable.
 
     Arguments (1):
@@ -156,17 +161,25 @@ class SVariable(UserArray):
         72
     """
     variableType = "Variable"
-    def __init__(self,values):
-        UserArray.__init__(self,values)
-        self.id = id(self)
-        self.note = ""
+
+    def __new__(cls, values):
+        obj = np.asarray(values).view(cls)
+        return obj
+
+    def __array_finalize__(self, obj):
         dim = self.shape
-        self.n = dim[0]
-        if len(dim) == 2:
-            self.t = dim[1]
-        else:
-            self.t = 1
-        
+        self.n = dim[0] if len(dim) > 0 else 0
+        self.t = dim[1] if len(dim) > 1 else 1
+        if obj is None:
+            return
+        self.id = getattr(obj, 'id', id(self))
+        self.note = getattr(obj, 'note', '')
+        self.variableType = getattr(obj, 'variableType', 'Variable')
+        self.name = getattr(obj, 'name', '')
+        self.varType = getattr(obj, 'varType', '')
+        self.regionNames = getattr(obj, 'regionNames', [])
+        self.timeString = getattr(obj, 'timeString', '')
+
     def addNote(self,message):
         self.note = message
 
@@ -179,16 +192,17 @@ class SVariable(UserArray):
     def setType(self,varType):
         self.varType = varType
 
-   
     def setRegionNames(self,regionNames):
         self.regionNames = regionNames
 
     def setTimeString(self,timeString):
         self.timeString = timeString
+
+
 class DataParser:
     """Process STARS Data file input and creates variable instances."""
     def __init__(self,info,project):
-        vnames = info.keys()
+        vnames = list(info.keys())
         self.varNames = vnames
         dataDict = {}
         for i in vnames:
@@ -197,10 +211,9 @@ class DataParser:
             values = var[1]
             n=var[2][0]
             t=var[2][1]
-            values = apply(varMenu[varType],[values,n,t])
+            values = varMenu[varType](values,n,t)
             variable = Variable(values)
             variable.setName(i)
-            #print i
             variable.setType(varType)
             dataDict[i] = variable
             project.dataBase.addVariable(variable) # assumes this is used within a project
@@ -235,21 +248,21 @@ class Annual(TimeString):
         startTime = int(startTime)
         finishTime = int(finishTime)
         finishTime = finishTime+1
-        self.numeric = range(startTime,finishTime,inc)
-        self.string = map(repr,self.numeric)
+        self.numeric = list(range(startTime,finishTime,int(inc)))
+        self.string = list(map(repr,self.numeric))
         self.t = len(self.numeric)
         self.timeType = 'ANNUAL'
         self.summary()
-    
+
     def summary(self):
-        t1 = "Time Series Type: " + self.timeType 
+        t1 = "Time Series Type: " + self.timeType
         t2 = "T = " + str(self.t)
         t3 = "Start Year: " + self.string[0]
         t4 = "End Year: " + self.string[-1]
-        self.timeSummary = "\n".join([t1,t2,t3,t4])        
+        self.timeSummary = "\n".join([t1,t2,t3,t4])
 
     def report(self):
-        print self.timeSummary
+        print(self.timeSummary)
 
 class Decadal(TimeString):
     """Labels for decadal time series """
@@ -258,21 +271,21 @@ class Decadal(TimeString):
         startTime = int(startTime)
         finishTime = int(finishTime)
         finishTime = finishTime+1
-        self.numeric = range(startTime,finishTime,inc)
-        self.string = map(repr,self.numeric)
+        self.numeric = list(range(startTime,finishTime,int(inc)))
+        self.string = list(map(repr,self.numeric))
         self.t = len(self.numeric)
         self.timeType = 'DECADAL'
         self.summary()
 
     def summary(self):
-        t1 = "Time Series Type: " + self.timeType 
+        t1 = "Time Series Type: " + self.timeType
         t2 = "T = " + str(self.t)
         t3 = "Start Year: " + self.string[0]
         t4 = "End Year: " + self.string[-1]
-        self.timeSummary = "\n".join([t1,t2,t3,t4])   
+        self.timeSummary = "\n".join([t1,t2,t3,t4])
 
     def report(self):
-        print self.timeSummary
+        print(self.timeSummary)
 
 class SubAnnual(TimeString):
     """Labels for subannual time series:
@@ -307,22 +320,22 @@ class SubAnnual(TimeString):
                     [ mid.append(my) for my in subAndYear ]
                     c = c+1
             time = first + mid + end
-        self.numeric = range(len(time))
-        self.string = time    
+        self.numeric = list(range(len(time)))
+        self.string = time
         self.t = len(self.numeric)
         self.timeType = subannualTypes[division]
         self.summary()
 
     def summary(self):
-        t1 = "Time Series Type: " + self.timeType 
+        t1 = "Time Series Type: " + self.timeType
         t2 = "T = " + str(self.t)
         t3 = "Start Sub-Year / Year: " + self.string[0]
         t4 = "End Sub-Year / Year: " + self.string[-1]
-        self.timeSummary = "\n".join([t1,t2,t3,t4])        
+        self.timeSummary = "\n".join([t1,t2,t3,t4])
 
     def report(self):
-        print self.timeSummary
-        
+        print(self.timeSummary)
+
 class Irregular(TimeString):
     """Labels for irregular time periods:
         Arguments:
@@ -331,25 +344,25 @@ class Irregular(TimeString):
     """
     def __init__(self,t,tLabels=[]):
         TimeString.__init__(self,"IRREGULAR")
-        self.numeric = range(1,t+1)
+        self.numeric = list(range(1,t+1))
         self.timeType = "IRREGULAR"
         if len(tLabels) == t:
             self.string = tLabels
         else:
-            print "Number of labels do not match the number of time periods.\nUsing integers to represent irregular time periods."
+            print("Number of labels do not match the number of time periods.\nUsing integers to represent irregular time periods.")
             self.string = [ str(i) for i in self.numeric ]
         self.t = t
         self.summary()
 
     def summary(self):
-        t1 = "Time Series Type: " + self.timeType 
+        t1 = "Time Series Type: " + self.timeType
         t2 = "T = " + str(self.t)
         t3 = "Start Period: " + self.string[0]
         t4 = "End Period: " + self.string[-1]
-        self.timeSummary = "\n".join([t1,t2,t3,t4])        
+        self.timeSummary = "\n".join([t1,t2,t3,t4])
 
     def report(self):
-        print self.timeSummary
+        print(self.timeSummary)
 
 # stubs for other frequency classes
 Quarterly = Annual
@@ -364,7 +377,7 @@ class FileReader:
         self.contents = self.readFile()
 
     def readFile(self):
-        fileName = self.fileName 
+        fileName = self.fileName
         try:
             f = open(fileName,'r')
             return f.read().split()
@@ -388,8 +401,7 @@ class DataReader(FileReader):
         except:
             mesg="No header file found: %s"%fileName
             Error(mesg)
-        
-        #print "header", self.header
+
         self.timeInfo = self.header[0].split()
         self.timeFreq = self.timeInfo[0].upper()
         self.timeFreq = self.timeFreq.strip()
@@ -397,19 +409,19 @@ class DataReader(FileReader):
             t = int(self.timeInfo[-1])
             self.timeClass = Irregular(t)
         else:
-            self.timeClass = apply(timeFreqMenu[self.timeFreq],self.timeInfo[1:])
+            self.timeClass = timeFreqMenu[self.timeFreq](*self.timeInfo[1:])
         regionInfo = self.header[1:]
         self.regionType = regionInfo[0].strip()
-        self.regionNames = map(string.strip,regionInfo[1:])
+        self.regionNames = [x.strip() for x in regionInfo[1:]]
         self.parse()
-        
+
 
     def timeString(self):
         return self.timeClass.getString()
 
     def timeNumeric(self):
         return self.timeClass.getNumeric()
-     
+
     def parse(self):
         self.t = len(self.timeString())
         self.n = len(self.regionNames)
@@ -418,9 +430,7 @@ class DataReader(FileReader):
         self.varNames = d[1:self.nVars+1]
         p = self.nVars+1
         self.contents = d[p:]
-        #print self.contents[0:20]
         lIndex = []
-        #print self.varNames
         for i in self.varNames:
             lIndex.append(self.contents.index(i))
         rIndex = lIndex[1:]
@@ -434,7 +444,7 @@ class DataReader(FileReader):
             name = info[0]
             type = info[1].upper()
             vals = info[2:]
-            vals = map(float,vals)
+            vals = list(map(float,vals))
             self.Info[name] = [type,vals,[self.n,self.t]]
             i += 1
 
@@ -457,43 +467,41 @@ class spMatrix:
 
     def full(self):
         """Returns a full row standardized weights matrix."""
-        #print self.dict
         n = len(self.dict)
-        w = zeros([n,n],Float)
-        ids = self.dict.keys()
+        w = np.zeros([n,n])
+        ids = list(self.dict.keys())
         for id in ids:
             neighborids = self.dict[id][1]
             nNeighbors = self.dict[id][0]
-            vals = ones([1,nNeighbors],Float) * 1./nNeighbors
-            put(w[id,],neighborids,vals)
+            w[id, neighborids] = 1. / nNeighbors
         return w
-    
+
     def setName(self,name):
         self.name = name
 
     def zeroRows(self):
         """Returns a list of row indices with zero sums.
         """
-        full = greater(self.full(),0)
-        rowSums = sum(full,axis=1)
-        zeroRows = equal(rowSums,0.0)
-        numZeros = sum(zeroRows)
+        full = self.full() > 0
+        rowSums = np.sum(full, axis=1)
+        zeroRows = rowSums == 0.0
+        numZeros = int(np.sum(zeroRows))
         if numZeros > 0:
-            return argsort(zeroRows)[-numZeros:].tolist()
+            return np.argsort(zeroRows)[-numZeros:].tolist()
         else:
             return []
 
     def islands(self):
-        ids = self.dict.keys()
+        ids = list(self.dict.keys())
         islands = [ id for id in ids if self.dict[id][0]==0 ]
         return islands
 
 
     def  symmetryCheck(self):
         """Returns 1 if matrix is symmetric, 0 otherwise."""
-        full = greater(self.full(),0)
-        comp = not_equal(full,transpose(full))
-        if sum(sum(comp)) == 0:
+        full = self.full() > 0
+        comp = full != full.T
+        if np.sum(comp) == 0:
             return 1
         else:
             return 0
@@ -501,15 +509,15 @@ class spMatrix:
     def asymmetricRows(self):
         """Returns a list of row indices of asymetries.
         """
-        full = greater(self.full(),0)
-        comp = not_equal(full,transpose(full))
-        rowSums = sum(comp,axis=1)
-        rows = greater(rowSums,0.0)
-        numRows = sum(rows)
+        full = self.full() > 0
+        comp = full != full.T
+        rowSums = np.sum(comp, axis=1)
+        rows = rowSums > 0.0
+        numRows = int(np.sum(rows))
         if numRows > 0:
-            return argsort(rows)[-numRows:].tolist()
+            return np.argsort(rows)[-numRows:].tolist()
         else:
-            return []    
+            return []
 
 class spGalMatrix(spMatrix):
     """Spatial weights matrix in sparse form based on GAL.
@@ -525,26 +533,20 @@ class spGalMatrix(spMatrix):
         >>> galstates=open("states48.gal",'r')
         >>> ws = galstates.readlines()
         >>> galstates.close()
-        >>> galinfo = map(int,"".join(ws).split())
+        >>> galinfo = list(map(int,"".join(ws).split()))
         >>> name="wsp"
         >>> wsp = spGalMatrix(name,galinfo)
     """
     def __init__(self,name,galInfo):
         spMatrix.__init__(self,name)
         self.n=galInfo[0]
-        #print galInfo
-
-        #print self.n
         id=1
         for i in range(self.n):
-            rid = galInfo[id] 
+            rid = galInfo[id]
             nNeighbors = galInfo[id+1]
             neighbors = galInfo[id+2:id+2+nNeighbors]
-            self.dict[rid] = [nNeighbors, array(neighbors)]
-        #    print "Record Info"
-        #    print i,rid,nNeighbors,neighbors
-            id += 2+nNeighbors 
-        #    raw_input("wait")
+            self.dict[rid] = [nNeighbors, np.array(neighbors)]
+            id += 2+nNeighbors
 
 class spRegionMatrix(spMatrix):
     """Spatial weights matrix in sparse form based on regional membership.
@@ -565,24 +567,23 @@ class spRegionMatrix(spMatrix):
     """
     def __init__(self,regions):
         spMatrix.__init__(self,regions.name)
-        ra = take(regions,range(len(regions)))
+        ra = np.take(regions, list(range(len(regions))))
         rids = Utility.unique(ra)
         for r in rids:
-            members = nonzero(ra[:,0]==r)
+            members = np.nonzero(ra[:,0]==r)[0]
             for member in members:
-                neighbors = take(members,nonzero(members!=member))
+                neighbors = np.take(members, np.nonzero(members!=member)[0])
                 self.dict[member] = [len(neighbors),neighbors]
         self.setName(regions.name)
 
 def full2Sparse(fullMatrix):
     # returns sparse binary representation of a full matrix
-    # requires python 2.2
     # nonzero values are treated as binary 1
-    n,k = shape(fullMatrix)
+    n,k = fullMatrix.shape
     d = {}
-    ij = [ (i,j) for i in range(n-1) for j in range(i+1,n) ]
+    ij_pairs = [ (i,j) for i in range(n-1) for j in range(i+1,n) ]
 
-    for i,j in ij:
+    for i,j in ij_pairs:
         v = fullMatrix[i,j]
         if v:
             try:
@@ -605,7 +606,7 @@ def ij(n):
     """Returns upper triangular indices for looping over a square
     matrix"""
 
-    rn = range(n)
+    rn = list(range(n))
     return [ (i,j) for i in rn[0:-1] for j in rn[i+1:n] ]
 
 class Regime:
@@ -615,19 +616,15 @@ class Regime:
         uid = dict( [ (i,i) for i in variable[:,0] ] )
         n = len(variable)
         rn = range(n)
-        uids = uid.keys()
-        uids.sort()
-        bridge = dict( [ (i,uids.index(variable[i,0])) for i in rn ] ) 
+        uids = sorted(uid.keys())
+        bridge = dict( [ (i,uids.index(variable[i,0])) for i in rn ] )
         self.bridge=bridge
         self.uids = uids
-        self.partition = bridge.values()
+        self.partition = list(bridge.values())
         if name:
             self.name = name
         else:
             self.name = variable.name
-        
-
-
 
 
 
@@ -636,9 +633,9 @@ class DistanceMatrix(fMatrix):
     def __init__(self,x,y):
         n = len(x)
         ijs = ij(n)
-        d = zeros((n,n),Float)
+        d = np.zeros((n,n))
         for i,j in ijs:
-            d[i,j] = d[j,i] = sqrt ( (x[i] - x[j])**2 + (y[i] - y[j])**2 )[0]
+            d[i,j] = d[j,i] = np.sqrt( (x[i] - x[j])**2 + (y[i] - y[j])**2 )[0]
         self.values = d
         self.ijs = ijs
         self.percentiles()
@@ -650,22 +647,22 @@ class DistanceMatrix(fMatrix):
         self.vunsorted = self.v[:]
         self.v.sort()
         nv = len(self.v)
-        self.v = array(self.v)
-        pct = arange(nv)*1./nv
+        self.v = np.array(self.v)
+        pct = np.arange(nv)*1./nv
         self.pct = pct
 
     def pctValue(self,pct):
         """returns the pct percentile"""
-        maxp = max(self.pct)
+        maxp = np.max(self.pct)
         if pct > maxp:
             rv = self.v[-1]
         else:
-            rv = self.v[sum(self.pct <= pct)]
+            rv = self.v[int(np.sum(self.pct <= pct))]
         return rv
 
     def valuePct(self,value):
         """returns the percentile represented by the value"""
-        return self.pct[sum(self.v <= value)]
+        return self.pct[int(np.sum(self.v <= value))]
 
     def binaryThreshold(self,threshold):
         b = (self.values <= threshold)
@@ -678,7 +675,7 @@ class DistanceMatrix(fMatrix):
         return br
 
     def continuousThreshold(self,threshold):
-        mv = max(max(self.values))
+        mv = np.max(self.values)
         if threshold >= mv:
             c = self.values
         else:
@@ -690,7 +687,7 @@ class DistanceMatrix(fMatrix):
         c = self.continuousThreshold(threshold)
         id = invDistance(c,exponent)
         cr = rowStandardize(id)
-        return cr 
+        return cr
 
     def hybrid(self,pct=0.25,binary=1,exponent=2):
         """returns a row standardized proximity matrix where proximity
@@ -701,13 +698,13 @@ class DistanceMatrix(fMatrix):
             pct: the percentile cut-off for threshold distance
             binary: if (1) pre standardized values are binary, if 0 pre
                       standardized values are continuous
-            exponent: distance decay exponent. ignored if binary is 1 
+            exponent: distance decay exponent. ignored if binary is 1
         Returns (1):
             w: a full n by n row standardized matrix
 
             default is defined as those joins with distances less than
             the 1st quartile distance.
-        
+
         """
 
         threshold = self.pctValue(pct)
@@ -733,7 +730,7 @@ class CovarianceMatrix:
     def __init__(self,variable):
         self.name = "covar_"+variable.name
         self.n = variable.n
-        self.values = transpose(variable)
+        self.values = np.transpose(variable)
         self.variableT = self.values
         covarMat = self.cov()
         self.matType="full"
@@ -752,24 +749,24 @@ class CovarianceMatrix:
         if threshold:
             cut = threshold
         else:
-            cut = mean(mean(self.values))
-        hl = self.values > cut 
+            cut = np.mean(self.values)
+        hl = self.values > cut
         self.binary = hl
 
     def cov(self):
         # our own cuz MLab is broken
         n = self.n
         ijs = ij(n)
-        mat = zeros((n,n),Float)
+        mat = np.zeros((n,n))
         n1 = n - 1
         for i,j in ijs:
             x = self.values[:,i]
             y = self.values[:,j]
-            xd = x - mean(x)
-            yd = y - mean(y)
-            cv = sum(xd*yd)/n1
-            sy = std(y)
-            sx = std(x)
+            xd = x - np.mean(x)
+            yd = y - np.mean(y)
+            cv = np.sum(xd*yd)/n1
+            sy = np.std(y)
+            sx = np.std(x)
             mat[i,j] = cv/(sy*sx)
             mat[j,i] = mat[i,j]
         return mat
@@ -777,11 +774,11 @@ class CovarianceMatrix:
 
 class CorrMatrix(fMatrix):
     def __init__(self,variable):
-        vars = transpose(variable)
-        self.values = corrcoef(vars)
-        zd = zeroDiagonal(self.values)
+        vars = np.transpose(variable)
+        self.values = np.corrcoef(vars)
+        zd = zeroDiagonal(self.values.copy())
         self.zd = zd
-        thresh = min(max(zd))
+        thresh = np.min(np.max(zd, axis=0))
         self.thresh=thresh
         self.binary = zeroDiagonal(self.values >= thresh)
         self.matType="corr"
@@ -789,15 +786,15 @@ class CorrMatrix(fMatrix):
 
 
 def zeroDiagonal(matrix):
-    n,k=shape(matrix)
+    n,k=matrix.shape
     for i in range(n): matrix[i,i] = 0
     return matrix
 
 def rowStandardize(matrix):
-    n,k=shape(matrix)
-    rs = sum(matrix,1)
+    n,k=matrix.shape
+    rs = np.sum(matrix, axis=1)
     den = 1./(rs + (rs==0))
-    stand = matrixmultiply(diag(den),matrix)
+    stand = np.diag(den) @ matrix
     return stand
 
 def invDistance(matrix,exponent):
@@ -805,21 +802,17 @@ def invDistance(matrix,exponent):
     nz = de == 0
     id =  (1./(de+nz)) - nz
     return id
-        
+
 class GalReader(FileReader):
     def __init__(self,fileName):
         galFile= fileName + ".gal"
         FileReader.__init__(self,galFile)
-        galinfo=map(int," ".join(self.contents).split())
+        galinfo=list(map(int," ".join(self.contents).split()))
         self.galInfo = galinfo
-        self.w=array([0,2,2])
+        self.w=np.array([0,2,2])
         name = os.path.basename(fileName)
         self.w=spGalMatrix(name,galinfo)
 
-        #if self.w.symmetryCheck() == 0:
-        #    mesg = "%s is not symmetric." %galFile
-        #    Error(mesg)
-    
         zeroRows = self.w.zeroRows()
         if len(zeroRows) > 0:
             mesg = "%s contains islands." %galFile
@@ -827,45 +820,33 @@ class GalReader(FileReader):
 
 
 if __name__ == '__main__':
-    #import doctest, Data 
-    #doctest.testmod(Data)
     n = 5
     n2 = n**2
-    d = arange(n2)
-    d = reshape(d,(n,n))
+    d = np.arange(n2)
+    d = np.reshape(d,(n,n))
     d[0,3]=d[3,0] = 0
     ds = full2Sparse(d)
-    print ds
+    print(ds)
 
-    x = range(100)
-    y = range(100)
-    #d = DistanceMatrix(x,y)
-    #cr = d.cThresholdRsId(4,2)
-
-    #d = DistanceMatrix(range(4),range(4))
+    x = list(range(100))
+    y = list(range(100))
 
     from stars import *
-    #s = Project("s")
-    #s.ReadData("csiss")
-    #y = s.getVariable("pcr")
-    #w = CorrMatrix(y)
 
-    print "New Time Strings"
+    print("New Time Strings")
     a = Annual(1989,1999)
-    print a.string, a.numeric
+    print(a.string, a.numeric)
 
     q = SubAnnual(2, 1999, 3, 2002, 4)
-    print q.string, q.numeric
+    print(q.string, q.numeric)
     m = SubAnnual(2, 1999, 3, 2002, 12)
-    print m.string, m.numeric
+    print(m.string, m.numeric)
 
     tNames = [ "I" + str(i) for i in range(10) ]
     i = Irregular(10, tLabels = tNames)
-    print i.string, i.numeric
+    print(i.string, i.numeric)
 
     i2 = Irregular(9, tLabels = tNames)
-    print i2.string, i2.numeric
+    print(i2.string, i2.numeric)
 
     g=GalReader("data/ecu138")
-    
-

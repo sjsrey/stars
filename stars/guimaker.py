@@ -16,7 +16,7 @@ Borrowed from Programming Python
 """
 
 import sys
-from Tkinter import *                     # widget classes
+from tkinter import *                     # widget classes
 from types   import *                     # type constants
 
 class GuiMaker(Frame):
@@ -130,7 +130,7 @@ class GuiMaker(Frame):
         """
         override me in subclass
         """
-        from tkMessageBox import showinfo
+        from tkinter.messagebox import showinfo
         showinfo('Help', 'Sorry, no help for ' + self.__class__.__name__)
 
     def start(self): pass  # override me in subclass

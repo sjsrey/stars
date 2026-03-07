@@ -10,7 +10,7 @@ OVERVIEW
 """
 
 
-from Tkinter import *
+from tkinter import *
 from glob import glob
 from stars import options
 import os
@@ -46,11 +46,11 @@ class SDialog(Toplevel):
         self.title(title)
         self.listDict = listDict
         lTitle = len(title)
-        optionIds=optBridge.keys()
+        optionIds=list(optBridge.keys())
         optionIds.sort()
         fcount=0
         # get maximum label width
-        labelWidth = max([ len(optBridge[x][0]) for x in optBridge.keys()])
+        labelWidth = max([ len(optBridge[x][0]) for x in list(optBridge.keys())])
         #entryWidth = labelWidth * 2
         entryWidth = 50 
         self.optionLabels = []
@@ -85,7 +85,7 @@ class SDialog(Toplevel):
         self.fcount = fcount
         if listDict:
             self.commands = {}
-            for key in listDict.keys():
+            for key in list(listDict.keys()):
                 items  = listDict[key]
                 entries[key-1].bind("<Double-1>",self.itemselector)
                 self.optionTitle = key
@@ -341,11 +341,11 @@ def test():
     class MyScrolledList(ScrolledList):
         def fill_menu(self): self.menu.add_command(label="pass")
         def on_select(self, index):
-            print "select", self.get(index)
-            print "fill entry with",self.get(index)
+            print("select", self.get(index))
+            print("fill entry with",self.get(index))
         def on_double(self, index):
-            print "double", self.get(index)
-            print "fill entry with",self.get(index)
+            print("double", self.get(index))
+            print("fill entry with",self.get(index))
     s = MyScrolledList(root,singleSelect=0)
     for i in range(30):
         s.append("item %02d" % i)
@@ -645,15 +645,15 @@ if __name__ == '__main__':
 
     # process the settings in the Option_Dialogue
     if d.status:
-        print 'Called'
-        print se.get()
-        print vls.get()
-        print cb.get()
-        print rb.get()
-        print perm.get()
-        print variance.get()
+        print('Called')
+        print(se.get())
+        print(vls.get())
+        print(cb.get())
+        print(rb.get())
+        print(perm.get())
+        print(variance.get())
     else:
-        print 'Cancelled'
+        print('Cancelled')
 
         
         

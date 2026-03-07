@@ -13,7 +13,7 @@ The Matcher Class is used for a single vector with multiple
 instances of the same value occuring through the list.
 """
 
-import sets
+
 
 def createBridge(list1,list2):
     "Returns an index list for mapping list2 values into list1 order."
@@ -50,7 +50,7 @@ def batchSplit(list):
     
 
 def uniqueList(l):
-    s = sets.Set(l)
+    s = set(l)
     s = list(s)
     return s
 

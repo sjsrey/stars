@@ -24,15 +24,15 @@ class ColorSchemes:
     def getScheme(self,device,legendType,nColors):
         key = device,legendType,nColors
         schemes = self.schemes
-        if schemes.has_key(key):
+        if key in schemes:
             return schemes[key]
         else:
-            print "No such colorScheme defined:",key
+            print("No such colorScheme defined:",key)
             return None
     def getSchemes(self):
         """Returns all defined ColorSchemes"""
         schemes = self.schemes
-        keys =   schemes.keys() 
+        keys =   list(schemes.keys()) 
         keys.sort()
         return [ schemes[key] for key in keys]
 
@@ -54,7 +54,7 @@ class ColorScheme:
         return tkrgb
 
     def summary(self):
-        print "Scheme Definition:",self.key
+        print("Scheme Definition:",self.key)
 
 
 colorSchemes = ColorSchemes()
@@ -350,8 +350,8 @@ ColorScheme("diverging",s,"projector",colorSchemes)
 
 
 def colorPicker():
-    import tkColorChooser
-    color = tkColorChooser.Chooser(
+    import tkinter.colorchooser
+    color = tkinter.colorchooser.Chooser(
             initialcolor='gray',
             title="Choose background color").show()
             # color[0]: (r,g,b) tuple, color[1]: hex number
@@ -361,7 +361,7 @@ def colorPicker():
 
 
 if __name__ == '__main__':
-    from Tkinter import *
+    from tkinter import *
     root = Tk()
     w=20
     h=20
@@ -377,7 +377,7 @@ if __name__ == '__main__':
     # check out existing colorSchemes
     schemes = colorSchemes.getSchemes()
     for scheme in schemes:
-        print scheme.key
+        print(scheme.key)
         scheme.summary()
         nc = len(scheme.colors) 
         n = range(nc)
@@ -399,7 +399,7 @@ if __name__ == '__main__':
             color = scheme.colors[rn[i]]
             rgb = scheme.rgb[rn[i]]
             view.create_rectangle(10+i*w,10+4*h,10+w+w*i,10+5*h,fill=color,tag=("cs"))
-        raw_input("hit key to continue")
+        input("hit key to continue")
         view.delete("cs")
 
 

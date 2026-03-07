@@ -13,9 +13,7 @@ This module implements various handy utilities for STARS.
 
 """
 """Utility functions for STARS"""
-from numpy.oldnumeric import *
-from numpy.oldnumeric.mlab import *
-from numpy.oldnumeric.random_array import permutation
+import numpy as np
 
 def unique(y):
     """returns the unique values of an array."""
@@ -23,40 +21,36 @@ def unique(y):
     for i in y:
         if i not in uvals:
             uvals.append(i)
-    return(array(uvals))
+    return(np.array(uvals))
 
 def meandev(y):
     """Returns variable expressed in deviations from its mean."""
-    dimy = shape(y)
-    meany = mean(y)
+    dimy = y.shape
+    meany = np.mean(y, axis=0)
     if len(dimy) > 1:
         n,t = dimy
-        dev = y - matrixmultiply(ones([n,t],Float),diag(meany))
+        dev = y - np.diag(meany) @ np.ones([t,n])
+        dev = dev.T
     else:
         dev = y - meany
     return dev
 
 def permutate(y):
     """Returns a matrix (vector)  with rows (elements) permutated"""
-    dimy = shape(y)
-    if len(dimy) > 1:
-        n,t = dimy
-    else:
-        n = len(y)
-    
-    pid = permutation(n)
-    yp = take(y,pid)
-    return (yp)
+    dimy = y.shape if hasattr(y, 'shape') else (len(y),)
+    n = dimy[0]
+    pid = np.random.permutation(n)
+    yp = np.take(y, pid, axis=0)
+    return yp
 
 def slag(w,variable):
     """Sparse Spatial Lag"""
-    n,k = shape(variable)
-    lag = zeros((n,k),Float)
-    id = range(n)
+    n,k = variable.shape
+    lag = np.zeros((n,k))
     for i in w.dict.keys():
         nn,ids = w.dict[i]
         den = 1./nn
-        values = array(sum(take(variable,ids)) * den)
+        values = np.array(np.sum(np.take(variable,ids,axis=0), axis=0) * den)
         lag[i,:] = values
     return lag
 
@@ -73,14 +67,14 @@ def TransposeList(m):
     Transpose a list of lists: Author: gerhard@bigfoot.de
     """
     n = len(m)
-    return [[m[j][i] for i in range(len(m[0])) for j in range(n)][k*n:k*n+n] for k in range(len(m[0]))] 
+    return [[m[j][i] for i in range(len(m[0])) for j in range(n)][k*n:k*n+n] for k in range(len(m[0]))]
 
 def splitList(l):
     """Takes a list of values and makes each its own list within a list for
     csv writing.
     l = (list) = list of values
     """
-    listOfLists = [] 
+    listOfLists = []
     [ listOfLists.append( [i] ) for i in l ]
     return listOfLists
 
@@ -98,8 +92,8 @@ def joinListValues(var1,var2,delim=""):
 
 def applyDataTypes(listOfTypes,listOfValues):
     columns = range(len(listOfTypes))
-    listOfValues = [ i.strip("\'") for i in listOfValues ]         
-    listOfValues = [ i.strip("\"") for i in listOfValues ]         
+    listOfValues = [ i.strip("\'") for i in listOfValues ]
+    listOfValues = [ i.strip("\"") for i in listOfValues ]
     return [ eval(listOfTypes[i])(listOfValues[i]) for i in columns ]
 
 def findDataTypes(listOfValues):
@@ -111,5 +105,3 @@ def findDataTypes(listOfValues):
         except:
             dataTypes.append('str')
     return dataTypes
-
-

@@ -115,11 +115,11 @@ class Interaction:
         """
         provides a print listing of attributes for the interaction.
         """
-        print "Interaction key: %s"%(self.key)
-        print "Sender Type: %s"%self.senderType
-        print "Sender Command: %s"%self.senderCommand
-        print "Responder Type: %s"%self.responderType
-        print "Responder Command: %s"%self.responderCommand
+        print("Interaction key: %s"%(self.key))
+        print("Sender Type: %s"%self.senderType)
+        print("Sender Command: %s"%self.senderCommand)
+        print("Responder Type: %s"%self.responderType)
+        print("Responder Command: %s"%self.responderCommand)
 
 class Interactions:
     """
@@ -147,12 +147,12 @@ class Interactions:
         interaction = Interaction(mode, senderType, senderCommand,
                       responderType, responderCommand)
         self.interactions[interaction.key] = interaction
-        if self.modes.has_key(interaction.mode):
+        if interaction.mode in self.modes:
             self.modes[interaction.mode].append(interaction.key)
         else:
             self.modes[interaction.mode] = [interaction.key]
 
-        if self.origins.has_key(interaction.originKey):
+        if interaction.originKey in self.origins:
             self.origins[interaction.originKey].append(interaction)
         else:
             self.origins[interaction.originKey]=[interaction]
@@ -176,14 +176,14 @@ class Interactions:
         originKey (string): concatenated string with senderType and
             senderCommand as the origin signal
         """
-        if self.origins.has_key(originKey):
+        if originKey in self.origins:
             return self.origins[originKey]
 
     def listInteractions(self):
         """
         Prints all interactions that belong to this object.
         """
-        for key in self.interactions.keys():
+        for key in list(self.interactions.keys()):
             self.interactions[key].summary()
 
 class Observer:
@@ -205,7 +205,7 @@ class Observer:
         """
         self.items[item]=item
         itype = item.type
-        if self.types.has_key(itype):
+        if itype in self.types:
             self.types[itype].append(item)
         else:
             self.types[itype]=[item]
@@ -217,7 +217,7 @@ class Observer:
         item (Subscriber):
         """
         itype = item.type
-        if self.items.has_key(item):
+        if item in self.items:
             del self.items[item]
             self.types[itype].remove(item)
 
@@ -225,12 +225,12 @@ class Observer:
         """
         Print out a list of subscribers by subscriber types.
         """
-        for item in self.items.keys():
-            print self.items[item]
-        for typeKey in self.types.keys():
-            print typeKey
+        for item in list(self.items.keys()):
+            print(self.items[item])
+        for typeKey in list(self.types.keys()):
+            print(typeKey)
             for item in self.types[typeKey]:
-                print item,typeKey
+                print(item,typeKey)
 
     def setInteractionMode(self,interActionMode):
         """
@@ -270,8 +270,8 @@ class Observer:
         """
         Prints out a list of interactions the Observer manages.
         """
-        keys=self.interactions.interactions.keys()
-        print "there are %d interactions defined"%len(keys)
+        keys=list(self.interactions.interactions.keys())
+        print("there are %d interactions defined"%len(keys))
         if full:
             self.interactions.listInteractions()
 
@@ -299,7 +299,7 @@ class Observer:
                     command = interaction.responderCommand
                     #print "responderType",responderType
                     #print "command",command
-                    if self.types.has_key(responderType):
+                    if responderType in self.types:
                         responders = self.types[responderType]
                         #print "responders",responders
                         for responder in responders:
@@ -317,7 +317,7 @@ if __name__ == '__main__':
     # defined in other modules (such as View.py)
 
     from iview import IMap,IScatter,IHistogram,ITimeSeries
-    from numpy.oldnumeric import *
+    import numpy as np
 
     class Scatter(Subscriber):
         nscatter = 0
@@ -332,16 +332,16 @@ if __name__ == '__main__':
             Subscriber.__init__(self,observer)
 
         def selectPoints(self,pointIds):
-            print self.name," will select points",pointIds
+            print(self.name," will select points",pointIds)
 
         def selectedPoints(self,pointIds):
-            print self.name,"selected point",pointIds
+            print(self.name,"selected point",pointIds)
 
         def brushPoints(self,pointIds):
-            print self.name," will brush on points",pointIds
+            print(self.name," will brush on points",pointIds)
 
         def selectObservations(self,observations):
-            print self.name, "will select ids associated with observations"
+            print(self.name, "will select ids associated with observations")
             ids = self.matcher.matchObservations(observations)
             self.selectPoints(ids)
 
@@ -355,7 +355,7 @@ if __name__ == '__main__':
 
         def updateTime(self,tsId):
             tsid = tsId[0].ts
-            print self.name," is updating to time period",tsid
+            print(self.name," is updating to time period",tsid)
 
         def buildMethods(self):
             m={}
@@ -388,7 +388,7 @@ if __name__ == '__main__':
             self.matcher.select(polyIds)
         
         def brushPolygons(self,polygonIds):
-            print self.name," will brush on polygons",polygonIds
+            print(self.name," will brush on polygons",polygonIds)
 
         def selectObservations(self,observations):
             ids = self.matcher.matchObservations(observations)
@@ -408,7 +408,7 @@ if __name__ == '__main__':
                "selectObservations":self.selectObservations}
             self.methods=m
         def testMethod(self):
-            print "Im test method"
+            print("Im test method")
 
     class Histogram(Subscriber):
         nhist = 0
@@ -513,7 +513,7 @@ if __name__ == '__main__':
 
     poly2cs={}
 
-    for key in cs2poly.keys():
+    for key in list(cs2poly.keys()):
         ids = cs2poly[key]
         for id in ids:
             poly2cs[id] = [key]
@@ -532,12 +532,12 @@ if __name__ == '__main__':
     # with iview classes
     m1.matcher.select(range(37,55))
     mobs = m1.matcher.getSelected()
-    print "selected in histogram", h1.matcher.selected
+    print("selected in histogram", h1.matcher.selected)
     m1.selectedObservations(mobs)
-    print "selected in histogram", h1.matcher.selected
+    print("selected in histogram", h1.matcher.selected)
     ob.setInteractionMode("brushing")
-    print "after turning off interaction"
+    print("after turning off interaction")
     m1.selectedObservations(mobs)
-    print "selected in histogram should be off", h1.matcher.selected
+    print("selected in histogram should be off", h1.matcher.selected)
     m1.selectedObservations(mobs)
-    print "selected in histogram", h1.matcher.selected
+    print("selected in histogram", h1.matcher.selected)

@@ -1,5 +1,5 @@
 """
-Distribution functions and probabilities module 
+Distribution functions and probabilities module
 ----------------------------------------------------------------------
 AUTHOR(S):  Sergio J. Rey sjrey@users.sourceforge.net
             Mark V. Janikas mjanikas@users.sourceforge.net
@@ -29,17 +29,20 @@ such damage.
 
 Comments and/or additions are welcome (send e-mail to:
 strang@nmr.mgh.harvard.edu).
- 
+
 
 OVERVIEW
+
 
 """
 
 
 import math
-from numpy.oldnumeric import *
-from numpy.oldnumeric.mlab import *
-def chicdf(chisq,df):
+import numpy as np
+from scipy.stats import norm as _norm
+
+
+def chicdf(chisq, df):
     """
 Returns the (1-tailed) probability value associated with the provided
 chi-square value and df.  Adapted from chisq.c in Gary Perlman's |Stat.
@@ -47,101 +50,73 @@ chi-square value and df.  Adapted from chisq.c in Gary Perlman's |Stat.
 Usage:   chicdf(chisq,df)
 """
     BIG = 20.0
-    def ex(x):
-	BIG = 20.0
-	if x < -BIG:
-	    return 0.0
-	else:
-	    return math.exp(x)
 
-    if chisq <=0 or df < 1:
-	return 1.0
+    def ex(x):
+        BIG = 20.0
+        if x < -BIG:
+            return 0.0
+        else:
+            return math.exp(x)
+
+    if chisq <= 0 or df < 1:
+        return 1.0
     a = 0.5 * chisq
-    if df%2 == 0:
-	even = 1
+    if df % 2 == 0:
+        even = 1
     else:
-	even = 0
+        even = 0
     if df > 1:
-	y = ex(-a)
+        y = ex(-a)
     if even:
-	s = y
+        s = y
     else:
-	s = 2.0 * zprob(-math.sqrt(chisq))
+        s = 2.0 * zprob(-math.sqrt(chisq))
     if (df > 2):
-	chisq = 0.5 * (df - 1.0)
-	if even:
-	    z = 1.0
-	else:
-	    z = 0.5
-	if a > BIG:
-	    if even:
-		e = 0.0
-	    else:
-		e = math.log(math.sqrt(math.pi))
-	    c = math.log(a)
-	    while (z <= chisq):
-		e = math.log(z) + e
-		s = s + ex(c*z-a-e)
-		z = z + 1.0
-	    return s
-	else:
-	    if even:
-		e = 1.0
-	    else:
-		e = 1.0 / math.sqrt(math.pi) / math.sqrt(a)
-		c = 0.0
-		while (z <= chisq):
-		    e = e * (a/float(z))
-		    c = c + e
-		    z = z + 1.0
-		return (c*y+s)
+        chisq = 0.5 * (df - 1.0)
+        if even:
+            z = 1.0
+        else:
+            z = 0.5
+        if a > BIG:
+            if even:
+                e = 0.0
+            else:
+                e = math.log(math.sqrt(math.pi))
+            c = math.log(a)
+            while (z <= chisq):
+                e = math.log(z) + e
+                s = s + ex(c * z - a - e)
+                z = z + 1.0
+            return s
+        else:
+            if even:
+                e = 1.0
+            else:
+                e = 1.0 / math.sqrt(math.pi) / math.sqrt(a)
+            c = 0.0
+            while (z <= chisq):
+                e = e * (a / float(z))
+                c = c + e
+                z = z + 1.0
+            return (c * y + s)
     else:
-	return s
+        return s
 
 
 def zprob(z):
     """
 Returns the area under the normal curve 'to the left of' the given z value.
-Thus, 
+Thus,
     for z<0, zprob(z) = 1-tail probability
     for z>0, 1.0-zprob(z) = 1-tail probability
     for any z, 2.0*(1.0-zprob(abs(z))) = 2-tail probability
-Adapted from z.c in Gary Perlman's |Stat.
 
 Usage:   zprob(z)
 """
-    Z_MAX = 6.0    # maximum meaningful z-value
-    if z == 0.0:
-	x = 0.0
-    else:
-	y = 0.5 * math.fabs(z)
-	if y >= (Z_MAX*0.5):
-	    x = 1.0
-	elif (y < 1.0):
-	    w = y*y
-	    x = ((((((((0.000124818987 * w
-			-0.001075204047) * w +0.005198775019) * w
-		      -0.019198292004) * w +0.059054035642) * w
-		    -0.151968751364) * w +0.319152932694) * w
-		  -0.531923007300) * w +0.797884560593) * y * 2.0
-	else:
-	    y = y - 2.0
-	    x = (((((((((((((-0.000045255659 * y
-			     +0.000152529290) * y -0.000019538132) * y
-			   -0.000676904986) * y +0.001390604284) * y
-			 -0.000794620820) * y -0.002034254874) * y
-		       +0.006549791214) * y -0.010557625006) * y
-		     +0.011630447319) * y -0.009279453341) * y
-		   +0.005353579108) * y -0.002141268741) * y
-		 +0.000535310849) * y +0.999936657524
-    if z > 0.0:
-	prob = ((x+1.0)*0.5)
-    else:
-	prob = ((1.0-x)*0.5)
-    return prob
+    return float(_norm.cdf(z))
 
 
-def fprob (dfnum, dfden, F):
+def fprob(dfnum, dfden, F):
     """
 Returns the (1-tailed) significance level (p-value) of an F
 statistic given the degrees of freedom for the numerator (dfR-dfF) and
@@ -149,11 +124,11 @@ the degrees of freedom for the denominator (dfF).
 
 Usage:   fprob(dfnum, dfden, F)   where usually dfnum=dfbn, dfden=dfwn
 """
-    p = betai(0.5*dfden, 0.5*dfnum, dfden/float(dfden+dfnum*F))
+    p = betai(0.5 * dfden, 0.5 * dfnum, dfden / float(dfden + dfnum * F))
     return p
 
 
-def betacf(a,b,x):
+def betacf(a, b, x):
     """
 This function evaluates the continued fraction form of the incomplete
 Beta function, betai.  (Adapted from: Numerical Recipies in C.)
@@ -164,29 +139,30 @@ Usage:   betacf(a,b,x)
     EPS = 3.0e-7
 
     bm = az = am = 1.0
-    qab = a+b
-    qap = a+1.0
-    qam = a-1.0
-    bz = 1.0-qab*x/qap
-    for i in range(ITMAX+1):
-	em = float(i+1)
-	tem = em + em
-	d = em*(b-em)*x/((qam+tem)*(a+tem))
-	ap = az + d*am
-	bp = bz+d*bm
-	d = -(a+em)*(qab+em)*x/((qap+tem)*(a+tem))
-	app = ap+d*az
-	bpp = bp+d*bz
-	aold = az
-	am = ap/bpp
-	bm = bp/bpp
-	az = app/bpp
-	bz = 1.0
-	if (abs(az-aold)<(EPS*abs(az))):
-	    return az
-    print 'a or b too big, or ITMAX too small in Betacf.'
+    qab = a + b
+    qap = a + 1.0
+    qam = a - 1.0
+    bz = 1.0 - qab * x / qap
+    for i in range(ITMAX + 1):
+        em = float(i + 1)
+        tem = em + em
+        d = em * (b - em) * x / ((qam + tem) * (a + tem))
+        ap = az + d * am
+        bp = bz + d * bm
+        d = -(a + em) * (qab + em) * x / ((qap + tem) * (a + tem))
+        app = ap + d * az
+        bpp = bp + d * bz
+        aold = az
+        am = ap / bpp
+        bm = bp / bpp
+        az = app / bpp
+        bz = 1.0
+        if (abs(az - aold) < (EPS * abs(az))):
+            return az
+    print('a or b too big, or ITMAX too small in Betacf.')
 
-def betai(a,b,x):
+
+def betai(a, b, x):
     """
 Returns the incomplete beta function:
 
@@ -198,19 +174,20 @@ using the betacf function.  (Adapted from: Numerical Recipies in C.)
 
 Usage:   betai(a,b,x)
 """
-    if (x<0.0 or x>1.0):
-	raise ValueError, 'Bad x in lbetai'
-    if (x==0.0 or x==1.0):
-	bt = 0.0
+    if (x < 0.0 or x > 1.0):
+        raise ValueError('Bad x in lbetai')
+    if (x == 0.0 or x == 1.0):
+        bt = 0.0
     else:
-	bt = math.exp(gammln(a+b)-gammln(a)-gammln(b)+a*math.log(x)+b*
-		      math.log(1.0-x))
-    if (x<(a+1.0)/(a+b+2.0)):
-	return bt*betacf(a,b,x)/float(a)
+        bt = math.exp(gammln(a + b) - gammln(a) - gammln(b) + a * math.log(x) + b *
+                      math.log(1.0 - x))
+    if (x < (a + 1.0) / (a + b + 2.0)):
+        return bt * betacf(a, b, x) / float(a)
     else:
-	return 1.0-bt*betacf(b,a,1.0-x)/float(b)
+        return 1.0 - bt * betacf(b, a, 1.0 - x) / float(b)
 
-def tpvalue(t,df):
+
+def tpvalue(t, df):
     """Returns the upper tail area for a t variate with df degrees of
     freedom.
 
@@ -223,13 +200,12 @@ def tpvalue(t,df):
         freedom.
 
     Author:
-        Serge Rey based on modification of code in stats.py by 
+        Serge Rey based on modification of code in stats.py by
         Gary Strangman.
 
     """
-    prob = betai(0.5*df,0.5,float(df)/(df+t*t))
-    return(prob)
-
+    prob = betai(0.5 * df, 0.5, float(df) / (df + t * t))
+    return (prob)
 
 
 def gammln(xx):
@@ -242,19 +218,18 @@ Usage:   gammln(xx)
 """
 
     coeff = [76.18009173, -86.50532033, 24.01409822, -1.231739516,
-	     0.120858003e-2, -0.536382e-5]
+             0.120858003e-2, -0.536382e-5]
     x = xx - 1.0
     tmp = x + 5.5
-    tmp = tmp - (x+0.5)*math.log(tmp)
+    tmp = tmp - (x + 0.5) * math.log(tmp)
     ser = 1.0
     for j in range(len(coeff)):
-	x = x + 1
-	ser = ser + coeff[j]/x
-    return -tmp + math.log(2.50662827465*ser)
+        x = x + 1
+        ser = ser + coeff[j] / x
+    return -tmp + math.log(2.50662827465 * ser)
 
 
-
-def dnorm(x,sigma=1,xbar=0):
+def dnorm(x, sigma=1, xbar=0):
     """evaluate normal distribution at x
     Arguments:
         x
@@ -262,41 +237,43 @@ def dnorm(x,sigma=1,xbar=0):
         xbar: mean value of x
     Returns:
         pdf: height of normal pdf at x
-    
+
     Notes:
         original by Serge Rey <serge@rohan.sdsu.edu>
-    
+
     """
-    z=(x-xbar)/sigma
+    z = (x - xbar) / sigma
     zp = z > 20.
     zn = z < -20.
     zok = zp + zn
 
-    z = ( zp * 20. ) + ( zn  *  -20. ) +  z * (zok == 0)
+    z = (zp * 20.) + (zn * -20.) + z * (zok == 0)
     try:
-        return (1./((2*pi)**(1/2.)) * exp(-(1/2.) * z**2))
+        return (1. / ((2 * math.pi) ** (1 / 2.)) * np.exp(-(1 / 2.) * z ** 2))
     except:
-        print max(z),min(z)
+        print(max(z), min(z))
         return z
+
+
 def iqr(x):
     """inter-quartile range
     Arguments:
         x: array of values
     Returns:
         iqr: inter-quartile range for x
-    
+
     Notes:
         original by Serge Rey <serge@rohan.sdsu.edu>
     """
-    sx=sort(x)
-    n=len(sx)
-    if (n%2 == 0):
-        n2=n/2
+    sx = np.sort(x)
+    n = len(sx)
+    if (n % 2 == 0):
+        n2 = n // 2
     else:
-        n2=(n+1)/2 - 1 # zero offset
-    q1=median(sx[:n2+1])
-    q2=median(sx[n2:])
-    return q2-q1 
+        n2 = (n + 1) // 2 - 1  # zero offset
+    q1 = np.median(sx[:n2 + 1])
+    q2 = np.median(sx[n2:])
+    return q2 - q1
 
 
 class Kde:
@@ -311,7 +288,7 @@ class Kde:
         xmin: minimum value of x-axis: default = min(y)-0.35*min(y)
         xmax: maximum value of x-axis: default = max(y)+0.35*max(y)
         npoints: number of points on x-axis density is estimated at
-   
+
     Attributes:
         h: bandwidth
         xmin: minimum value of x-axis
@@ -334,89 +311,85 @@ class Kde:
     >>> inc=s.getVariable("pcincome")
     >>> i29=inc[:,0]
     >>> kde29=Kde(i29)
-    >>> print "Estimated cdf for income of 650: %6.3f"%kde29.integrate(650)
+    >>> print("Estimated cdf for income of 650: %6.3f"%kde29.integrate(650))
     Estimated cdf for income of 650:  0.578
     """
-    def __init__(self,y,kernel="Gaussian",h=0,xmin=None,xmax=None,npoints=100):
+    def __init__(self, y, kernel="Gaussian", h=0, xmin=None, xmax=None, npoints=100):
         if xmin or xmax:
-            xrange=xmax-xmin
+            xrange = xmax - xmin
         else:
-            xmax=max(y)
-            xmin=min(y)
-            xrange=xmax-xmin
-            xmax=xmax + .35 * xrange
-            xmin=xmin - .35 * xrange
-            xrange=xmax-xmin
-        xd = xrange*1./npoints
-        xgrid=arange(xmin,xmax,xd)
-        self.xgrid=xgrid    
-        self.xmax=xmax      
-        self.xmin=xmin
+            xmax = max(y)
+            xmin = min(y)
+            xrange = xmax - xmin
+            xmax = xmax + .35 * xrange
+            xmin = xmin - .35 * xrange
+            xrange = xmax - xmin
+        xd = xrange * 1. / npoints
+        xgrid = np.arange(xmin, xmax, xd)
+        self.xgrid = xgrid
+        self.xmax = xmax
+        self.xmin = xmin
         self.xd = xd
-        n=len(y)
+        n = len(y)
         if h == 0:
-
-            sy = std(reshape(y,(len(y),1)))
-            iqr1 = iqr(y)/1.34
+            sy = np.std(y.reshape((len(y), 1)))
+            iqr1 = iqr(y) / 1.34
             if sy < iqr1:
                 H = sy
             else:
                 H = iqr1
-            h = 1.06 * H * n**(-1/5.)
-        self.h=h
+            h = 1.06 * H * n ** (-1 / 5.)
+        self.h = h
 
-        if kernel=="Gaussian":
-            nh = n*h
-    #        print (xgrid[0] - y)/h
-    #        raw_input("pause")
-            fx = [ sum(dnorm( (a-y)/h )/h )/n for a in xgrid]
-            self.fx=fx
-            
-        elif kernel=="Uniform":
-            nh2=n*h*2.
-            fx = [ sum( (abs(a-y)/h <= 1.0))/nh2 for a in xgrid]
-            self.fx=fx
-            
+        if kernel == "Gaussian":
+            fx = [np.sum(dnorm((a - y) / h) / h) / n for a in xgrid]
+            self.fx = fx
+
+        elif kernel == "Uniform":
+            nh2 = n * h * 2.
+            fx = [np.sum((abs(a - y) / h <= 1.0)) / nh2 for a in xgrid]
+            self.fx = fx
+
         else:
-            print "Non-recognized Kernel"
+            print("Non-recognized Kernel")
 
-    def integrate(self,xval=None):
+    def integrate(self, xval=None):
         "Integrate the empirical density from -inf up to xval."
-        height=self.fx
-        width=self.xd
-        xgrid=self.xgrid
+        height = self.fx
+        width = self.xd
+        xgrid = self.xgrid
         if xval:
-            n=sum(xgrid<=xval)
+            n = np.sum(xgrid <= xval)
         else:
-            n=len(height)
-        cdf=sum([width*h for h in height[:n]])
+            n = len(height)
+        cdf = sum([width * h for h in height[:n]])
         return cdf
 
     def createCDF(self):
-        cdf = [ self.integrate(i) for i in self.xgrid ]
+        cdf = [self.integrate(i) for i in self.xgrid]
         return cdf
-    
 
 
 if __name__ == '__main__':
-    import doctest,pdf
+    import doctest
+    import pdf
     doctest.testmod(pdf)
 
-    chval=9.21
-    dof = 2 
-    pv = chicdf(chval,dof)
-    print pv
+    chval = 9.21
+    dof = 2
+    pv = chicdf(chval, dof)
+    print(pv)
 
-    chval=3.84
-    pv = chicdf(chval,1)
-    print pv
+    chval = 3.84
+    pv = chicdf(chval, 1)
+    print(pv)
 
-    chval=8.55
-    pv = chicdf(chval,15)
-    print pv
+    chval = 8.55
+    pv = chicdf(chval, 15)
+    print(pv)
 
     from stars import *
-    s=Project("s")
+    s = Project("s")
     s.ReadData("csiss")
     inc = s.getVariable("pcincome")
-    ky = Kde(inc[:,0])
+    ky = Kde(inc[:, 0])

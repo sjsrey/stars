@@ -17,4 +17,4 @@ class Error:
     """STARS error message handler."""
     def __init__(self,string):
         so = "STARS Error: "+string
-        print so
+        print(so)

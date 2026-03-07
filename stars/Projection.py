@@ -13,7 +13,7 @@ methods can be attached to menu callbacks.
 
 """
 
-from Tkinter import *
+from tkinter import *
 from math import *
 import CanvasCoords
 import ArcView as av
@@ -207,7 +207,7 @@ class Map:
             self.shplist = shapes
             
         else:
-            print Projection
+            print(Projection)
             #pname = str(Projection).split()[1]
             bboxRad = [radians(i) for i in bbox]
             WestRad, SouthRad, EastRad, NorthRad = bboxRad
@@ -305,7 +305,7 @@ class MapView:
 if __name__ == '__main__':
 
     
-    fname = raw_input("Enter the shape file name (include .shp): ") 
+    fname = input("Enter the shape file name (include .shp): ") 
     #fname = 'data/nat.shp'
     #fname = 'california.shp'
     #fname = 'data/us48.shp'

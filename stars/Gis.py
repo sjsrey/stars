@@ -72,7 +72,7 @@ class Polygon:
         if (x0==x1 and y0==y1):
             self.__coordinates = coordinates
         else:
-            print """Warning: cooridantes forced to closed geographic form."""
+            print("""Warning: cooridantes forced to closed geographic form.""")
             coordinates.extend([x0,y0])
             self.__coordinates = coordinates
 

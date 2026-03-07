@@ -10,7 +10,6 @@ OVERVIEW:
 Geographic Algorithm Library utilities for STARS
 """
 
-import sets
 def ReadGisFile(fileName):
     gis = open(fileName,'r')
     gisdata = gis.readlines()
@@ -33,7 +32,7 @@ def ReadGisFile(fileName):
         r2 = row + ncoord + 1
         polyDict[pId] = [ float(coord.strip()) \
                                for coord in gisdata[r1:r2]]
-        if cpolyDict.has_key(csId):
+        if csId in cpolyDict:
             cpolyDict[csId].append(pId)
         else:
             cpolyDict[csId] = [pId]
@@ -49,8 +48,8 @@ def ReadGisFile(fileName):
 
 def gis2Contiguity(coords,poly2cs,cs2poly):
     vert2cs = {} 
-    polykeys = coords.keys()
-    csids = cs2poly.keys()
+    polykeys = list(coords.keys())
+    csids = list(cs2poly.keys())
     for poly in polykeys:
         vertices = coords[poly]
         n = len(vertices)
@@ -59,13 +58,13 @@ def gis2Contiguity(coords,poly2cs,cs2poly):
         pnts = [ (vertices[i],vertices[i+1])  for i in r]
         csid = poly2cs[poly][0]
         for pnt in pnts:
-            if vert2cs.has_key(pnt):
+            if pnt in vert2cs:
                 if csid not in vert2cs[pnt]:
                     vert2cs[pnt].append(csid)
             else:
                 vert2cs[pnt] = [csid]
     galinfo = {}
-    pnts = vert2cs.keys()
+    pnts = list(vert2cs.keys())
     for pnt in pnts:
         ids = vert2cs[pnt]
         nids = len(ids)
@@ -76,27 +75,27 @@ def gis2Contiguity(coords,poly2cs,cs2poly):
                     idi = ids[i]
                     idj = ids[j]
                     if idi != idj:
-                        if galinfo.has_key(idi):
+                        if idi in galinfo:
                             if idj not in galinfo[idi]:
                                 galinfo[idi].append(idj)
                         else:
                             galinfo[idi]=[idj]
     
-                        if galinfo.has_key(idj):
+                        if idj in galinfo:
                             if idi not in galinfo[idj]:
                                 galinfo[idj].append(idi)
                         else:
                             galinfo[idj]=[idi]
             
-    keys = galinfo.keys()
+    keys = list(galinfo.keys())
     island = [ csid  for csid in csids if csid not in keys]
     if island:
-        print "unconnected observation(s): ",island
+        print("unconnected observation(s): ",island)
         for obs in island:
             galinfo[obs] = ()
     else:
-        print "all observations connected"
-    items = galinfo.items()
+        print("all observations connected")
+    items = list(galinfo.items())
     g2 = dict( [(item[0],(len(item[1]),item[1])) for item in items  ] )
     return g2
 
@@ -133,8 +132,8 @@ def aggregateGal(gal,bridge):
     >>> newGal2
     {0: [1, [1]], 1: [1, [0]]}
     """
-    bkeys = bridge.keys()
-    gkeys = gal.keys()
+    bkeys = list(bridge.keys())
+    gkeys = list(gal.keys())
     ir = zip(range(len(bkeys)),bkeys)
     ig = zip(range(len(gkeys)),gkeys)
     new2old = bridge 
@@ -149,17 +148,17 @@ def aggregateGal(gal,bridge):
     rn1 = rn[:-1]
     newGal = {}
     for key in bkeys:
-        newGal[key] = [0,sets.Set()]
+        newGal[key] = [0,set()]
     for i in rn1:
         okey = bkeys[i]
-        oset = sets.Set()
+        oset = set()
         okeys = bridge[okey]
         temp = []
         oset = [ temp.extend(gal[gid][1]) for gid in okeys ]
-        oset = sets.Set(temp)
+        oset = set(temp)
         for j in rn[i+1:]:
             dkey = bkeys[j]
-            dset = sets.Set()
+            dset = set()
             dkeys = bridge[dkey]
             join = oset.intersection(dkeys)
             if join:
@@ -167,7 +166,7 @@ def aggregateGal(gal,bridge):
                 b=newGal[dkey][1].union([okey])
                 newGal[okey][1]=a
                 newGal[dkey][1]=b
-    for key in newGal.keys():
+    for key in list(newGal.keys()):
         newGal[key][0] = len(newGal[key][1])
         newGal[key][1] = list(newGal[key][1])
 

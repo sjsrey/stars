@@ -66,7 +66,7 @@ class ArcViewProject:
         self.table2variables()
         varNames = self.variables.keys()
         if name not in varNames:
-            print 'Variable not found: %s'%name
+            print('Variable not found: %s'%name)
         else:
             return self.variables[name]
 
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     import Projection
     import CanvasCoords
     import FileIO
-    from Tkinter import *
+    from tkinter import *
 
     root = Tk()
     class View:
@@ -156,11 +156,11 @@ if __name__ == '__main__':
 
 
 
-    projectName = raw_input("Enter shapefile name (with .shp): ")
+    projectName = input("Enter shapefile name (with .shp): ")
     if projectName:
         proj = ArcViewProject(projectName)
         proj.summary()
-        table = raw_input("Show attribute table (y or n)?")
+        table = input("Show attribute table (y or n)?")
         if table.upper() == 'Y':
 
             columnLabels = proj.getVariableNames()
@@ -170,7 +170,7 @@ if __name__ == '__main__':
                     columnLabels=columnLabels)
 
         map = Projection.Map(projectName)
-        plot = raw_input("plot shapes (y or n)?")
+        plot = input("plot shapes (y or n)?")
         top = Toplevel(root)
         if plot.upper() == 'Y':
             v = View(top, map)

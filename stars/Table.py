@@ -7,7 +7,7 @@ AUTHOR(S):  Sergio J. Rey sjrey@users.sourceforge.net
 OVERVIEW
 """
 
-from numpy.oldnumeric import *
+import numpy as np
 class Table:
     """Pretty table class for STARS"""
     def __init__(self,body,head=[],rowNames=[],colNames=[],fmt=[[8,3]],rowFmt=[8,3],colFmt=[8,3],origin=""):
@@ -128,14 +128,13 @@ class Table:
         return sv
 
 if __name__ == '__main__':
-    from numpy.oldnumeric import *
-    x = reshape(arrayrange(20)*1.,[4,5])
+    x = np.reshape(np.arange(20)*1.,[4,5])
     tab = Table(x,fmt=[[4,2]])
     t=tab.body
-    print t
+    print(t)
 
     t2 = Table(x,fmt=[[8,3]],colNames=["a","b","c","d","e"])
-    print t2.body
+    print(t2.body)
 
     t3 = Table(x,fmt=[[8,3]],colNames=range(5))
 

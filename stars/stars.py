@@ -9,11 +9,11 @@ AUTHOR(S):  Sergio J. Rey sjrey@users.sourceforge.net
 OVERVIEW
 """
 
-import ConfigParser
+import configparser
 import Errors
 import sys
 import os
-cf=ConfigParser.ConfigParser()
+cf=configparser.ConfigParser()
 #env = os.environ
 #if env.has_key("STARSHOME"):
 #    STARSHOME=env['STARSHOME']
@@ -27,7 +27,7 @@ import Common
 options = Common.Options()
 import Data
 
-cf=ConfigParser.ConfigParser()
+cf=configparser.ConfigParser()
 try:
     cf.read(".starsrc")
     CANVASBACKGROUND=cf.get('graphics','canvasBackground')
@@ -46,7 +46,6 @@ from pickle import *
 from Database import *
 from Messages import *
 from Table import *
-import string
 import os.path
 
 from Esda import *
@@ -109,20 +108,20 @@ http://stars-py.sourceforge.net/ """
 
 
 def Credits():
-    print credits
+    print(credits)
 
 def Copyright():
-    print copyright
+    print(copyright)
 
 def License():
     f=open("license.txt",'r')
     l=f.readlines()
     s="".join(l)
-    print s
+    print(s)
     f.close()
 
 def Opening():
-    print PROGRAM
+    print(PROGRAM)
     
 
 class Project:
@@ -170,7 +169,7 @@ class Project:
         #check for file existence
         if os.path.exists(fileName):
             self.initialize()
-            config = ConfigParser.ConfigParser()
+            config = configparser.ConfigParser()
             config.read(fileName)
             projectDir = os.path.dirname(fileName)
             #print config.sections()
@@ -199,14 +198,14 @@ class Project:
             # read any gal matricies
             try:
                 galFiles = self.options["weight"]["gal"][0].split()
-                print galFiles
+                print(galFiles)
                 for galFile in galFiles:
            #         print galFile
                     gfile = os.path.join(projectDir,galFile)
                     self.ReadGalMatrix(gfile)
             #print "gal"
             except:
-                print "No Weights Matrices"
+                print("No Weights Matrices")
 
             # read any gis boundary files
             self.listGISNames = []
@@ -224,7 +223,7 @@ class Project:
                     self.__calcCentroids()
             self.gisResolution = self.options["graphics"]["screen"]
         else:
-            print "Error: Cannot read project file: %s"%fileName
+            print("Error: Cannot read project file: %s"%fileName)
 
     def writeProjectFile(self,fileName):
         dataFile = fileName.split(".")[0]
@@ -275,13 +274,13 @@ class Project:
         fo = os.path.join(self.directory,filePrefix+".gis")
         f = open(fo,"w")
         c = self.newcoords
-        keys = c.keys()
+        keys = list(c.keys())
         csCount = {}
         sall=[]
         for key in keys:
             coords = c[key]
             cs = self.poly2cs[key][0]
-            if csCount.has_key(cs):
+            if cs in csCount:
                 csCount[cs] +=1
             else:
                 csCount[cs] = 0
@@ -299,8 +298,7 @@ class Project:
         fo = os.path.join(self.directory,filePrefix+".cnt")
         f = open(fo,"w")
         c = self.centroids
-        keys = c.keys()
-        keys.sort()
+        keys = sorted(c.keys())
         csCount = {}
         sall=[]
         for key in keys:
@@ -312,11 +310,11 @@ class Project:
         f.close()
 
     def summarizeOptions(self):
-        skeys= self.options.keys()
+        skeys= list(self.options.keys())
         for sectionKey in skeys:
             section = self.options[sectionKey]
        #     print section
-            optionKeys = section.keys() 
+            optionKeys = list(section.keys()) 
             for optionKey in optionKeys:
                 values = section[optionKey]
        #         print section,optionKey,values
@@ -324,7 +322,7 @@ class Project:
     def writeData(self,fileName):
         fo = open(fileName,'w')
         db = self.dataBase
-        variableNames = db.variables.keys()
+        variableNames = list(db.variables.keys())
         nVar = len(variableNames)
         varString = (" ").join(variableNames)
         so = "%d %s\n"%(nVar,varString)
@@ -357,8 +355,8 @@ class Project:
                 s = (" ").join(s)
                 fo.write(s+"\n")
             else:
-                print var
-                print shape(var)
+                print(var)
+                print(var.shape)
                 rowi = var[:,0]
                 rowi = rowi.tolist()
                 s = [ "%-.3f"%x for x in rowi]
@@ -397,7 +395,7 @@ class Project:
 
     def setVarStrings(self):
         db = self.dataBase
-        variableNames = db.variables.keys()
+        variableNames = list(db.variables.keys())
         for variableName in variableNames:
             variable = db.getVariable(variableName)
             variable.setTimeString(self.timeString)
@@ -432,7 +430,7 @@ class Project:
             r2 = row + ncoord + 1
             polyDict[pId] = [ float(coord.strip()) \
                                    for coord in gisdata[r1:r2]]
-            if cpolyDict.has_key(csId):
+            if csId in cpolyDict:
                 cpolyDict[csId].append(pId)
             else:
                 cpolyDict[csId] = [pId]
@@ -452,13 +450,12 @@ class Project:
         poly2cs = self.poly2cs
         cs2poly = self.cs2poly
         polyTemp={}
-        for poly in coords.keys():
+        for poly in list(coords.keys()):
             xy = coords[poly]
             xyChar = PolyChar(xy)
             polyTemp[poly] = xyChar
         centroids = {}
-        cs2polykeys = cs2poly.keys()
-        cs2polykeys.sort()
+        cs2polykeys = sorted(cs2poly.keys())
         xvar = []
         yvar = []
         for csKey in cs2polykeys:
@@ -473,8 +470,7 @@ class Project:
             centroids[csKey] = centroid
         self.centroids = centroids
 
-        cs2polykeys = cs2poly.keys()
-        cs2polykeys.sort()
+        cs2polykeys = sorted(cs2poly.keys())
         xvar = []
         yvar = []
         for csKey in cs2polykeys:
@@ -514,8 +510,8 @@ class Project:
     
     def gis2Contiguity(self,coords,poly2cs,cs2poly):
         vert2cs = {} 
-        polykeys = coords.keys()
-        csids = cs2poly.keys()
+        polykeys = list(coords.keys())
+        csids = list(cs2poly.keys())
         for poly in polykeys:
             vertices = coords[poly]
             n = len(vertices)
@@ -524,13 +520,13 @@ class Project:
             pnts = [ (vertices[i],vertices[i+1])  for i in r]
             csid = poly2cs[poly][0]
             for pnt in pnts:
-                if vert2cs.has_key(pnt):
+                if pnt in vert2cs:
                     if csid not in vert2cs[pnt]:
                         vert2cs[pnt].append(csid)
                 else:
                     vert2cs[pnt] = [csid]
         galinfo = {}
-        pnts = vert2cs.keys()
+        pnts = list(vert2cs.keys())
         for pnt in pnts:
             ids = vert2cs[pnt]
             nids = len(ids)
@@ -541,25 +537,25 @@ class Project:
                         idi = ids[i]
                         idj = ids[j]
                         if idi != idj:
-                            if galinfo.has_key(idi):
+                            if idi in galinfo:
                                 if idj not in galinfo[idi]:
                                     galinfo[idi].append(idj)
                             else:
                                 galinfo[idi]=[idj]
         
-                            if galinfo.has_key(idj):
+                            if idj in galinfo:
                                 if idi not in galinfo[idj]:
                                     galinfo[idj].append(idi)
                             else:
                                 galinfo[idj]=[idi]
                 
-        keys = galinfo.keys()
+        keys = list(galinfo.keys())
         islands = [ csid  for csid in csids if csid not in keys]
         if islands:
-            print "unconnected observation(s): ",islands
+            print("unconnected observation(s): ",islands)
             return 0
         else:
-            items = galinfo.items()
+            items = list(galinfo.items())
             g2 = dict( [(item[0],(len(item[1]),item[1])) for item in items  ] )
             return g2
 
@@ -568,8 +564,8 @@ class Project:
 
     def catalogue(self):
         db = self.dataBase
-        variableNames = db.variables.keys()
-        matrixNames = db.matrices.keys()
+        variableNames = list(db.variables.keys())
+        matrixNames = list(db.matrices.keys())
         nvar=len(variableNames)
         nmat=len(matrixNames)
         
@@ -613,7 +609,7 @@ class Project:
 
     def listVariablesPartial(self):
         db = self.dataBase
-        variableNames = db.variables.keys()
+        variableNames = list(db.variables.keys())
         nvar=len(variableNames)
         so="\nProject has %d variables.\n"%nvar
         if nvar:
@@ -625,24 +621,24 @@ class Project:
     def listVariables(self,varNames=[],maxCol=10,fmt=[8,0]):
         db = self.dataBase
         if varNames==[]:
-            varNames =db.variables.keys()
-        print varNames
+            varNames =list(db.variables.keys())
+        print(varNames)
         vtype = {}
         # organize variables by type
         for var in varnames:
             v = db.getVariable(var)
-            if vtype.has_key(v.varType):
+            if v.varType in vtype:
                 vtype[v.varType].append(v)
             else:
                 vtype[v.varType]=[v]
         # print variables by type
         so = []
-        for varType in vtype.keys():
+        for varType in list(vtype.keys()):
             vars = vtype[varType]
             if varType=="CSTS":
                 t = len(self.timeString)
                 rowLabels = self.regionNames
-                nr = t/maxCol
+                nr = t//maxCol
                 klast = t - nr * maxCol
                 nr += 1
                 if nr == 1:
@@ -666,7 +662,7 @@ class Project:
                 n = len(self.regionNames)
                 rowLabels = self.regionNames
                 t = len(vars) #number of columns
-                nr = t/maxCol
+                nr = t//maxCol
                 klast = t - nr * maxCol
                 nr += 1
                 if nr == 1:
@@ -677,18 +673,18 @@ class Project:
                 v1=0
                 for row in kwidth:
                     v2 = row 
-                    print v1,v2
+                    print(v1,v2)
                     x = vars[v1:v2]
                     colLabels = [var.name for var in x]
-                    body = transpose(array([var[:,0] for var in x]))
-                    print body
+                    import numpy as np; body = np.transpose(np.array([var[:,0] for var in x]))
+                    print(body)
                     tab = Table(body,colNames=colLabels,rowNames=rowLabels,fmt=fmt)
-                    print tab
+                    print(tab)
                     so.append(tab.table)
-                    print "so",so
+                    print("so",so)
                     v1 = v2
             else:
-                print "not implemented yet"
+                print("not implemented yet")
               
         so ="\n".join(so)
         return so
@@ -705,7 +701,7 @@ if __name__ == '__main__':
     import Markov
     from Table import *
     from SDialog import *
-    from numpy.oldnumeric import *
+    import numpy as np
 
 
     args = sys.argv
@@ -714,6 +710,6 @@ if __name__ == '__main__':
     if nargs == 1:
         Opening()
     elif nargs == 2:
-        t=execfile(args[1])
+        exec(open(args[1]).read())
     else:
-        print "Bad command arguments"
+        print("Bad command arguments")

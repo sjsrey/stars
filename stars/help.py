@@ -11,8 +11,8 @@ help classes for STARS.
 
 
 """
-from Tkinter import *
-from ScrolledText import ScrolledText
+from tkinter import *
+from tkinter.scrolledtext import ScrolledText
 
 BGCOLOR="white"
 FGCOLOR="black"
@@ -30,7 +30,7 @@ class MyThing (Frame):
         self.addText()
 
     def leftMouseClick(self,event):
-        print "got a click"
+        print("got a click")
         mouseIndex =  "@%d,%d" % (event.x, event.y)
         current = self.textBox.index(mouseIndex)
         row = current.split(".")[0] + ".0"
@@ -39,7 +39,7 @@ class MyThing (Frame):
         target = self.rowIndex[row]
         target = float(target)+12.0
         target = str(target)
-        print "moving to target",target
+        print("moving to target",target)
         self.textBox.see(target)
 
     def rightMouseClick(self,event):
@@ -112,8 +112,8 @@ class MyThing (Frame):
 
         lines = lines[top:]
         for line in lines:
-            if sectionDict.has_key(line):
-                print "section id",line
+            if line in sectionDict:
+                print("section id",line)
                 position = self.textBox.index(END)
                 tocPosition = sectionDict[line]
                 rowIndex[tocPosition] = position

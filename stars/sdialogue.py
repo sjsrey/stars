@@ -23,14 +23,14 @@ Also need to at a status attribute for the main container widget to determine
 if the dialogue was cancelled or not.
 """
 
-import Tkinter as Tk
-import tkSimpleDialog
+import tkinter as Tk
+import tkinter.simpledialog
 import os
 from stars import options
 from stars import credits
 import version
 import time
-from ScrolledText import ScrolledText
+from tkinter.scrolledtext import ScrolledText
 
 VERSION = version.VERSION
 VERSIONDATE = version.DATE
@@ -132,7 +132,7 @@ class SDialogue:
     def onOk(self):
         """handler for clicking ok button"""
         results = {}
-        children = self.children.keys()
+        children = list(self.children.keys())
         for child in children:
             results[child] = self.children[child].retrieve()
 
@@ -160,14 +160,14 @@ class SDialogue:
 
     def summarize(self):
         results = self.getResults()
-        widgetIds = results.keys()
+        widgetIds = list(results.keys())
         widgetIds.sort()
         for widgetId in widgetIds:
             result = results[widgetId]
             s0="Widget %d "% widgetId
             s="%s had the following values specified by the user: "% s0
-            print s
-            print result
+            print(s)
+            print(result)
 
 
 
@@ -181,7 +181,7 @@ class ChildWidget:
 
     def retrieve(self):
         """get user specified values for each option"""
-        print "Need to override"
+        print("Need to override")
 
 
     def draw(self):
@@ -336,7 +336,7 @@ class UserEntries(ChildWidget):
         self.entries=entries
 
     def retrieve(self):
-        keys = self.entries.keys()
+        keys = list(self.entries.keys())
         keys.sort()
         entries = self.entries
         results = [ entries[key].get() for key in keys]
@@ -444,7 +444,7 @@ To remove a selection from a specific entry, click the - button to its left.
         self.masterFrame.grid()
 
     def retrieve(self):
-        keys = self.container.keys()
+        keys = list(self.container.keys())
         self.values = {} 
         for key in keys:
             item = self.container[key]
@@ -477,7 +477,7 @@ To remove a selection from a specific entry, click the - button to its left.
     def addSelection(self):
         index = self.lb.index('active')
         value = self.lb.get(index)
-        for key in self.container.keys():
+        for key in list(self.container.keys()):
             item = self.container[key]
             item.entry.delete(0,Tk.END)
             value = item.entry.insert(Tk.END,value)
@@ -647,16 +647,16 @@ selections.
         self.retrieve()
         self.status = 1
         self.quit()
-        print self.status
-        print self.values
+        print(self.status)
+        print(self.values)
 
     def onCancel(self):
         self.status = 0
         self.quit()
-        print self.status
+        print(self.status)
 
     def onHelp(self):
-        print self.helpText
+        print(self.helpText)
         HelpDialog(self.top,self.helpText,title=self.title)
 
     def quit(self):
@@ -822,10 +822,10 @@ class HelpDialog:
 
 
 
-class aAbout(tkSimpleDialog.Dialog):
+class aAbout(tkinter.simpledialog.Dialog):
     """ The application's about box """
     def __init__(self, master=None):
-	    tkSimpleDialog.Dialog.__init__(self, master)
+	    tkinter.simpledialog.Dialog.__init__(self, master)
  
     def buttonbox(self):
 	# Stolen from tkSimpleDialog.py
@@ -866,11 +866,11 @@ class aAbout(tkSimpleDialog.Dialog):
 
 
     def ok(self):
-        print 'ok'
+        print('ok')
 
 
 
-class About(tkSimpleDialog.Dialog):
+class About(tkinter.simpledialog.Dialog):
     def body(self, master):
         self.image = Tk.PhotoImage(file=GIFFILE)
         self.icon = Tk.Label(master, image=self.image)
@@ -895,7 +895,7 @@ class About(tkSimpleDialog.Dialog):
         self.infoText.insert('0.0', getLicense())	
         self.infoText.configure(state=Tk.DISABLED)
 
-class Credits(tkSimpleDialog.Dialog):
+class Credits(tkinter.simpledialog.Dialog):
     def body(self, master):
         self.image = Tk.PhotoImage(file=GIFFILE)
         self.icon = Tk.Label(master, image=self.image)
@@ -1011,16 +1011,16 @@ selected periods."""
     
     # once the user clicks ok or cancel, we can process the results
     results = dialogue.getResults()
-    print """"The results for each subwidget are placed in a dictonary, with the
+    print(""""The results for each subwidget are placed in a dictonary, with the
     keys representing the order in which the subwidget was attached to the
-    master."""
-    widgetIds = results.keys()
+    master.""")
+    widgetIds = list(results.keys())
     widgetIds.sort()
     for widgetId in widgetIds:
         result = results[widgetId]
-        print "Widget %d had the following values specified by the user:"%widgetId
-        print result
-        print "\n"
+        print("Widget %d had the following values specified by the user:"%widgetId)
+        print(result)
+        print("\n")
 
     root.mainloop()
 
