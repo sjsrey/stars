@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "stars"
+version = "0.9.0"
+description = "Space-Time Analysis of Regional Systems"
+readme = "README.rst"
+license = { text = "GPL-3.0-or-later" }
+authors = [
+    { name = "Sergio J. Rey",     email = "sjrey@users.sourceforge.net" },
+    { name = "Mark V. Janikas",   email = "janikas@users.sourceforge.net" },
+    { name = "Boris Dev",         email = "borisdev@users.sourceforge.net" },
+]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "matplotlib>=3.7",
+    "geopandas>=0.14",
+    "shapely>=2.0",
+    "libpysal>=4.9",
+    "esda>=2.5",
+    "giddy>=2.3",
+    "inequality>=1.0",
+    "mapclassify>=2.6",
+    "PyQt6>=6.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "pytest-cov",
+]
+
+[project.scripts]
+stars = "app:main"
+
+[tool.setuptools.packages.find]
+where  = ["stars"]
+include = ["views*"]
+
+[tool.setuptools.package-data]
+"*" = ["data/*.prj", "data/*.dat", "data/*.dht", "data/*.gis",
+       "data/*.gal", "data/*.shp", "data/*.shx", "data/*.dbf",
+       "data/*.csv"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "-v"
+
+[tool.ruff]
+line-length = 100
